@@ -1,0 +1,1467 @@
+'use client'
+import React, { ChangeEvent, useState } from "react";
+import ExifReader from 'exifreader';
+
+export default function Page() {
+    const [file, setFile] = useState<File | null>(null);
+
+    const [address, setAddress] = useState<string>("")
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = event.target;
+        if (files && files.length === 1) {
+            const selectedFile = files[0];
+            setFile(selectedFile); // 상태 업데이트
+
+            // const tags = await ExifReader.load(file);
+            // const { GPSLongitude, GPSLatitude } = tags;
+            // const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${GPSLatitude?.description},${GPSLongitude?.description}&result_type=political&key=AIzaSyDFZ_1A_G4R6IjolqGwB39R2ub-7Q9sFU0`);
+            // const {results} = await response.json();
+            processExifData(selectedFile);
+
+
+        }
+    };
+
+    const processExifData = async (file: File) => {
+        try {
+            const tags = await ExifReader.load(file);
+            const { GPSLongitude, GPSLatitude } = tags;
+
+            if (GPSLongitude && GPSLatitude) {
+                const latitude = GPSLatitude.description;
+                const longitude = GPSLongitude.description;
+
+                const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&result_type=political&key=AIzaSyDFZ_1A_G4R6IjolqGwB39R2ub-7Q9sFU0`,
+                )
+                const { results } = await response.json();
+
+                if (results && results.length > 0) {
+                    setAddress(results[0].formatted_address);
+                } else {
+                    setAddress("주소를 찾을 수 없습니다.");
+                }
+            } else {
+                setAddress("GPS 데이터를 찾을 수 없습니다.");
+            }
+        } catch (error) {
+            console.error("처리 중 오류:", error);
+            setAddress("데이터를 처리하는 중 오류가 발생했습니다.");
+        }
+    };
+
+    const onChangeSearch = async (e:ChangeEvent<HTMLInputElement>) => {
+
+        const response = await fetch(`https://geocode.googleapis.com/v4beta/geocode/address/${e.currentTarget.value}&key=AIzaSyDFZ_1A_G4R6IjolqGwB39R2ub-7Q9sFU0`,
+        {
+            method: "GET"
+        })
+        const result = await response.json();
+        console.log(result);
+    }
+    return (
+        <div>
+            <h1>EXIF.js with Next.js</h1>
+            <label htmlFor="file">{file?.name ?? "FILE"}</label><input id="file" className="hidden" type="file" accept="image/*" onChange={handleFileChange} />
+            <p>{address}</p>
+            <div>
+
+                <input type="text" id="search_query" name="search_query" onChange={onChangeSearch} />
+            </div>
+        </div>
+    );
+};
+
+
+
+
+
+
+
+{
+    "Bits Per Sample": {
+        "value": 8,
+        "description": "8"
+    },
+    "Image Height": {
+        "value": 2262,
+        "description": "2262px"
+    },
+    "Image Width": {
+        "value": 4021,
+        "description": "4021px"
+    },
+    "Color Components": {
+        "value": 3,
+        "description": "3"
+    },
+    "Subsampling": {
+        "value": [
+            [
+                1,
+                34,
+                0
+            ],
+            [
+                2,
+                17,
+                1
+            ],
+            [
+                3,
+                17,
+                1
+            ]
+        ],
+        "description": "YCbCr4:2:0 (2 2)"
+    },
+    "Make": {
+        "id": 271,
+        "value": [
+            "Apple"
+        ],
+        "description": "Apple"
+    },
+    "Model": {
+        "id": 272,
+        "value": [
+            "iPhone 7 Plus"
+        ],
+        "description": "iPhone 7 Plus"
+    },
+    "Orientation": {
+        "id": 274,
+        "value": 1,
+        "description": "top-left"
+    },
+    "XResolution": {
+        "id": 282,
+        "value": [
+            72,
+            1
+        ],
+        "description": "72"
+    },
+    "YResolution": {
+        "id": 283,
+        "value": [
+            72,
+            1
+        ],
+        "description": "72"
+    },
+    "ResolutionUnit": {
+        "id": 296,
+        "value": 2,
+        "description": "inches"
+    },
+    "Software": {
+        "id": 305,
+        "value": [
+            "10.2"
+        ],
+        "description": "10.2"
+    },
+    "DateTime": {
+        "id": 306,
+        "value": [
+            "2017:01:24 15:01:28"
+        ],
+        "description": "2017:01:24 15:01:28"
+    },
+    "YCbCrPositioning": {
+        "id": 531,
+        "value": 1,
+        "description": "centered"
+    },
+    "Exif IFD Pointer": {
+        "id": 34665,
+        "value": 208,
+        "description": 208
+    },
+    "GPS Info IFD Pointer": {
+        "id": 34853,
+        "value": 1662,
+        "description": 1662
+    },
+    "ExposureTime": {
+        "id": 33434,
+        "value": [
+            1,
+            847
+        ],
+        "description": "1/847"
+    },
+    "FNumber": {
+        "id": 33437,
+        "value": [
+            9,
+            5
+        ],
+        "description": "f/1.8"
+    },
+    "ExposureProgram": {
+        "id": 34850,
+        "value": 2,
+        "description": "Normal program"
+    },
+    "ISOSpeedRatings": {
+        "id": 34855,
+        "value": 20,
+        "description": 20
+    },
+    "ExifVersion": {
+        "id": 36864,
+        "value": [
+            48,
+            50,
+            50,
+            49
+        ],
+        "description": "0221"
+    },
+    "DateTimeOriginal": {
+        "id": 36867,
+        "value": [
+            "2017:01:24 15:01:28"
+        ],
+        "description": "2017:01:24 15:01:28"
+    },
+    "DateTimeDigitized": {
+        "id": 36868,
+        "value": [
+            "2017:01:24 15:01:28"
+        ],
+        "description": "2017:01:24 15:01:28"
+    },
+    "ComponentsConfiguration": {
+        "id": 37121,
+        "value": [
+            1,
+            2,
+            3,
+            0
+        ],
+        "description": ""
+    },
+    "ShutterSpeedValue": {
+        "id": 37377,
+        "value": [
+            9620,
+            989
+        ],
+        "description": "1/847"
+    },
+    "ApertureValue": {
+        "id": 37378,
+        "value": [
+            2159,
+            1273
+        ],
+        "description": "1.80"
+    },
+    "BrightnessValue": {
+        "id": 37379,
+        "value": [
+            9521,
+            1060
+        ],
+        "description": "8.982075471698113"
+    },
+    "ExposureBiasValue": {
+        "id": 37380,
+        "value": [
+            0,
+            1
+        ],
+        "description": "0"
+    },
+    "MeteringMode": {
+        "id": 37383,
+        "value": 5,
+        "description": "Pattern"
+    },
+    "Flash": {
+        "id": 37385,
+        "value": 16,
+        "description": "Flash did not fire, compulsory flash mode"
+    },
+    "FocalLength": {
+        "id": 37386,
+        "value": [
+            399,
+            100
+        ],
+        "description": "3.99 mm"
+    },
+    "SubjectArea": {
+        "id": 37396,
+        "value": [
+            2015,
+            1511,
+            2217,
+            1330
+        ],
+        "description": "Rectangle; X: 2015, Y: 1511, width: 2217, height: 1330"
+    },
+    "MakerNote": {
+        "id": 37500,
+        "value": [
+            65,
+            112,
+            112,
+            108,
+            101,
+            32,
+            105,
+            79,
+            83,
+            0,
+            0,
+            1,
+            77,
+            77,
+            0,
+            13,
+            0,
+            1,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            4,
+            0,
+            2,
+            0,
+            7,
+            0,
+            0,
+            2,
+            46,
+            0,
+            0,
+            0,
+            176,
+            0,
+            3,
+            0,
+            7,
+            0,
+            0,
+            0,
+            104,
+            0,
+            0,
+            2,
+            222,
+            0,
+            4,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            5,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            182,
+            0,
+            6,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            173,
+            0,
+            7,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            8,
+            0,
+            10,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            3,
+            70,
+            0,
+            12,
+            0,
+            10,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            3,
+            94,
+            0,
+            13,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            26,
+            0,
+            14,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            4,
+            0,
+            16,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            20,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            98,
+            112,
+            108,
+            105,
+            115,
+            116,
+            48,
+            48,
+            79,
+            17,
+            2,
+            0,
+            253,
+            0,
+            246,
+            0,
+            244,
+            0,
+            235,
+            0,
+            115,
+            0,
+            126,
+            0,
+            235,
+            0,
+            63,
+            1,
+            65,
+            1,
+            246,
+            0,
+            225,
+            0,
+            223,
+            0,
+            220,
+            0,
+            219,
+            0,
+            218,
+            0,
+            218,
+            0,
+            198,
+            1,
+            18,
+            1,
+            26,
+            1,
+            15,
+            1,
+            121,
+            0,
+            134,
+            0,
+            191,
+            1,
+            215,
+            1,
+            219,
+            1,
+            129,
+            1,
+            33,
+            1,
+            7,
+            1,
+            1,
+            1,
+            246,
+            0,
+            245,
+            0,
+            244,
+            0,
+            142,
+            1,
+            142,
+            1,
+            216,
+            1,
+            120,
+            1,
+            141,
+            0,
+            133,
+            0,
+            195,
+            1,
+            127,
+            1,
+            238,
+            1,
+            116,
+            1,
+            111,
+            1,
+            118,
+            1,
+            75,
+            1,
+            33,
+            1,
+            63,
+            1,
+            45,
+            1,
+            213,
+            0,
+            15,
+            1,
+            163,
+            1,
+            51,
+            1,
+            129,
+            0,
+            110,
+            0,
+            113,
+            1,
+            92,
+            1,
+            171,
+            1,
+            135,
+            1,
+            117,
+            1,
+            109,
+            1,
+            66,
+            1,
+            48,
+            1,
+            56,
+            1,
+            65,
+            1,
+            159,
+            0,
+            154,
+            0,
+            179,
+            0,
+            248,
+            0,
+            118,
+            0,
+            94,
+            0,
+            158,
+            1,
+            228,
+            1,
+            151,
+            1,
+            86,
+            1,
+            121,
+            1,
+            141,
+            1,
+            130,
+            1,
+            165,
+            1,
+            169,
+            1,
+            164,
+            1,
+            119,
+            0,
+            96,
+            0,
+            94,
+            0,
+            94,
+            0,
+            77,
+            0,
+            79,
+            0,
+            217,
+            0,
+            193,
+            1,
+            188,
+            1,
+            219,
+            1,
+            214,
+            1,
+            100,
+            1,
+            62,
+            1,
+            157,
+            1,
+            218,
+            1,
+            20,
+            2,
+            87,
+            0,
+            86,
+            0,
+            86,
+            0,
+            82,
+            0,
+            72,
+            0,
+            71,
+            0,
+            95,
+            0,
+            209,
+            0,
+            70,
+            1,
+            93,
+            1,
+            57,
+            1,
+            52,
+            1,
+            222,
+            0,
+            51,
+            1,
+            128,
+            1,
+            145,
+            1,
+            72,
+            0,
+            72,
+            0,
+            72,
+            0,
+            69,
+            0,
+            65,
+            0,
+            65,
+            0,
+            77,
+            0,
+            111,
+            0,
+            13,
+            1,
+            22,
+            1,
+            12,
+            1,
+            19,
+            1,
+            202,
+            0,
+            194,
+            0,
+            204,
+            0,
+            48,
+            1,
+            68,
+            0,
+            67,
+            0,
+            67,
+            0,
+            62,
+            0,
+            63,
+            0,
+            60,
+            0,
+            76,
+            0,
+            211,
+            0,
+            89,
+            1,
+            26,
+            1,
+            29,
+            1,
+            214,
+            0,
+            97,
+            0,
+            77,
+            0,
+            191,
+            0,
+            20,
+            1,
+            53,
+            0,
+            45,
+            0,
+            40,
+            0,
+            58,
+            0,
+            59,
+            0,
+            59,
+            0,
+            68,
+            0,
+            82,
+            0,
+            93,
+            0,
+            158,
+            0,
+            243,
+            0,
+            196,
+            0,
+            81,
+            0,
+            86,
+            0,
+            79,
+            0,
+            238,
+            0,
+            33,
+            0,
+            32,
+            0,
+            44,
+            0,
+            43,
+            0,
+            45,
+            0,
+            51,
+            0,
+            52,
+            0,
+            43,
+            0,
+            51,
+            0,
+            71,
+            0,
+            73,
+            0,
+            139,
+            0,
+            87,
+            0,
+            106,
+            0,
+            76,
+            0,
+            222,
+            0,
+            24,
+            0,
+            24,
+            0,
+            36,
+            0,
+            42,
+            0,
+            39,
+            0,
+            48,
+            0,
+            46,
+            0,
+            48,
+            0,
+            68,
+            0,
+            76,
+            0,
+            53,
+            0,
+            82,
+            0,
+            154,
+            0,
+            186,
+            0,
+            149,
+            0,
+            224,
+            0,
+            32,
+            0,
+            24,
+            0,
+            30,
+            0,
+            45,
+            0,
+            37,
+            0,
+            46,
+            0,
+            55,
+            0,
+            62,
+            0,
+            57,
+            1,
+            123,
+            0,
+            63,
+            0,
+            62,
+            0,
+            70,
+            0,
+            76,
+            0,
+            97,
+            0,
+            222,
+            0,
+            28,
+            0,
+            25,
+            0,
+            27,
+            0,
+            39,
+            0,
+            52,
+            0,
+            48,
+            0,
+            51,
+            0,
+            42,
+            0,
+            189,
+            0,
+            78,
+            0,
+            55,
+            0,
+            145,
+            0,
+            106,
+            0,
+            34,
+            1,
+            53,
+            1,
+            226,
+            0,
+            17,
+            0,
+            18,
+            0,
+            30,
+            0,
+            32,
+            0,
+            41,
+            0,
+            51,
+            0,
+            45,
+            0,
+            39,
+            0,
+            45,
+            0,
+            49,
+            0,
+            51,
+            0,
+            233,
+            0,
+            218,
+            0,
+            69,
+            1,
+            243,
+            0,
+            187,
+            0,
+            18,
+            0,
+            21,
+            0,
+            21,
+            0,
+            24,
+            0,
+            28,
+            0,
+            43,
+            0,
+            59,
+            0,
+            32,
+            0,
+            34,
+            0,
+            36,
+            0,
+            51,
+            0,
+            85,
+            0,
+            58,
+            0,
+            62,
+            0,
+            81,
+            0,
+            56,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            12,
+            98,
+            112,
+            108,
+            105,
+            115,
+            116,
+            48,
+            48,
+            212,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            85,
+            102,
+            108,
+            97,
+            103,
+            115,
+            85,
+            118,
+            97,
+            108,
+            117,
+            101,
+            85,
+            101,
+            112,
+            111,
+            99,
+            104,
+            89,
+            116,
+            105,
+            109,
+            101,
+            115,
+            99,
+            97,
+            108,
+            101,
+            16,
+            1,
+            19,
+            0,
+            0,
+            51,
+            204,
+            84,
+            83,
+            232,
+            57,
+            16,
+            0,
+            18,
+            59,
+            154,
+            202,
+            0,
+            8,
+            17,
+            23,
+            29,
+            35,
+            45,
+            47,
+            56,
+            58,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            63,
+            255,
+            255,
+            101,
+            39,
+            0,
+            0,
+            155,
+            58,
+            255,
+            255,
+            250,
+            233,
+            0,
+            5,
+            21,
+            71,
+            255,
+            255,
+            232,
+            62,
+            0,
+            1,
+            248,
+            91,
+            0,
+            0,
+            0,
+            15,
+            0,
+            0,
+            0,
+            64,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            64
+        ],
+        "description": "[Raw maker note data]"
+    },
+    "SubSecTimeOriginal": {
+        "id": 37521,
+        "value": [
+            "317"
+        ],
+        "description": "317"
+    },
+    "SubSecTimeDigitized": {
+        "id": 37522,
+        "value": [
+            "317"
+        ],
+        "description": "317"
+    },
+    "FlashpixVersion": {
+        "id": 40960,
+        "value": [
+            48,
+            49,
+            48,
+            48
+        ],
+        "description": "0100"
+    },
+    "ColorSpace": {
+        "id": 40961,
+        "value": 65535,
+        "description": "Uncalibrated"
+    },
+    "PixelXDimension": {
+        "id": 40962,
+        "value": 4032,
+        "description": 4032
+    },
+    "PixelYDimension": {
+        "id": 40963,
+        "value": 3024,
+        "description": 3024
+    },
+    "SensingMethod": {
+        "id": 41495,
+        "value": 2,
+        "description": "One-chip color area sensor"
+    },
+    "SceneType": {
+        "id": 41729,
+        "value": 1,
+        "description": "A directly photographed image"
+    },
+    "ExposureMode": {
+        "id": 41986,
+        "value": 0,
+        "description": "Auto exposure"
+    },
+    "WhiteBalance": {
+        "id": 41987,
+        "value": 0,
+        "description": "Auto white balance"
+    },
+    "FocalLengthIn35mmFilm": {
+        "id": 41989,
+        "value": 28,
+        "description": "28 mm"
+    },
+    "SceneCaptureType": {
+        "id": 41990,
+        "value": 0,
+        "description": "Standard"
+    },
+    "LensSpecification": {
+        "id": 42034,
+        "value": [
+            [
+                4183519,
+                1048501
+            ],
+            [
+                33,
+                5
+            ],
+            [
+                9,
+                5
+            ],
+            [
+                14,
+                5
+            ]
+        ],
+        "description": "3.99-6.6 mm f/2.8"
+    },
+    "LensMake": {
+        "id": 42035,
+        "value": [
+            "Apple"
+        ],
+        "description": "Apple"
+    },
+    "LensModel": {
+        "id": 42036,
+        "value": [
+            "iPhone 7 Plus back dual camera 3.99mm f/1.8"
+        ],
+        "description": "iPhone 7 Plus back dual camera 3.99mm f/1.8"
+    },
+    "GPSLatitudeRef": {
+        "id": 1,
+        "value": [
+            "N"
+        ],
+        "description": "North latitude"
+    },
+    "GPSLatitude": {
+        "id": 2,
+        "value": [
+            [
+                36,
+                1
+            ],
+            [
+                6,
+                1
+            ],
+            [
+                4776,
+                100
+            ]
+        ],
+        "description": 36.11326666666667
+    },
+    "GPSLongitudeRef": {
+        "id": 3,
+        "value": [
+            "W"
+        ],
+        "description": "West longitude"
+    },
+    "GPSLongitude": {
+        "id": 4,
+        "value": [
+            [
+                115,
+                1
+            ],
+            [
+                10,
+                1
+            ],
+            [
+                3004,
+                100
+            ]
+        ],
+        "description": 115.17501111111112
+    },
+    "GPSSpeedRef": {
+        "id": 12,
+        "value": [
+            "K"
+        ],
+        "description": "Kilometers per hour"
+    },
+    "GPSSpeed": {
+        "id": 13,
+        "value": [
+            0,
+            1
+        ],
+        "description": "0"
+    },
+    "GPSImgDirectionRef": {
+        "id": 16,
+        "value": [
+            "T"
+        ],
+        "description": "True direction"
+    },
+    "GPSImgDirection": {
+        "id": 17,
+        "value": [
+            114919,
+            387
+        ],
+        "description": "296.9483204134367"
+    },
+    "GPSDestBearingRef": {
+        "id": 23,
+        "value": [
+            "T"
+        ],
+        "description": "True direction"
+    },
+    "GPSDestBearing": {
+        "id": 24,
+        "value": [
+            114919,
+            387
+        ],
+        "description": "296.9483204134367"
+    },
+    "GPSHPositioningError": {
+        "id": 31,
+        "value": [
+            2153,
+            438
+        ],
+        "description": "4.915525114155251"
+    },
+    "Preferred CMM type": {
+        "value": "appl",
+        "description": "Apple"
+    },
+    "Profile Version": {
+        "value": "4.0.0",
+        "description": "4.0.0"
+    },
+    "Profile/Device class": {
+        "value": "mntr",
+        "description": "Display Device profile"
+    },
+    "Color Space": {
+        "value": "RGB ",
+        "description": "RGB "
+    },
+    "Connection Space": {
+        "value": "XYZ ",
+        "description": "XYZ "
+    },
+    "ICC Profile Date": {
+        "value": "2022-01-01T00:00:00.000Z",
+        "description": "2022-01-01T00:00:00.000Z"
+    },
+    "ICC Signature": {
+        "value": "acsp",
+        "description": "acsp"
+    },
+    "Primary Platform": {
+        "value": "APPL",
+        "description": "Apple"
+    },
+    "Device Manufacturer": {
+        "value": "APPL",
+        "description": "Apple"
+    },
+    "Device Model Number": {
+        "value": "\u0000\u0000\u0000\u0000",
+        "description": "\u0000\u0000\u0000\u0000"
+    },
+    "Rendering Intent": {
+        "value": 0,
+        "description": "Perceptual"
+    },
+    "Profile Creator": {
+        "value": "appl",
+        "description": "appl"
+    },
+    "ICC Description": {
+        "value": "Display P3",
+        "description": "Display P3"
+    },
+    "ICC Copyright": {
+        "value": "Copyright Apple Inc., 2022",
+        "description": "Copyright Apple Inc., 2022"
+    },
+    "ScaleFactorTo35mmEquivalent": {
+        "value": 7.017543859649122,
+        "description": "7.0"
+    },
+    "FieldOfView": {
+        "value": 65.4704525442152,
+        "description": "65.5 deg"
+    },
+    "FileType": {
+        "value": "jpeg",
+        "description": "JPEG"
+    }
+}

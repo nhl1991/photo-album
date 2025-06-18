@@ -1,0 +1,94 @@
+'use client'
+import { ChangeEvent, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react"
+import { Loader } from "@googlemaps/js-api-loader";
+import { useDebouncedCallback } from "use-debounce";
+export default function Page() {
+
+    const [query, setQuery] = useState('');
+
+
+    useEffect(() => {
+
+    }, [])
+
+    return (
+        <>
+
+            <footer className="w-full flex flex-col ">
+                <p className="w-full text-center p-2">Address will be placed.</p>
+                <form className="" >
+                    <label className="min-w border-2 rounded-2xl border-sky-400 px-4 py-1 text-base my-2" htmlFor="file">File name</label>
+                    <input className="border-2 rounded-2xl border-sky-400 px-4 py-1 text-base hidden" type="file" id="file" name="file" accept="image/*" />
+                    <input className="border-2 rounded-2xl border-sky-400 px-4 py-1 text-base my-2" type="submit" name="submit" value={`업로드`} />
+                </form>
+                <Suggestions />
+            </footer>
+
+        </>
+    )
+    // return(
+    //     <div className="w-[100vw] h-[100vh]">
+    //     <iframe style={{borderRadius: "12px"}} src="https://open.spotify.com/embed/playlist/7rrqmdXvuSZfAPeoMu6GFJ?utm_source=generator" className="w-full h-full" frameBorder="0" allowFullScreen={false} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    //     </div>
+    // )
+}
+
+function Suggestions() {
+    const apiOptions = {
+        apiKey: "AIzaSyDFZ_1A_G4R6IjolqGwB39R2ub-7Q9sFU0"
+    }
+
+    const [data, setData] = useState<Array<string|undefined>>([]);
+    const [text, setText] = useState<string>('');
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const loader = new Loader(apiOptions);
+    const onChange = useDebouncedCallback((event) => {
+        setText(event.target.value);
+
+        getSuggestions();
+    }, 200);
+
+    const getSuggestions = async () => {
+        if (text == '') return;
+        const { AutocompleteSuggestion } = await loader.importLibrary("places")
+        //@params > autocompleteRequest:  AutocompleteRequest / @return Promise<{suggestions:Array<AutocompleteSuggestion>}>
+        const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
+            input: text,
+        })
+        
+
+        // @ts-ignore
+        const arr = suggestions.map((autocompletesuggestion) => {
+            const { text } = autocompletesuggestion.placePrediction.text
+            console.log(text);
+            return text;
+        })
+
+            setData(arr);
+
+    }
+
+    const onClick = (e: MouseEvent<HTMLParagraphElement>) => {
+        console.log(e.currentTarget.innerText)
+        if (inputRef && inputRef.current)
+            inputRef.current.value = e.currentTarget.innerText
+        setData([]);
+    }
+    useEffect(() => {
+
+    }, [])
+    return (
+        <div className="">
+            <div className="w-full px-24 py-12">
+                <input ref={inputRef} className="w-full bg-white text-black px-2 py-1 m-0 focus:outline-0" type="text" name="google_geocoding" onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)} />
+                <div className="bg-gray-700 rounded-b-2xl m-0">
+                    {
+                        data ? data.map((item, index) => { return <p className="px-2 py-1 hover:bg-slate-500 cursor-pointer" key={index} onClick={onClick}>{item}</p> }) : null
+                    }
+                </div>
+            </div>
+        </div>
+
+    )
+}
