@@ -17,7 +17,7 @@ export default function SignIn() {
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(e);
+
         try {
             setIsLoading(true);
             if (emailRef.current && passwordRef.current) {
@@ -42,7 +42,7 @@ export default function SignIn() {
     return (
         <div className="w-96 h-64  rounded-2xl p-4">
             <form className="w-full h-full grid grid-cols-1 grid-rows-6 gap-2" onSubmit={onSubmit}>
-                <div className="flex items-center justify-center col-span-full row-span-4 flex flex-col justify-evenly px-4">
+                <div className="items-center col-span-full row-span-4 flex flex-col justify-evenly px-4">
                     <input className="w-5/6 outline-0 border-white border-b-2 focus:border-b-sky-400" id="email" type="email" name="email" placeholder="Email" ref={emailRef} />
                     <input className="w-5/6 outline-0 border-white border-b-2 focus:border-b-sky-400" id="password" type="password" name="password" placeholder="Password" ref={passwordRef} />
                 </div>

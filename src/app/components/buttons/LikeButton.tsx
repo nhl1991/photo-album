@@ -51,11 +51,11 @@ export default function LikeButton({ id, like, length }: {
         setUserlist(like);
 
         if(user && like && like.includes(user.uid)){
-            // console.log('user.uid in like')
+
             setUserLike(true);
         }
         else{
-            // console.log('user.uid not in like')
+
             setUserLike(false);
         }
 

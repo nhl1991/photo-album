@@ -61,7 +61,7 @@ function Suggestions() {
         // @ts-ignore
         const arr = suggestions.map((autocompletesuggestion) => {
             const { text } = autocompletesuggestion.placePrediction.text
-            console.log(text);
+
             return text;
         })
 

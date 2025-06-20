@@ -48,7 +48,7 @@ export async function updateView(reference: DocumentReference, view: number) {
 //this function will get modifed array of liked user list.
 export async function updateLike(reference: DocumentReference, like: Array<string>|null) {
     const likeCount = like ? like.length : 0
-    // console.log('updatelike gets ',like);
+
     if (reference instanceof DocumentReference)
         try {
             await updateDoc(reference, { like, likes: likeCount });

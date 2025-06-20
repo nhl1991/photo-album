@@ -20,7 +20,7 @@ interface Modal {
     username: string,
     address: string,
     comments: Comment[] | null,
-    
+
 }
 interface Comment {
     uid: string,
@@ -57,7 +57,7 @@ export default function ModalContainer({ id,
         const ref = getDatabaseRefById(id);
         updateView(ref, currentView);
 
-        console.log('post changed. : ', like ,likes)
+
     })
 
     const onClickContainer = (e: MouseEvent<HTMLDivElement>) => {
@@ -66,9 +66,9 @@ export default function ModalContainer({ id,
 
 
     return (
-        <div className="w-[90lvw] h-[80lvh]  rounded-2xl grid grid-cols-6 grid-rows-10 bg-black text-white relative gap-1 p-2" onClick={onClickContainer} >
+        <div className="w-[90vw] h-[80vh] bg-lime-200 rounded-2xl grid grid-cols-6 grid-rows-10  text-white relative gap-1 p-2" onClick={onClickContainer} >
             {/* TOP */}
-            <div className="col-span-full content-center place-self-end">
+            <div className="col-span-full content-center place-self-end bg-lime-200">
                 {ValidateUserAuthorization(userId) ? <DeleteButton id={id} userId={userId} image={image} /> : null}
 
                 <button className="p-1 cursor-pointer" name="close-btn" onClick={onClose}>
@@ -77,20 +77,20 @@ export default function ModalContainer({ id,
                     </svg>
                 </button>
             </div>
-            {/* IMAGE - BOTTOM RIGHT  */}
-            <div className="col-span-4 row-start-2 row-span-8 ">
-                <div className="w-full h-full relative">
+            {/* IMAGE - BOTTOM LEFT  */}
+            <div className="col-span-full bg- row-[2/4] md:col-span-4 md:row-start-2 md:row-span-8 bg-lime-200">
+                {/* <div className="w-full h-full relative">
                     <Image className="" src={image} objectFit="contain" fill alt="none" />
-                </div>
+                </div> */}
             </div>
-            {/* TEXT - BOTTOM LEFT */}
-            <div className="col-[5/7] row-span-8 grid grid-rows-10 grid-cols-3 ">
-                <div className=" col-span-full row-span-1 grid grid-cols-3 content-center">
+            {/* TEXT - BOTTOM RIGHT */}
+            <div className="md:col-[5/7]  md:row-span-8 bg-lime-300 grid grid-rows-10 grid-cols-3 ">
+                {/* <div className=" col-span-full row-span-1 grid grid-cols-3 content-center">
                     <div className=" justify-center items-center flex">
                         <div className="w-[48px] h-[48px] rounded-full  relative overflow-hidden">
-                        {avartar ? <Image src={avartar} fill objectFit="cover" alt="image" sizes="(max-width: 128px)" /> : <svg className="w-full" data-slot="icon" fill="none" strokeWidth={1.5} stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    </svg>}
+                            {avartar ? <Image src={avartar} fill objectFit="cover" alt="image" sizes="(max-width: 128px)" /> : <svg className="w-full" data-slot="icon" fill="none" strokeWidth={1.5} stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>}
                         </div>
                         <p className="w-max text-xl px-2 ">{username}</p>
                     </div>
@@ -115,7 +115,7 @@ export default function ModalContainer({ id,
                 <div className="col-span-full row-span-3 ">
                     <CommentComponent id={id} comments={comments} />
 
-                </div>
+                </div> */}
                 {/* <div id="info-text" className="w-full rows-[2/4] flex py-2 col-full ">
                     
 

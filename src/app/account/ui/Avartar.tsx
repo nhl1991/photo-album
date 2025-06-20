@@ -10,7 +10,7 @@ export default function Avartar({user}: {user: User|null}) {
     const [, setAvartar] = useState<string | undefined | null>(user?.photoURL);
 
     const onAvartarChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        if (!user) { console.log(user); return; }
+        if (!user) return;
         const { files } = e.target;
         if (files && files.length === 1) {
             const file = files[0];

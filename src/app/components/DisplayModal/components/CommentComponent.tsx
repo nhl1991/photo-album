@@ -49,7 +49,7 @@ export default function CommentComponent({ id, comments }: {
             <div className="w-full h-36  my-2 overflow-scroll">
                 {
                     comments ? comments.map((comment: Comment, index) => {
-                        return <div className="w-full flex flex-col text-sm bg-gray-900 rounded-2xl my-1 p-1 gap-1 " key={index}>
+                        return <div className="w-full flex flex-col text-sm bg-gray-900/30 rounded-2xl my-1 p-1 gap-1 " key={index}>
                             <div className="grid grid-cols-[repeat(4, 1fr)] grid-cols-1">
                                 <p className="mx-2 font-bold col-end-2 ">{comment.displayName}</p>
                                 {comment.uid === uid ? <button className="col-start-3" onClick={() => onDelete(index)}>
