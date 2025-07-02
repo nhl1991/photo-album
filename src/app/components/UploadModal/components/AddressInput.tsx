@@ -1,6 +1,5 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { useState, useEffect, useRef, MouseEvent, ChangeEvent, SetStateAction, Dispatch } from "react";
-import { useDebouncedCallback } from "use-debounce";
 
 export default function Address({ defaultValue,
     setAddress }: { defaultValue: string, setAddress: Dispatch<SetStateAction<string>> }) {
@@ -13,11 +12,11 @@ export default function Address({ defaultValue,
     const inputRef = useRef<HTMLInputElement>(null);
 
     const loader = new Loader(apiOptions);
-    const onChange = useDebouncedCallback((event) => {
-        setQuery(event.target.value);
+    const onChange = (e:ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value);
 
         getSuggestions();
-    }, 200);
+    };
 
     const getSuggestions = async () => {
         if (query == '') return;
@@ -25,23 +24,17 @@ export default function Address({ defaultValue,
         //@params > autocompleteRequest:  AutocompleteRequest / @return Promise<{suggestions:Array<AutocompleteSuggestion>}>
         const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
             input: query,
-        })
+        });
 
-
-
-        const arr = suggestions.map((autocompletesuggestion) => {
-            if (autocompletesuggestion.placePrediction) {
-                const { text } = autocompletesuggestion.placePrediction.text
-                return text;
-            }
-        })
+        //@ts-ignore
+        const arr = suggestions.map((s) => s.placePrediction?.text?.text);
 
         setData(arr);
 
     }
 
     const onClick = (e: MouseEvent<HTMLParagraphElement>) => {
-        console.log(e.currentTarget.innerText)
+        //console.log(e.currentTarget.innerText)
         if (inputRef && inputRef.current) {
             inputRef.current.value = e.currentTarget.innerText
             setAddress(e.currentTarget.innerText)
@@ -54,13 +47,13 @@ export default function Address({ defaultValue,
 
     }, [defaultValue])
     return (
-        <>
+        <div className="w-full relative">
             <input id="address" ref={inputRef} defaultValue={defaultValue} className="w-full border-2 border-gray-400 rounded-2xl px-2 py-1 m-0 focus:border-sky-400 outline-0" type="text" name="google_geocoding" onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)} />
-            <div className="bg-gray-700 rounded-b-2xl m-0">
+            <div className="bg-gray-700 rounded-b-2xl m-0 absolute">
                 {
                     data ? data.map((item, index) => { return <p className="px-2 py-1 hover:bg-slate-500 cursor-pointer" key={index} onClick={onClick}>{item}</p> }) : null
                 }
             </div>
-        </>
+        </div>
     )
 }
