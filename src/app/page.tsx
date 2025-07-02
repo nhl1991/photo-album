@@ -35,7 +35,7 @@ export default function Home() {
     await auth.authStateReady();
 
     if (!auth.currentUser)
-      route.push('/login');
+      route.push('/signin');
 
 
   },[route])
