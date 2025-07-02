@@ -26,7 +26,7 @@ export default function Address({ defaultValue,
             input: query,
         });
 
-        //@ts-ignore
+        //@ts-expect-error: Google Maps places library types missing
         const arr = suggestions.map((s) => s.placePrediction?.text?.text);
 
         setData(arr);
