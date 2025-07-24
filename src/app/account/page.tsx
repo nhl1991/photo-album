@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 import { auth } from "../firebase"
 import { User, onAuthStateChanged } from "firebase/auth";
-import Avartar from "./ui/Avartar";
-import DisplayName from "./ui/DisplayName";
-import SignOut from "./ui/SignOutButton";
-
-import ButtonContainer from "./ui/ButtonContainer";
 import Link from "next/link";
+import Avartar from "@/components/account/ui/Avartar";
+import DisplayName from "@/components/account/ui/DisplayName";
+import SignOut from "@/components/account/ui/SignOutButton";
+import ButtonItem from "@/components/account/ui/ButtonItem";
+import ButtonGroup from "@/components/account/ui/ButtonGroup";
 
 export default function Page() {
 
@@ -35,25 +35,25 @@ export default function Page() {
 
                 <Avartar user={user} />
                 <DisplayName user={user} />
-                <div className=" p-4 flex gap-2 flex-col">
-                    <ButtonContainer>
+                <ButtonGroup>
+                    <ButtonItem>
                         <Link href={'account/password'}>
                             <p className="rounded-2xl px-4 py-1 font-semibold">CHANGE PASSWORD</p></Link>
-                    </ButtonContainer>
+                    </ButtonItem>
 
-                    <ButtonContainer>
+                    <ButtonItem>
                         <Link href={'account/dashboard'}>
                             <p className="rounded-2xl px-4 py-1 font-semibold">MY DASHBOARD</p></Link>
-                    </ButtonContainer>
+                    </ButtonItem>
 
-                    <ButtonContainer>
+                    <ButtonItem>
                         <Link href={'account/favorite'}>
                             <p className="rounded-2xl px-4 py-1 font-semibold">FAVORITE</p></Link>
-                    </ButtonContainer>
-                    <ButtonContainer>
+                    </ButtonItem>
+                    <ButtonItem>
                         <SignOut />
-                    </ButtonContainer>
-                </div>
+                    </ButtonItem>
+                </ButtonGroup>
             </div>
         </div>
     )

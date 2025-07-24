@@ -1,12 +1,12 @@
 'use client'
 import { auth, db } from "@/app/firebase";
-import { iPosts } from "@/app/utils/interface";
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ModalProvider } from "@/app/components/DisplayModal/components/ModalContext";
 import { Unsubscribe, onAuthStateChanged } from "firebase/auth";
-import TimelineWrapper from "@/app/components/TimelineWrapper";
-import Timeline from "@/app/components/Timeline";
+import { ModalProvider } from "@/components/DisplayModal/components/ModalContext";
+import TimelineWrapper from "@/components/TimelineWrapper";
+import Timeline from "@/components/Timeline";
+import { iPosts } from "@/utils/interface";
 
 
 export default function Page() {

@@ -2,13 +2,13 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 import { useRouter } from "next/navigation";
-import Upload from "./components/UploadModal/UploadComponent";
-import { iPosts } from "./utils/interface";
-import { ModalProvider } from "./components/DisplayModal/components/ModalContext";
 import { Unsubscribe } from "firebase/auth";
 import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore";
-import Timeline from "./components/Timeline";
-import TimelineWrapper from "./components/TimelineWrapper";
+import { iPosts } from "@/utils/interface";
+import Upload from "@/components/UploadModal/UploadComponent";
+import { ModalProvider } from "@/components/DisplayModal/components/ModalContext";
+import TimelineWrapper from "@/components/TimelineWrapper";
+import Timeline from "@/components/Timeline";
 
 
 export default function Home() {
