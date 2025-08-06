@@ -1,10 +1,9 @@
 'use client'
-import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useRef, useState } from "react"
-import { auth } from "../../app/firebase";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
 import Link from "next/link";
+import { FirebaseAuthSignIn } from "@/utils/firebase-utils";
 
 
 export default function SignIn() {
@@ -21,7 +20,9 @@ export default function SignIn() {
         try {
             setIsLoading(true);
             if (emailRef.current && passwordRef.current) {
-                const user = await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+                // const user = await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+                const user = await FirebaseAuthSignIn(emailRef.current.value, passwordRef.current.value);
+
                 if (user)
                     router.push('/')
             }

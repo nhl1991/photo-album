@@ -1,37 +1,42 @@
 import Post from "./Post";
-import { iPosts } from "../utils/interface";
+import { iPost } from "../types/interface";
 import LikeButton from "./buttons/LikeButton";
 import View from "./buttons/ViewComponent";
 import { TimeConverter } from "../utils/time-conversion";
 import CommentIndicator from "./buttons/CommentIndicator";
-import PostCardWrapper from "./PostCardWrapper";
 import TitleWithAuthor from "./TitleWithAuthor";
+import { useDisplayModalStore } from "@/store/modalStore";
+import DisplayModalContainor from "./DisplayModal/DisplayModalContainer";
+import { useMemo } from "react";
 
 
 
 export default function Timeline({ posts }: {
-    posts: iPosts[]
+    posts: iPost[]
 }) {
-    // const [posts, setPosts] = useState<iPosts[]>([])
-
-    // <boolean & Dispatch<SetStateAction<boolean>>>({showModal, setShowModal});
-
-
-
+    const { isDisplaying, setIsDisplaying, selectedPostId, setSelectedPostId } = useDisplayModalStore();
+    const onClick = (value: iPost) => {
+        setIsDisplaying(true);
+        setSelectedPostId(value.id);
+    }
+    const post = useMemo(() => {
+        return posts.find(p => p.id === selectedPostId);
+    }, [selectedPostId, posts]);
 
 
     return (
         <>
+            {isDisplaying && post ? <DisplayModalContainor post={post} /> : null}
             {
                 posts.map((post) => {
-                    return <div key={post.id} className="relative" >
+                    return <div key={post.id} className="relative  hover:scale-105 transition-transform duration-200 cursor-pointer" onClick={() => onClick(post)}  >
 
-                        <PostCardWrapper>
+                        <div className="flex flex-col rounded-2xl items-center justify-center p-2" >
                             <Post {...post} />
                             <TitleWithAuthor title={post.title} username={post.username} />
-                        </PostCardWrapper>
+                        </div>
 
-                        <div className="w-full flex flex-col justify-center items-center gap-2">
+                        <div className="w-full flex md:flex-col justify-center items-center gap-2">
                             <div className="flex">
                                 <LikeButton id={post.id} like={post.like} length={post.likes} />
                                 <View view={post.view} />

@@ -1,5 +1,5 @@
 import { auth } from "@/app/firebase"
-import { Comment } from "@/utils/interface";
+import { Comment } from "@/types/interface";
 import CommentInput from "./CommentInput";
 import CommentsList from "../ui/CommentsList";
 import CommentCount from "../ui/CommentCount";
@@ -16,13 +16,13 @@ export default function CommentComponent({ id, comments }: {
 
     return (
         <div className="w-full h-full grid grid-rows-12 grid-cols-1">
-            <div className="w-full h-full row-span-1">
+            <div className="w-full col-start-1 h-full row-span-1">
                 <CommentCount length={comments ? comments.length : 0} />
             </div>
-            <div className="w-full h-full py-2 px-4  row-span-9 overflow-scroll">
+            <div className="w-full col-start-1 h-full py-2 px-4  row-span-9 overflow-scroll text-sm md:text-xl">
                 <CommentsList id={id} uid={uid} comments={comments} />
             </div>
-            <div className="w-full h-full flex items-center justify-center py-2 px-4 row-span-2">
+            <div className="w-full col-start-1 h-full flex items-center justify-center py-2 px-4 row-span-2">
                 <CommentInput uid={uid} displayName={displayName} id={id} />
             </div>
         </div>

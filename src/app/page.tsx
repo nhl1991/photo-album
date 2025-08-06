@@ -1,24 +1,23 @@
 "use client"
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 import { useRouter } from "next/navigation";
-import { Unsubscribe } from "firebase/auth";
+import { onAuthStateChanged, Unsubscribe, User } from "firebase/auth";
 import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore";
-import { iPosts } from "@/utils/interface";
 import Upload from "@/components/UploadModal/UploadComponent";
-import { ModalProvider } from "@/components/DisplayModal/components/ModalContext";
 import TimelineWrapper from "@/components/TimelineWrapper";
 import Timeline from "@/components/Timeline";
+import { usePostStore } from "@/store/postStore";
 
 
 export default function Home() {
   const route = useRouter();
 
   const [isUploading, setIsUploading] = useState(false);
-  const [posts, setPosts] = useState<iPosts[]>([])
+  // const [posts, setPosts] = useState<iPost[]>([])
   // <boolean & Dispatch<SetStateAction<boolean>>>({showModal, setShowModal});
 
-
+  const { posts, setPosts } = usePostStore(); 
   const orderOptions: { [key: string]: string } = {
     createdAt: "시간순",
     likes: "좋아요",
@@ -30,25 +29,29 @@ export default function Home() {
     setIsUploading(true);
   }
 
-  const init = useCallback(async () => {
-    //wait for firebase
-    await auth.authStateReady();
 
-    if (!auth.currentUser)
-      route.push('/signin');
-
-
-  },[route])
 
   useEffect(() => {
-    init();
+    const init = async () => {
+      //wait for firebase
+      await auth.authStateReady()
 
+      if (!auth.currentUser)
+        route.push('/signin');
+
+
+    }
+    init();
+    // https://firebase.google.com/docs/reference/js/v8/firebase.auth.Auth#onauthstatechanged
+    // onAuthStateChanged(nextOrObserver : Observer<any> | ((a: User | null) => any), error ? : (a: Error) => any, completed ? : firebase.Unsubscribe) : firebase.Unsubscribe
     let unsubscribe: Unsubscribe | null = null;
     const fetchPosts = async () => {
+
       const postsQuery = query(collection(db, "posts"),
         orderBy(`${sort}`, "desc"),
         limit(25)
       );
+
       unsubscribe = onSnapshot(postsQuery, (snapshot) => {
         const posts = snapshot.docs.map((doc) => {
           const { like, likes, view, createdAt, description, image, title, userId, username, address, comments, avartar } = doc.data()
@@ -70,13 +73,16 @@ export default function Home() {
           }
         })
         setPosts(posts)
-      })
+      });
     }
     fetchPosts();
-    return () => {
-      unsubscribe?.();
-    }
-  },[sort, init])
+
+    return onAuthStateChanged(auth, (user: User | null) => {
+      if (!unsubscribe) return;
+      if (!user) unsubscribe();
+    })
+
+  }, [route, sort, setPosts])
 
   return (
     <div className="w-[100vw] h-full col-span-full row-[2/-1] px-12 py-4 ">
@@ -105,11 +111,9 @@ export default function Home() {
 
           </select>
         </div>
-        <ModalProvider>
           <TimelineWrapper>
             <Timeline posts={posts} />
           </TimelineWrapper>
-        </ModalProvider>
 
       </section>
 

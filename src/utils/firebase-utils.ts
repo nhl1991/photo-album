@@ -1,10 +1,18 @@
 import { DocumentReference, arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
 
-import { Comment, iPostsParams } from "./interface";
+import { Comment, iPostsParams } from "../types/interface";
 import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/app/firebase";
+import { browserSessionPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 
 
+
+export async function FirebaseAuthSignIn(email: string, password: string) {
+    return await setPersistence(auth, browserSessionPersistence)
+        .then(() => {
+            return signInWithEmailAndPassword(auth, email, password);
+        })
+}
 
 export function ValidateUserAuthorization(userId: string) {
     const user = auth.currentUser;
@@ -47,7 +55,7 @@ export async function updateView(reference: DocumentReference, view: number) {
 }
 
 //this function will get modifed array of liked user list.
-export async function updateLike(reference: DocumentReference, like: Array<string>|null) {
+export async function updateLike(reference: DocumentReference, like: Array<string> | null) {
     const likeCount = like ? like.length : 0
 
     if (reference instanceof DocumentReference)
@@ -77,11 +85,11 @@ export async function DeleteDocById(id: string, userId: string) {
 
 
 }
-export async function updateComment(reference: DocumentReference, uid: string, displayName:string, comment: string, createdAt: number) {
+export async function updateComment(reference: DocumentReference, uid: string, displayName: string, comment: string, createdAt: number) {
 
     if (reference instanceof DocumentReference)
         try {
-            await updateDoc(reference, {comments: arrayUnion({uid, displayName, comment, createdAt})});
+            await updateDoc(reference, { comments: arrayUnion({ uid, displayName, comment, createdAt }) });
         } catch (e) {
             if (e instanceof FirebaseError) {
                 console.log(e.message);
@@ -90,11 +98,11 @@ export async function updateComment(reference: DocumentReference, uid: string, d
     else return;
 }
 
-export async function deleteComment(reference: DocumentReference, comments:Comment[], index:number){
+export async function deleteComment(reference: DocumentReference, comments: Comment[], index: number) {
 
     if (reference instanceof DocumentReference)
         try {
-            await updateDoc(reference, {comments: arrayRemove(comments[index])});
+            await updateDoc(reference, { comments: arrayRemove(comments[index]) });
         } catch (e) {
             if (e instanceof FirebaseError) {
                 console.log(e.message);
@@ -106,6 +114,6 @@ export async function deleteComment(reference: DocumentReference, comments:Comme
 
 
 
-export async function Logout(){
+export async function Logout() {
     await auth.signOut();
 }

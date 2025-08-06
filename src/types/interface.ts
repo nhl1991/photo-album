@@ -1,6 +1,6 @@
-import { Dispatch, MouseEvent, SetStateAction } from "react";
+import { MouseEvent } from "react";
 
-export interface iPosts {
+export interface iPost {
     id: string,
     avartar?: string,
     like: Array<string>,
@@ -51,13 +51,7 @@ export interface iPostsParams {
     address?: string,
     
 }
-export interface ModalContextInterface {
-    showModal: boolean, 
-    setShowModal: Dispatch<SetStateAction<boolean>>,
-    post: iPosts | undefined, 
-    setPost: Dispatch<SetStateAction<iPosts | undefined>>
-}
 
-export interface iPostWithOnClick extends iPosts {
+export interface iPostWithOnClick extends iPost {
     onClickModal : (e:MouseEvent<HTMLDivElement>) => void
 }

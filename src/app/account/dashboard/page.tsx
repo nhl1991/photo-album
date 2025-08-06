@@ -4,13 +4,12 @@ import { collection, onSnapshot, orderBy, query, where } from "firebase/firestor
 import { useEffect, useState } from "react";
 import { Unsubscribe } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
-import { iPosts } from "@/utils/interface";
-import { ModalProvider } from "@/components/DisplayModal/components/ModalContext";
+import { iPost } from "@/types/interface";
 import TimelineWrapper from "@/components/TimelineWrapper";
 import Timeline from "@/components/Timeline";
 
 export default function Page() {
-    const [posts, setPosts] = useState<iPosts[]>([])
+    const [posts, setPosts] = useState<iPost[]>([])
     const [loading, setLoading] = useState(true);
 
 
@@ -66,11 +65,9 @@ export default function Page() {
     }, [loading])
     return (
         <div className="w-[100vw] h-[100vh]">
-            <ModalProvider>
                 <TimelineWrapper>
                     <Timeline posts={posts} />
                 </TimelineWrapper>
-            </ModalProvider>
         </div>
     )
 }

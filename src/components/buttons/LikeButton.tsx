@@ -9,8 +9,8 @@ export default function LikeButton({ id, like, length }: {
     like: Array<string>,
     length: number
 }) {
-    const user = auth.currentUser;
 
+    const user = auth.currentUser;
     const [userlist, setUserlist] = useState<Array<string> | null>(null);
     const [userLike, setUserLike] = useState<boolean>(false)
 
@@ -40,7 +40,6 @@ export default function LikeButton({ id, like, length }: {
         }else {
             await updateLike(likeRef, [user.uid]);
             setUserlist([user.uid]);
-
         }
     }
 
@@ -72,3 +71,9 @@ export default function LikeButton({ id, like, length }: {
         </div>
     )
 }
+
+/**
+ * When user hit the like button, it immediately update like field in doc.
+ * This process well refreshed on <Timeline /> Component.
+ * When pop up the modal, 
+ */
