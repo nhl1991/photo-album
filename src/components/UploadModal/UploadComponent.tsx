@@ -50,10 +50,8 @@ export default function Upload({ setter }: {
     }
 
     const onChangeTitle = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(e.target instanceof HTMLTextAreaElement);
         if (e.currentTarget instanceof HTMLInputElement && e.currentTarget.name === 'title')
             setTitle(e.currentTarget.value);
-
     }
 
     const onChangeDescription = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -62,7 +60,7 @@ export default function Upload({ setter }: {
     }
     const isSubmitReady = () => {
         const user = auth.currentUser;
-        if (!user || !file || isLoading || title === "" || description === "")
+        if (!user || !file || isLoading || title === "" || title.length > 20 || description === "")
             return false;
         else return true;
     }
@@ -139,20 +137,20 @@ export default function Upload({ setter }: {
                 if (results && results.length > 0) {
                     setAddress(results[0].formatted_address);
                 } else {
-                    setAddress("주소를 찾을 수 없습니다.");
+                    setAddress("Address can't be found.");
                 }
             } else {
-                setAddress("GPS 데이터를 찾을 수 없습니다.");
+                setAddress("There is no GPS.");
             }
         } catch (error) {
-            console.error("EXIF 처리 중 오류:", error);
+            console.error("EXIF Error:", error);
             setAddress("EXIF 데이터를 처리하는 중 오류가 발생했습니다.");
         }
     };
 
     return (
         <div id="modal" className="w-[100vw] h-[100vh] flex items-center justify-center bg-black/20 md:p-0 p-4 fixed top-0 left-0 z-50" onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
-            <div className="w-full h-full md:w-1/3 md:min-w-[50rem] md:h-3/4 relative bg-gray-900  grid grid-rows-12 grid-cols-1 text-white rounded-2xl ">
+            <div className="w-full h-full md:w-1/3 md:min-w-[50rem] md:h-full relative bg-gray-900  grid grid-rows-12 grid-cols-1 text-white rounded-2xl ">
 
                 <header className="w-full h-max px-4 py-2 flex row-start-1">
                     <div className="w-full px-2">
@@ -177,7 +175,7 @@ export default function Upload({ setter }: {
                                             <DeleteIcon className="w-8" />
                                         </button>
                                     </div>
-                                    <Image className="w-full h-full p-2 relative rounded-2xl" src={URL.createObjectURL(file)} objectFit="contain" fill alt="uploaded file" />
+                                    <Image className="w-full h-full p-2 relative rounded-2xl object-contain" src={URL.createObjectURL(file)} fill alt="uploaded file" />
 
                                 </div>
                                 : <div className="w-full h-full p-4 flex items-center justify-center">
@@ -193,28 +191,32 @@ export default function Upload({ setter }: {
 
 
                 </section>
-                <footer className="row-[8/-1] w-full h-full">
-                    <div className="p-2 col-span-3 row-span-full">
-                        <div>
-                            <p></p>
-                        </div>
-                        <form className="w-full h-full flex flex-col rounded-2xl p-4 items-center justify-center" onSubmit={onSubmit}>
-                            <label className="font-semibold self-start" htmlFor="address">Location</label>
+                <footer className="row-[8/-1] w-full h-full p-8">
+                    <div className="w-full h-full p-1 col-span-3 row-span-full ">
+                        <form className="w-full h-full grid grid-cols-1 grid-rows-6 gap-2 rounded-2xl p-1 items-center justify-center" onSubmit={onSubmit}>
+                            <div className="w-full h-full row-[1/2]">
+                                <label className="font-semibold self-start" htmlFor="address">Location</label>
+                                <Address defaultValue={address} setAddress={setAddress} />
+                            </div>
+                            <div className="w-full h-full row-[2/6] flex flex-col">
+                                <label className="font-semibold self-start" htmlFor="description">Description</label>
+                                <textarea id="description" name="description" className="h-full border-2 rounded-2xl w-full p-2 border-gray-400 focus:border-sky-400 outline-0" onChange={onChangeDescription}>
 
-                            <Address defaultValue={address} setAddress={setAddress} />
-                            <label className="font-semibold self-start" htmlFor="description">Description</label>
-                            <textarea id="description" name="description" className="my-2 border-2 rounded-2xl w-full h-54 p-2 border-gray-400 focus:border-sky-400 outline-0" onChange={onChangeDescription}>
-
-                            </textarea>
-                            <div className="w-full flex p-2 items-center justify-center">
+                                </textarea>
+                            </div>
+                            <div className="w-full h-full flex items-center justify-center row-[6/-1]">
                                 <input ref={fileRef} className={`hidden`} type="file" id="file" name="file" accept="image/*" onChange={onUploadFile} />
-                                {isSubmitReady() ? <div className="w-full flex items-center-safe justify-center px-4 py-1 cursor-pointer bg-sky-600 rounded-2xl hover:opacity-80" >
+                                {isSubmitReady() ? <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-sky-600 rounded-2xl hover:opacity-80" >
                                     <p className="px-2 font-bold">UPLOAD</p>
                                     <label htmlFor="upload">
                                         <UploadIcon className="w-8" />
                                     </label>
-                                    </div> : null}
-                                <input id="upload" className={`hidden`} type="submit" name="submit" value={isLoading ? `완료` : '올리기'} />
+                                    <input id="upload" className={`hidden`} type="submit" name="submit" value="upload" />
+                                </div> : <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-gray-600 rounded-2xl" >
+                                    <p className="px-2 font-bold">UPLOAD</p>
+                                        <UploadIcon className="w-8" />
+                                </div>}
+                                
                             </div>
                         </form>
 
