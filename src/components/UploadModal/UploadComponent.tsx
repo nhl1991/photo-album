@@ -5,12 +5,12 @@ import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react"
 import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { getGPS } from "../../utils/exif-utils";
 import Address from "./components/AddressInput";
 import { auth, db, storage } from "@/app/firebase";
 import UploadIcon from "../icons/UploadIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import CloseIcon from "../icons/CloseIcon";
+import { getAddressByGps } from "@/utils/google-geocode";
 
 export default function Upload({ setter }: {
     setter: React.Dispatch<React.SetStateAction<boolean>>
@@ -22,10 +22,11 @@ export default function Upload({ setter }: {
     const [description, setDescription] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [address, setAddress] = useState<string>("")
+    const WrapperRef = useRef<HTMLInputElement | null>(null)
     const fileRef = useRef<HTMLInputElement | null>(null);
-    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const sectionRef = useRef<HTMLDivElement | null>(null);
 
-    const onUploadFile = () => {
+    const onUploadFile = async () => {
         if (!fileRef || !fileRef.current) return;
         const { files } = fileRef.current;
         if (files && files[0].size > 1024 * 1024 * 10) {
@@ -37,9 +38,29 @@ export default function Upload({ setter }: {
             const selectedFile = files[0];
             setFile(selectedFile);
             setFname(selectedFile.name);
-            processExifData(selectedFile);
+            const address = await getAddressByGps(selectedFile);
+            setAddress(address);
 
         }
+    }
+
+    const onCloseBtn = () => {
+        if(!WrapperRef.current || isLoading) return;
+        const el = WrapperRef.current;
+
+        setIsLoading(true);
+        el.classList.add('animate-fade-Out');
+
+        const handleEnd = () => {
+            el.removeEventListener('animationend', handleEnd);
+            setIsLoading(false);
+            
+            setter(false);
+        }
+
+        el.addEventListener("animationend", handleEnd, { once: true });
+
+
     }
 
     const deleteOnUploadFile = () => {
@@ -124,49 +145,22 @@ export default function Upload({ setter }: {
         }
     }, [])
 
-
-    const processExifData = async (file: File) => {
-        try {
-
-            const gps = await getGPS(file);
-            if (gps) {
-                const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${gps.Latitude},${gps.Longitude}&result_type=political&key=AIzaSyDFZ_1A_G4R6IjolqGwB39R2ub-7Q9sFU0`,
-                )
-                const { results } = await response.json();
-
-                if (results && results.length > 0) {
-                    setAddress(results[0].formatted_address);
-                } else {
-                    setAddress("Address can't be found.");
-                }
-            } else {
-                setAddress("There is no GPS.");
-            }
-        } catch (error) {
-            console.error("EXIF Error:", error);
-            setAddress("EXIF 데이터를 처리하는 중 오류가 발생했습니다.");
-        }
-    };
-
     return (
-        <div id="modal" className="w-[100vw] h-[100vh] flex items-center justify-center bg-black/20 md:p-0 p-4 fixed top-0 left-0 z-50" onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
-            <div className="w-full h-full md:w-1/3 md:min-w-[50rem] md:h-full relative bg-gray-900  grid grid-rows-12 grid-cols-1 text-white rounded-2xl ">
-
-                <header className="w-full h-max px-4 py-2 flex row-start-1">
-                    <div className="w-full px-2">
-                        <input name="title" type="text" className={`w-full h-12 border-b-2 border-b-gray-400 ${title.length <= 20 ? `focus:border-b-sky-400` : `focus:border-b-red-400`} px-2 outline-0 text-center`} onChange={onChangeTitle} />
-                        <p className="w-[5%] text-[12px] ">{title.length}/20</p>
+        <div id="modal" ref={WrapperRef} className="w-[100vw] h-[100vh] flex items-center justify-center bg-white/80 p-8 md:p-4 fixed top-0 left-0 z-50 animate-fade-In" onClick={(e: MouseEvent<HTMLDivElement>) => { e.stopPropagation() }}>
+            <div className="w-full h-full 2xl:w-1/3 2xl:h-2/3 relative grid grid-rows-12 grid-cols-1 text-white rounded-2xl bg-gray-900">
+                <header className="w-full h-full flex items-center justify-center row-start-1 px-2 md:text-2xl">
+                    <div className="w-full h-full  border-b-2 border-b-gray-400 relative flex items-end justify-center">
+                        <input name="title" type="text" className={`w-full ${title.length <= 20 ? `focus:border-b-sky-400` : `focus:border-b-red-400`} px-2 outline-0 text-center`} onChange={onChangeTitle} />
+                        <p className="w-[5%] text-[12px] md:text-base">{title.length}/20</p>
                     </div>
-                    <div className="w-max h-max">
-                        <button className="justify-items-end  p-1 hover:opacity-50 cursor-pointer" value={fname} onClick={() => setter(false)}>
-                            <CloseIcon className="w-8" />
+                    <div className="w-max h-full">
+                        <button className="justify-items-end  p-1 hover:opacity-50 cursor-pointer" value={fname} onClick={onCloseBtn} >
+                            <CloseIcon className="w-6 md:w-8" />
                         </button>
                     </div>
                 </header>
-                <section ref={wrapperRef} className="h-full row-[2/8] ">
-
-                    <div className="h-full relative p-6 col-span-5 row-span-full">
-
+                <section ref={sectionRef} className="h-full row-[2/8]">
+                    <main className="h-full relative md:p-6 col-span-5 row-span-full">
                         {
                             file ?
                                 <div className="h-full relative p-6 col-span-5 row-span-full">
@@ -186,37 +180,35 @@ export default function Upload({ setter }: {
                                     </label>
                                 </div>
                         }
-                    </div>
-
-
-
+                    </main>
                 </section>
-                <footer className="row-[8/-1] w-full h-full p-8">
+                <footer className="row-[8/-1] w-full h-full">
                     <div className="w-full h-full p-1 col-span-3 row-span-full ">
-                        <form className="w-full h-full grid grid-cols-1 grid-rows-6 gap-2 rounded-2xl p-1 items-center justify-center" onSubmit={onSubmit}>
-                            <div className="w-full h-full row-[1/2]">
-                                <label className="font-semibold self-start" htmlFor="address">Location</label>
+                        <form className="w-full h-full grid grid-cols-1 grid-rows-8 gap-1 md:gap-2 rounded-2xl items-center justify-center" onSubmit={onSubmit}>
+                            <div className="w-full h-full row-[1/3] flex flex-col p-1">
                                 <Address defaultValue={address} setAddress={setAddress} />
                             </div>
-                            <div className="w-full h-full row-[2/6] flex flex-col">
-                                <label className="font-semibold self-start" htmlFor="description">Description</label>
-                                <textarea id="description" name="description" className="h-full border-2 rounded-2xl w-full p-2 border-gray-400 focus:border-sky-400 outline-0" onChange={onChangeDescription}>
-
-                                </textarea>
+                            <div className="w-full h-full row-[3/7] flex flex-col p-1">
+                                <div className="w-full h-full flex flex-col">
+                                    <label className="p-1 font-semibold self-start" htmlFor="description">Description</label>
+                                    <textarea id="description" name="description" className="h-full border-2 rounded-2xl w-full p-2 border-gray-400 focus:border-sky-400 outline-0" onChange={onChangeDescription} />
+                                </div>
                             </div>
-                            <div className="w-full h-full flex items-center justify-center row-[6/-1]">
-                                <input ref={fileRef} className={`hidden`} type="file" id="file" name="file" accept="image/*" onChange={onUploadFile} />
-                                {isSubmitReady() ? <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-sky-600 rounded-2xl hover:opacity-80" >
-                                    <p className="px-2 font-bold">UPLOAD</p>
-                                    <label htmlFor="upload">
+                            <div className="w-full h-full flex items-center justify-center row-[7/-1]">
+                                <div className="w-full h-full p-2">
+                                    {isSubmitReady() ? <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-sky-600 rounded-2xl hover:opacity-80" >
+                                        <p className="px-2 font-bold">UPLOAD</p>
+                                        <label htmlFor="upload">
+                                            <UploadIcon className="w-8" />
+                                        </label>
+                                        <input id="upload" className={`hidden`} type="submit" name="submit" value="upload" />
+                                    </div> : <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-gray-600 rounded-2xl" >
+                                        <p className="px-2 font-bold">UPLOAD</p>
                                         <UploadIcon className="w-8" />
-                                    </label>
-                                    <input id="upload" className={`hidden`} type="submit" name="submit" value="upload" />
-                                </div> : <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-gray-600 rounded-2xl" >
-                                    <p className="px-2 font-bold">UPLOAD</p>
-                                        <UploadIcon className="w-8" />
-                                </div>}
-                                
+                                    </div>}
+                                    <input ref={fileRef} className={`hidden`} type="file" id="file" name="file" accept="image/*" onChange={onUploadFile} />
+                                </div>
+
                             </div>
                         </form>
 

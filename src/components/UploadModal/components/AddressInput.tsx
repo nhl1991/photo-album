@@ -12,7 +12,7 @@ export default function Address({ defaultValue,
     const inputRef = useRef<HTMLInputElement>(null);
 
     const loader = new Loader(apiOptions);
-    const onChange = (e:ChangeEvent<HTMLInputElement>) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
 
         getSuggestions();
@@ -47,12 +47,15 @@ export default function Address({ defaultValue,
 
     }, [defaultValue])
     return (
-        <div className="w-full relative">
-            <input id="address" ref={inputRef} defaultValue={defaultValue} className="w-full border-2 border-gray-400 rounded-2xl px-2 py-1 m-0 focus:border-sky-400 outline-0" type="text" name="google_geocoding" onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)} />
-            <div className="bg-gray-700 rounded-b-2xl m-0 absolute">
-                {
-                    data ? data.map((item, index) => { return <p className="px-2 py-1 hover:bg-slate-500 cursor-pointer" key={index} onClick={onClick}>{item}</p> }) : null
-                }
+        <div className="w-full h-full relative flex flex-col">
+            <label className="font-semibold self-start" htmlFor="address">Location</label>
+            <input id="address" className="w-full h-full border-2 border-gray-400 rounded-2xl px-2 m-0 focus:border-sky-400 outline-0" ref={inputRef} defaultValue={defaultValue} type="text" name="google_geocoding" onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)} />
+            <div className="w-full">
+                <div className="w-full h-max bg-gray-700 rounded-2xl m-0 absolute">
+                    {
+                        data ? data.map((item, index) => { return <p className="px-2 py-1 hover:bg-slate-500 cursor-pointer" key={index} onClick={onClick}>{item}</p> }) : null
+                    }
+                </div>
             </div>
         </div>
     )
