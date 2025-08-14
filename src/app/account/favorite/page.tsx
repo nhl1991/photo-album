@@ -1,27 +1,31 @@
 'use client'
 import { auth, db } from "@/app/firebase";
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { Unsubscribe, onAuthStateChanged } from "firebase/auth";
+import { useContext, useEffect, useState } from "react";
+import { User, onAuthStateChanged } from "firebase/auth";
 import TimelineWrapper from "@/components/TimelineWrapper";
 import Timeline from "@/components/Timeline";
 import { iPost } from "@/types/interface";
+import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
+import { FirebaseError } from "firebase/app";
 
 
 export default function Page() {
 
     const [posts, setPosts] = useState<iPost[]>([]);
+    const unsubRef = useContext(UnsubRefContext);
 
-    
+
 
     useEffect(() => {
-        let unsubscribeFetch:Unsubscribe|null = null;
+        if (!unsubRef) return;
+        // let unsubscribe:Unsubscribe|null = null;
 
         const fetchPosts = async () => {
             const user = auth.currentUser;
-    
+
             if (!user) return;
-    
+
             const postQuery = query(
                 collection(db, "posts"),
                 where("like", "array-contains-any", [user.uid]),
@@ -29,10 +33,10 @@ export default function Page() {
             )
             // const snapshot = await getDocs(postQuery);
 
-            unsubscribeFetch = onSnapshot(postQuery, (snapshot)=>{
+            unsubRef.current = onSnapshot(postQuery, (snapshot) => {
                 const posts = snapshot.docs.map((doc) => {
                     const { like, likes, view, createdAt, description, image, title, userId, username, address, comments, avartar } = doc.data()
-        
+
                     return {
                         createdAt,
                         comments,
@@ -50,25 +54,24 @@ export default function Page() {
                     }
                 })
                 setPosts(posts);
+            }, (error: FirebaseError) => {
+                console.log(error, "=> Permission-denied due to Sign Out.");
+                return;
             })
         }
+        return onAuthStateChanged(auth, (user: User | null) => {
 
-        const unsubscribeAuthStateChanged = onAuthStateChanged(auth, () => {
-            fetchPosts();
+            if (user) fetchPosts();
+            else if (unsubRef) unsubRef.current?.();
         })
-
-        return () =>{ 
-            unsubscribeAuthStateChanged?.();
-            unsubscribeFetch?.();
-        }
-    }, [])
+    }, [unsubRef])
 
     return (
-            <div className="w-[100vw] h-[100vh] ">
-                <TimelineWrapper>
-                    <Timeline posts={posts} />
-                </TimelineWrapper>
-            </div>
+        <div className="w-[100vw] h-[100vh] ">
+            <TimelineWrapper>
+                <Timeline posts={posts} />
+            </TimelineWrapper>
+        </div>
 
     )
 }

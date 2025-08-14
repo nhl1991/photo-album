@@ -117,3 +117,15 @@ export async function deleteComment(reference: DocumentReference, comments: Comm
 export async function Logout() {
     await auth.signOut();
 }
+
+
+export function printErrorMessage(error: FirebaseError){
+    /**
+     * FirebaseError : { code: string, name:string, message:string, stack?: string}
+     */
+    const message = error.code;
+
+    return message.split('/')[1].replaceAll('-', ' ');
+
+
+}

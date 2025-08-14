@@ -39,6 +39,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Change Log
 
+**25/08/10
+- UI update. (1024*768, 4K Sizes)
+- Add an animation when upload component mounted.
 **25/08/06
 - Introduce Zustand.
 - 

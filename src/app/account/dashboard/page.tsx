@@ -1,38 +1,39 @@
 'use client'
 import { auth, db } from "@/app/firebase"
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore"
-import { useEffect, useState } from "react";
-import { Unsubscribe } from "firebase/auth";
-import { onAuthStateChanged } from "firebase/auth";
+import { useContext, useEffect, useState } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { iPost } from "@/types/interface";
 import TimelineWrapper from "@/components/TimelineWrapper";
 import Timeline from "@/components/Timeline";
+import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
+import { FirebaseError } from "firebase/app";
 
 export default function Page() {
     const [posts, setPosts] = useState<iPost[]>([])
     const [loading, setLoading] = useState(true);
-
-
+    const unsubRef = useContext(UnsubRefContext);
     useEffect(() => {
-        let unsubscribeFetch:Unsubscribe | null = null;
+        // let unsubscribe: Unsubscribe | null = null;
 
         const fetchPosts = async () => {
 
+            if (!unsubRef) return;
             const user = auth.currentUser;
-    
+
             if (!user) return;
-    
+            setLoading(true);
+
             const postQuery = query(
                 collection(db, "posts"),
                 where("userId", "==", user.uid),
                 orderBy("createdAt", "desc"),
             )
-    
             // const snapshot = await getDocs(postQuery);
-            unsubscribeFetch = onSnapshot(postQuery, (snapshot)=>{
+            unsubRef.current = onSnapshot(postQuery, (snapshot) => {
                 const posts = snapshot.docs.map((doc) => {
                     const { like, likes, view, createdAt, description, image, title, userId, username, address, comments, avartar } = doc.data()
-        
+
                     return {
                         createdAt,
                         comments,
@@ -50,24 +51,25 @@ export default function Page() {
                     }
                 })
                 setPosts(posts);
+            }, (error: FirebaseError) => {
+                console.log(error, "=> Permission-denied due to Sign Out.");
+                return;
             })
-            
+            setLoading(false);
+
         }
 
-        const unsubscribeAuthStateChanged = onAuthStateChanged(auth, () => {
-            fetchPosts();
+        return onAuthStateChanged(auth, (user: User | null) => {
+            console.log(user === null);
+            if (user) fetchPosts();
+            else if (unsubRef) unsubRef.current?.();
         })
-        setLoading(false);
-        return () => {
-            unsubscribeFetch?.();
-            unsubscribeAuthStateChanged?.();
-        };
-    }, [loading])
+    }, [loading, unsubRef])
     return (
         <div className="w-[100vw] h-[100vh]">
-                <TimelineWrapper>
-                    <Timeline posts={posts} />
-                </TimelineWrapper>
+            <TimelineWrapper>
+                <Timeline posts={posts} />
+            </TimelineWrapper>
         </div>
     )
 }
