@@ -169,7 +169,7 @@ export default function Upload({ setter }: {
                                             <DeleteIcon className="w-8" />
                                         </button>
                                     </div>
-                                    <Image className="w-full h-full p-2 relative rounded-2xl object-contain" src={URL.createObjectURL(file)} fill alt="uploaded file" />
+                                    <Image className="w-full h-full p-2 relative rounded-2xl object-contain" src={URL.createObjectURL(file)} fill sizes="(max-width: 768px) 100vw, 33vw" alt="uploaded file" />
 
                                 </div>
                                 : <div className="w-full h-full p-4 flex items-center justify-center">
