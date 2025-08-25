@@ -6,10 +6,12 @@ export async function getAddressByGps(file:File){
     
                 const gps = await getGPS(file);
                 if (gps) {
-                    const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${gps.Latitude},${gps.Longitude}&result_type=political&key=AIzaSyDFZ_1A_G4R6IjolqGwB39R2ub-7Q9sFU0`,
+                    const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${gps.Latitude},${gps.Longitude}&result_type=political&key=${process.env.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY}`,
                     )
-                    const { results } = await response.json();
-    
+                    if(response.status != 200) return;
+
+                    const  {results}  = await response.json();
+
                     if (results && results.length > 0) {
                         return results[0].formatted_address;
                     } else {
