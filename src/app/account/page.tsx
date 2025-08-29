@@ -51,6 +51,10 @@ export default function Page() {
                             <p className="rounded-2xl px-4 py-1 font-semibold">FAVORITE</p></Link>
                     </ButtonItem>
                     <ButtonItem>
+                        <Link href={'account/delete-account'}>
+                            <p className="rounded-2xl px-4 py-1 font-semibold">DELETE ACCOUNT</p></Link>
+                    </ButtonItem>
+                    <ButtonItem>
                         <SignOut />
                     </ButtonItem>
                 </ButtonGroup>

@@ -73,6 +73,7 @@ export default function Upload({
     if (!fileRef || !fileRef.current) return;
     fileRef.current.files = null;
     setFile(null);
+    setAddress("");
     setFname("");
   };
 
@@ -195,17 +196,15 @@ export default function Upload({
         </header>
         <section ref={sectionRef} className="h-full row-[2/8]">
           <main className="h-full relative md:p-6 col-span-5 row-span-full">
-            {file ? 
+            {file ? (
               <div className="h-full relative p-6 col-span-5 row-span-full">
                 <div className="absolute w-max h-max top-0 right-0 z-50">
-                  
-                    <button
-                      className="p-2 cursor-pointer"
-                      onClick={deleteOnUploadFile}
-                    >
-                      <DeleteIcon className="w-8" />
-                    </button>
-
+                  <button
+                    className="p-2 cursor-pointer"
+                    onClick={deleteOnUploadFile}
+                  >
+                    <DeleteIcon className="w-8" />
+                  </button>
                 </div>
                 <Image
                   className="w-full h-full p-2 relative rounded-2xl object-contain"
@@ -216,7 +215,7 @@ export default function Upload({
                   priority
                 />
               </div>
-             : 
+            ) : (
               <div className="w-full h-full p-4 flex items-center justify-center">
                 <label htmlFor="file">
                   <svg
@@ -237,7 +236,7 @@ export default function Upload({
                   </svg>
                 </label>
               </div>
-            }
+            )}
           </main>
         </section>
         <footer className="row-[8/-1] w-full h-full">

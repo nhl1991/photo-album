@@ -21,7 +21,6 @@ export default function Address({
   };
 
   const [data, setData] = useState<Array<string | undefined>>([]);
-  const [query, setQuery] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const loader = new Loader(apiOptions);
@@ -42,23 +41,26 @@ export default function Address({
         input: placeQuery,
       });
 
-    //@ts-expect-error: Google Maps places library types missing
+    //@ts-expect-error: Google Maps places library type missing
     const arr = suggestions.map((s) => s.placePrediction?.text?.text);
 
     setData(arr);
   };
 
-  const onClick = (e: MouseEvent<HTMLParagraphElement>) => {
+  const onClick = (e: MouseEvent<HTMLLIElement>) => {
     //console.log(e.currentTarget.innerText)
     if (inputRef && inputRef.current) {
-      inputRef.current.value = e.currentTarget.innerText;
+      // inputRef.current.value = e.currentTarget.innerText;
       setAddress(e.currentTarget.innerText);
     }
     setData([]);
   };
-  useEffect(() => {
-    if (inputRef && inputRef.current) setQuery(defaultValue);
-  }, [defaultValue]);
+  
+  useEffect(()=>{
+    if(!inputRef || !inputRef.current) return;
+    inputRef.current.value = defaultValue;
+  },[defaultValue])
+
   return (
     <div className="w-full h-full relative flex flex-col">
       <label className="font-semibold self-start" htmlFor="address">
@@ -73,22 +75,22 @@ export default function Address({
         name="google_geocoding"
         onChange={handleOnChange}
       />
-      <div className="w-full">
-        <div className="w-full h-max bg-gray-700 rounded-2xl m-0 absolute">
+      <div className="w-full relative">
+        <ul className="w-full h-max bg-gray-700 rounded-2xl m-0 absolute">
           {data
             ? data.map((item, index) => {
                 return (
-                  <p
+                  <li
                     className="px-2 py-1 hover:bg-slate-500 cursor-pointer"
                     key={index}
                     onClick={onClick}
                   >
                     {item}
-                  </p>
+                  </li>
                 );
               })
             : null}
-        </div>
+        </ul>
       </div>
     </div>
   );
