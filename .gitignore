@@ -14,7 +14,7 @@
 /coverage
 
 #dev
-/delete-account/*
+src/app/account/delete-account/*
 
 # next.js
 /.next/
