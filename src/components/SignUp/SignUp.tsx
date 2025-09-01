@@ -7,6 +7,7 @@ import { auth } from "../../app/firebase";
 import { FirebaseError } from "firebase/app";
 import Link from "next/link";
 import { printErrorMessage } from "@/utils/firebase-utils";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
 
@@ -16,6 +17,7 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [error, setError] = useState("")
+    const router = useRouter();
     const emailRef = useRef<HTMLInputElement | null>(null)
 
     const passwordRef = useRef<HTMLInputElement | null>(null)
@@ -26,12 +28,16 @@ export default function SignUp() {
 
         try {
             setIsLoading(true);
-            console.log('Sign up...')
+            
             if (emailRef.current && passwordRef.current) {
-                const credentials = await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current?.value);
-                await updateProfile(credentials.user, {
+                console.log(username);
+                await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current?.value).then(async (res)=>{
+                    await updateProfile(res.user, {
                     displayName: username
                 });
+                });
+                
+                router.push('/');
             }
         } catch (e) {
             if (e instanceof FirebaseError)
@@ -45,8 +51,9 @@ export default function SignUp() {
 
     }
 
-    const onChange = useDebouncedCallback((event) => {
-        if (event.target.name === "username") {
+    const onChange = useDebouncedCallback((event:ChangeEvent<HTMLInputElement>) => {
+
+        if (event.target.id === "username") {
             setUsername(event.target.value);
         } else return;
     }, 200)
