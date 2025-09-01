@@ -30,7 +30,7 @@ export default function SignUp() {
             setIsLoading(true);
             
             if (emailRef.current && passwordRef.current) {
-                console.log(username);
+
                 await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current?.value).then(async (res)=>{
                     await updateProfile(res.user, {
                     displayName: username

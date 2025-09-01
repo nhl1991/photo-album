@@ -54,3 +54,10 @@ npm run dev
 2. create variables
 
 ```
+
+
+### CHANGE LOG
+
+25/09/01
+- Fix display [username] on Navigation.
+- Fix [username] is not updated correctly when sign up.

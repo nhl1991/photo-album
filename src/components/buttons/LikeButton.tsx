@@ -2,7 +2,7 @@ import { auth, db } from "@/app/firebase";
 import { updateLike } from "@/utils/firebase-utils";
 import { doc, getDoc } from "firebase/firestore";
 
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 
 export default function LikeButton({ id, like, length }: {
     id: string,
@@ -16,8 +16,8 @@ export default function LikeButton({ id, like, length }: {
 
 
 
-    const onClick = async () => {
-        // e.preventDefault();
+    const onClick = async (e:MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
         const likeRef = doc(db, `/posts/${id}`);
         const likeSnap = await getDoc(likeRef);
         if (!likeSnap.exists() || !user) return;

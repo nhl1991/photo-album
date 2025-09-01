@@ -29,7 +29,7 @@ export default function Timeline({ posts }: {
             {isDisplaying && post ? <DisplayModalContainor post={post} /> : null}
             {
                 posts.map((post) => {
-                    return <div key={post.id} className="relative  hover:scale-105 transition-transform duration-200 cursor-pointer" onClick={() => onClick(post)}  >
+                    return <article key={post.id} className="relative  hover:scale-105 transition-transform duration-200 cursor-pointer" onClick={() => onClick(post)}  >
 
                         <div className="flex flex-col rounded-2xl items-center justify-center p-2" >
                             <Post {...post} />
@@ -46,7 +46,7 @@ export default function Timeline({ posts }: {
                                 <p className="text-white/50">{TimeConverter(post.createdAt)}</p>
                             </div>
                         </div>
-                    </div>
+                    </article>
 
                 })
 
