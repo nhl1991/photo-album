@@ -1,14 +1,29 @@
 "use client";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { auth, db } from "./firebase";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged, User } from "firebase/auth";
 import {
   collection,
+  DocumentData,
+  endBefore,
+  getCountFromServer,
   limit,
+  limitToLast,
   onSnapshot,
   orderBy,
+  Query,
   query,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
+  startAfter,
 } from "firebase/firestore";
 import Upload from "@/components/UploadModal/UploadComponent";
 import TimelineWrapper from "@/components/TimelineWrapper";
@@ -19,13 +34,21 @@ import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
 
 export default function Home() {
+  const pageSize = 10;
   const route = useRouter();
 
   const [isUploading, setIsUploading] = useState(false);
-
+  const [pageIndex, setPageIndex] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
   const unsubRef = useContext(UnsubRefContext);
-  // const [posts, setPosts] = useState<iPost[]>([])
-  // <boolean & Dispatch<SetStateAction<boolean>>>({showModal, setShowModal});
+  const firstDocRef = useRef<QueryDocumentSnapshot<
+    DocumentData,
+    DocumentData
+  > | null>(null);
+  const lastDocRef = useRef<QueryDocumentSnapshot<
+    DocumentData,
+    DocumentData
+  > | null>(null);
 
   const { posts, setPosts } = usePostStore();
   const orderOptions: { [key: string]: string } = {
@@ -34,19 +57,58 @@ export default function Home() {
     view: "조회수",
   };
   const [sort, setSort] = useState<string>("createdAt");
+  const [q, setQ] = useState<Query<DocumentData, DocumentData>>(
+    query(
+      collection(db, "posts"),
+      orderBy(`${sort}`, "desc"),
+      limit(pageSize)
+    )
+  );
   const { setDisplayName } = useDisplayNameStore();
-  const onModalHandler = () => {
+  const onModalHandler = useCallback(() => {
     setIsUploading(true);
+  }, [isUploading]);
+  const handleOnPrev = () => {
+    console.log("onPrev ", firstDocRef.current?.data().title);
+    setQ(
+      query(
+        collection(db, "posts"),
+        orderBy(`${sort}`, "desc"),
+        endBefore(firstDocRef.current),
+        limitToLast(pageSize)
+      )
+    );
+    if (pageIndex === 1) return;
+    setPageIndex((prev) => prev - 1);
+  };
+
+  const handleOnNext = () => {
+    setQ(
+      query(
+        collection(db, "posts"),
+        orderBy(`${sort}`, "desc"),
+        startAfter(lastDocRef.current),
+
+        limit(pageSize)
+      )
+    );
+    if (pageIndex === totalPage) return;
+    setPageIndex((prev) => prev + 1);
   };
 
   useEffect(() => {
     const init = async () => {
       try {
         await auth.authStateReady();
+        const agg = await getCountFromServer(query(collection(db, "posts")));
+        const total = agg.data().count;
 
+        const totalPages = Math.ceil(total / pageSize);
+        setTotalPage(totalPages);
         if (!auth.currentUser) route.push("/signin");
-        if(auth.currentUser && auth.currentUser.displayName)
+        if (auth.currentUser && auth.currentUser.displayName) {
           setDisplayName(auth.currentUser.displayName);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -56,22 +118,19 @@ export default function Home() {
     };
 
     init();
-    // https://firebase.google.com/docs/reference/js/v8/firebase.auth.Auth#onauthstatechanged
-    // onAuthStateChanged(nextOrObserver : Observer<any> | ((a: User | null) => any), error ? : (a: Error) => any, completed ? : firebase.Unsubscribe) : firebase.Unsubscribe
-    // let unsubscribe: Unsubscribe | null = null
 
     if (!unsubRef) return;
 
     const fetchPosts = async () => {
-      const postsQuery = query(
-        collection(db, "posts"),
-        orderBy(`${sort}`, "desc"),
-        limit(25)
-      );
-
       unsubRef.current = onSnapshot(
-        postsQuery,
-        (snapshot) => {
+        //query
+        q,
+        //onNext
+        (snapshot: QuerySnapshot<DocumentData, DocumentData>) => {
+          if (snapshot.empty) return; // empty = true
+          firstDocRef.current = snapshot.docs[0];
+          lastDocRef.current = snapshot.docs[snapshot.size - 1];
+
           const posts = snapshot.docs.map((doc) => {
             const {
               like,
@@ -106,6 +165,8 @@ export default function Home() {
           });
           setPosts(posts);
         },
+
+        //onError
         (error: FirebaseError) => {
           console.log(error, "=> Permission-denied due to Sign Out.");
           return;
@@ -113,16 +174,15 @@ export default function Home() {
       );
     };
     // fetchPosts();
-
     return onAuthStateChanged(auth, (user: User | null) => {
       if (user) fetchPosts();
       else if (unsubRef) unsubRef.current?.();
     });
-  }, [route, sort, setPosts, unsubRef]);
+  }, [route, sort, setPosts, unsubRef, q]);
 
   return (
-    <div className="w-[100vw] h-full col-span-full row-[2/-1] px-12 py-4 ">
-      <section className=" h-full overflow-scroll">
+    <div className="w-[100vw] h-max col-span-full row-[2/-1] p-2 ">
+      <section className="w-full h-max overflow-scroll">
         {isUploading ? (
           <Upload setter={setIsUploading} />
         ) : (
@@ -156,7 +216,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="w-full flex items-center justify-end px-4 py-2 active:outline-0">
+        <div className="w-full flex items-center justify-end active:outline-0">
           <select
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
               console.log(e.currentTarget.value);
@@ -172,9 +232,54 @@ export default function Home() {
             })}
           </select>
         </div>
-        <TimelineWrapper>
-          <Timeline posts={posts} />
-        </TimelineWrapper>
+        <div className="w-full h-full relative flex ">
+          <div className="w-6 md:w-12 flex items-center justify-center">
+            {pageIndex != 1 ? (
+              <button onClick={handleOnPrev}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-full"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.72 9.47a.75.75 0 0 0 0 1.06l4.25 4.25a.75.75 0 1 0 1.06-1.06L6.31 10l3.72-3.72a.75.75 0 1 0-1.06-1.06L4.72 9.47Zm9.25-4.25L9.72 9.47a.75.75 0 0 0 0 1.06l4.25 4.25a.75.75 0 1 0 1.06-1.06L11.31 10l3.72-3.72a.75.75 0 0 0-1.06-1.06Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            ) : null}
+          </div>
+          <TimelineWrapper>
+            <Timeline posts={posts} />
+          </TimelineWrapper>
+          <div className="w-6 md:w-12 flex items-center justify-center">
+            {pageIndex != totalPage ? (
+              <button onClick={handleOnNext}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-full"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M15.28 9.47a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L13.69 10 9.97 6.28a.75.75 0 0 1 1.06-1.06l4.25 4.25ZM6.03 5.22l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L8.69 10 4.97 6.28a.75.75 0 0 1 1.06-1.06Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            ) : null}
+          </div>
+          {/* {index <= max ? (
+            <div className="w-full h-max flex items-center justify-center bg-red-600">
+              <div className="px-2 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-xl cursor-pointer">
+                <button onClick={handleShowMore}>Show More</button>
+              </div>
+            </div>
+          ) : null} */}
+        </div>
       </section>
     </div>
   );

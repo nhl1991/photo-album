@@ -58,6 +58,9 @@ npm run dev
 
 ### CHANGE LOG
 
+25/09/02
+- Introduce Pagination
+
 25/09/01
 - Fix display [username] on Navigation.
 - Fix [username] is not updated correctly when sign up.

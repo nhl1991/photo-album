@@ -7,7 +7,7 @@ export default function TimelineWrapper({ children }: {
     return (
 
         <main className="w-full h-full overflow-scroll justify-center ">
-            <div className="m-4 grid grid-cols-[repeat(auto-fit,minmax(150,450px))] md:grid-cols-[repeat(auto-fit,minmax(200px,300px))] grid-rows-[repeat(2,minmax(300px,1fr))] md:grid-rows-[repeat(2,minmax(300px,1fr))] md:auto-rows-[minmax(300px,1fr)] auto-rows-[minmax(300px,1fr)] md:gap-4 gap-y-4 ">
+            <div className="m-4 grid grid-cols-1 md:grid-cols-5 grid-rows-10 md:grid-rows-[repeat(2,minmax(120px,320px))] md:auto-rows-[minmax(300px,1fr)] auto-rows-[minmax(300px,1fr)] md:gap-2 gap-y-4 bg-gray-700">
                 {children}
             </div>
         </main>

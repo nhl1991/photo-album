@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useEffect } from "react"
 
 
-export default function Post(
+export default function ImageSection(
     { 
         image,
         title }: iPost,
@@ -23,7 +23,7 @@ export default function Post(
             <>
                 <div className="w-full h-full p-1 relative rounded-2xl">
                     <div className="w-full h-48 p-1 relative">
-                        {image ? <Image className="rounded-2xl object-cover" src={image} fill sizes="(max-width: 768px) 100vw, 33vw" alt={title} /> : null}
+                        {image ? <Image className="rounded-2xl object-cover" src={image} fill sizes="(max-width: 768px) 100vw, 33vw" alt={title} priority /> : null}
                     </div>
                 </div>
             </>

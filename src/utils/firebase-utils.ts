@@ -1,4 +1,4 @@
-import { DocumentReference, arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { DocumentReference, arrayRemove, arrayUnion, deleteDoc, doc, onSnapshot, updateDoc, Query, DocumentData } from "firebase/firestore";
 
 import { Comment, iPostsParams } from "../types/interface";
 import { FirebaseError } from "firebase/app";
@@ -128,4 +128,49 @@ export function printErrorMessage(error: FirebaseError){
     return message.split('/')[1].replaceAll('-', ' ');
 
 
+}
+
+export async function fetchPostByQuery(q:Query<DocumentData, DocumentData>){
+    return onSnapshot(
+              q,
+              (snapshot) => {
+                const posts = snapshot.docs.map((doc) => {
+                  const {
+                    like,
+                    likes,
+                    view,
+                    createdAt,
+                    description,
+                    image,
+                    title,
+                    userId,
+                    username,
+                    address,
+                    comments,
+                    avartar,
+                  } = doc.data();
+    
+                  return {
+                    createdAt,
+                    comments,
+                    description,
+                    like,
+                    likes,
+                    view,
+                    image,
+                    title,
+                    userId,
+                    username,
+                    address,
+                    id: doc.id,
+                    avartar,
+                  };
+                });
+                return posts;
+              },
+              (error: FirebaseError) => {
+                console.log(error, "=> Permission-denied due to Sign Out.");
+                return;
+              }
+            );
 }
