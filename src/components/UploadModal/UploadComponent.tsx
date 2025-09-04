@@ -11,7 +11,7 @@ import UploadIcon from "../icons/UploadIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import CloseIcon from "../icons/CloseIcon";
 import { getAddressByGps } from "@/utils/google-geocode";
-import { usePostStore } from "@/store/postStore";
+
 
 export default function Upload({
   setter,
@@ -24,7 +24,7 @@ export default function Upload({
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [address, setAddress] = useState<string>("");
-  const { appendPosts } = usePostStore();
+
   const WrapperRef = useRef<HTMLInputElement | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);

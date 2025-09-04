@@ -3,18 +3,11 @@ import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 
 import TimelineWrapper from "@/components/TimelineWrapper";
-type loadMorePosts<
-  T extends QueryDocumentSnapshot<DocumentData, DocumentData> | null = any
-> = T extends QueryDocumentSnapshot<DocumentData, DocumentData>
-  ? (
-      lastdoc: T
-    ) => Promise<
-      readonly [
-        React.JSX.Element,
-        QueryDocumentSnapshot<DocumentData, DocumentData> | null
-      ]
-    >
-  : any;
+
+type LoadMorePosts = (
+  lastdoc: QueryDocumentSnapshot<DocumentData, DocumentData> | null
+) => Promise<
+  readonly [React.JSX.Element | null, QueryDocumentSnapshot<DocumentData, DocumentData> | null]>;
 
 export default function LoadMorePosts<
   T extends QueryDocumentSnapshot<DocumentData, DocumentData> | null
@@ -24,7 +17,7 @@ export default function LoadMorePosts<
   children,
 }: React.PropsWithChildren<{
   lastDoc: T;
-  loadMorePosts: loadMorePosts<T>;
+  loadMorePosts: LoadMorePosts;
 }>) {
   const [elements, setElements] = useState<React.JSX.Element[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,8 +29,9 @@ export default function LoadMorePosts<
     (abortController?: AbortController) => {
       setLoading(true);
       loadMorePosts(currentOffsetRef.current)
-        .then(([node, next]: [React.JSX.Element, T]) => {
+        .then(([node, next]) => {
           if (abortController?.signal.aborted) return;
+          if(!node) return;
           console.log(next);
           setElements((prev) => [...prev, node]);
           if (next === null) {

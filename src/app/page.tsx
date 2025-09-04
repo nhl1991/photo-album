@@ -66,17 +66,16 @@ const fetchPost = (q: Query<DocumentData, DocumentData>) =>
         avartar,
       };
     });
-    if (docs.length >= PAGE_SIZE)
-      return { posts: data, offset: docs[PAGE_SIZE - 1] };
-    else if (docs.length >= 1)
-      return { posts: data, offset: docs[docs.length] };
+    console.log('fetch')
+    if (docs.length >= PAGE_SIZE) return { posts: data, offset: docs[PAGE_SIZE - 1] };
     else return { posts: data, offset: null };
   });
 
 async function NextFetch(
   lastDoc: QueryDocumentSnapshot<DocumentData, DocumentData> | null
 ) {
-  if (!lastDoc) return;
+
+  if (!lastDoc) return [null, null] as const;
   console.log(lastDoc.data().title);
   const q = query(
     collection(db, "posts"),
@@ -84,16 +83,18 @@ async function NextFetch(
     limit(PAGE_SIZE),
     startAfter(lastDoc)
   );
+
   const { posts, offset } = await fetchPost(q);
-  console.log("NEXTEFT ", offset?.data().title);
-  return [<Post posts={posts} key={posts[0].id} />, offset];
+
+  // if(posts === undefined) return [null, null] as const;
+  return [<Post posts={posts} key={posts[0].id} />, offset] as const;
 }
 export default function Home() {
   const route = useRouter();
 
   //states
   const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [sort, setSort] = useState<string>("createdAt");
 
   //refs
@@ -120,7 +121,7 @@ export default function Home() {
     //fetch
     if (!unsubRef) return;
     const initialize = async () => {
-      setIsLoading(true);
+
       try {
         await auth.authStateReady();
         if (!auth.currentUser) route.push("/signin");
@@ -136,8 +137,6 @@ export default function Home() {
         setInitialPosts(posts);
       } catch (err) {
         console.log("Error : ", err);
-      } finally {
-        setIsLoading(false);
       }
     };
     initialize();
@@ -285,3 +284,9 @@ export default function Home() {
 //   if (pageIndex === totalPage) return;
 //   setPageIndex((prev) => prev + 1);
 // };
+
+
+
+/**
+ * Type 'undefined' is not assignable to type 'readonly [Element, QueryDocumentSnapshot<DocumentData, DocumentData> | null]'.ts(2322)
+ */
