@@ -57,6 +57,9 @@ npm run dev
 
 
 ### CHANGE LOG
+25/09/04
+- Change Pagination to infinite scroll.
+- Future : Upload & Sort will be fixed.
 
 25/09/02
 - Introduce Pagination

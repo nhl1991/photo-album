@@ -11,6 +11,7 @@ import UploadIcon from "../icons/UploadIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import CloseIcon from "../icons/CloseIcon";
 import { getAddressByGps } from "@/utils/google-geocode";
+import { usePostStore } from "@/store/postStore";
 
 export default function Upload({
   setter,
@@ -23,6 +24,7 @@ export default function Upload({
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [address, setAddress] = useState<string>("");
+  const { appendPosts } = usePostStore();
   const WrapperRef = useRef<HTMLInputElement | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -122,25 +124,29 @@ export default function Upload({
     } else
       try {
         setIsLoading(true);
-
-        const doc = await addDoc(collection(db, "posts"), {
+        const post = {
           title,
           description,
           createdAt: Date.now(),
           avartar: user.photoURL,
           username: user.displayName || "Anonymous",
           userId: user.uid,
+          comments: null,
           address,
           like: null,
           likes: 0,
           view: 0,
-        });
+        }
+        const doc = await addDoc(collection(db, "posts"), post);
+
         const locationRef = ref(storage, `posts/${user.uid}/${doc.id}`);
         const result = await uploadBytes(locationRef, file);
         const url = await getDownloadURL(result.ref);
         await updateDoc(doc, {
           image: url,
         });
+        
+
         setter(false);
       } catch (e) {
         if (e instanceof FirebaseError) console.log(e);

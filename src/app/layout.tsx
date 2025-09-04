@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen grid grid-rows-12 grid-cols-12`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}
       >
         <UnsubContextProvider>
           <Navigation />

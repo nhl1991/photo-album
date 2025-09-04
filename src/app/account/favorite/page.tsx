@@ -4,10 +4,11 @@ import { collection, onSnapshot, orderBy, query, where } from "firebase/firestor
 import { useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import TimelineWrapper from "@/components/TimelineWrapper";
-import Timeline from "@/components/Timeline";
+
 import { iPost } from "@/types/interface";
 import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { FirebaseError } from "firebase/app";
+import Post from "@/components/Post";
 
 
 export default function Page() {
@@ -69,7 +70,7 @@ export default function Page() {
     return (
         <div className="w-[100vw] h-[100vh] ">
             <TimelineWrapper>
-                <Timeline posts={posts} />
+                <Post posts={posts} />
             </TimelineWrapper>
         </div>
 

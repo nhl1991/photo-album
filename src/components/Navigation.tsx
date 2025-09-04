@@ -6,11 +6,12 @@ import { User } from "firebase/auth";
 import { Logout } from "../utils/firebase-utils";
 import TimelineIcon from "./icons/HomeIcon";
 import DashboardIcon from "./icons/TimelineIcon";
-import AccounIcon from "./icons/AccounIcon";
+import AccountIcon from "./icons/AccountIcon";
 import LogoutIcon from "./icons/LogoutIcon";
 import { UnsubRefContext } from "./contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
 import { auth } from "@/app/firebase";
+import FavoriteIcon from "./icons/FavoriteIcon";
 
 export default function Navigation() {
   const router = useRouter();
@@ -52,8 +53,11 @@ export default function Navigation() {
           <Link className="w-max mx-1" href={"/account/dashboard"}>
             <DashboardIcon className="w-8" />
           </Link>
+          <Link className="w-max mx-1" href={"/account/favorite"}>
+            <FavoriteIcon className="w-8" />
+          </Link>
           <Link className="w-max" href={"/account"}>
-            <AccounIcon className="w-8" />
+            <AccountIcon className="w-8" />
           </Link>
 
           <button

@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { iPost } from "@/types/interface";
 import TimelineWrapper from "@/components/TimelineWrapper";
-import Timeline from "@/components/Timeline";
+import Timeline from "@/components/Post";
 import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { FirebaseError } from "firebase/app";
 

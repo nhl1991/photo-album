@@ -1,5 +1,4 @@
 
-import { iPost } from "@/types/interface"
 import Image from "next/image"
 import { useEffect } from "react"
 
@@ -7,7 +6,11 @@ import { useEffect } from "react"
 export default function ImageSection(
     { 
         image,
-        title }: iPost,
+        title,
+    isPriority }: { 
+        image:string,
+        title:string,
+    isPriority:boolean }
 ) {
     // const [showModal, setShowModal] = useState(false);
     // const onClick = () => {
@@ -21,9 +24,9 @@ export default function ImageSection(
     }, [])
         return (
             <>
-                <div className="w-full h-full p-1 relative rounded-2xl">
-                    <div className="w-full h-48 p-1 relative">
-                        {image ? <Image className="rounded-2xl object-cover" src={image} fill sizes="(max-width: 768px) 100vw, 33vw" alt={title} priority /> : null}
+                <div className="w-full h-full relative">
+                    <div className="w-full h-full relative ">
+                        {image ? <Image className=" object-cover rounded-2xl" src={image} fill sizes="(max-width: 768px) 100vw, 33vw" alt={title} priority={isPriority} /> : null}
                     </div>
                 </div>
             </>

@@ -1,5 +1,5 @@
 "use client";
-import {
+import React, {
   ChangeEvent,
   useCallback,
   useContext,
@@ -13,176 +13,150 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import {
   collection,
   DocumentData,
-  endBefore,
-  getCountFromServer,
+  getDocs,
   limit,
-  limitToLast,
-  onSnapshot,
   orderBy,
   Query,
   query,
   QueryDocumentSnapshot,
-  QuerySnapshot,
   startAfter,
+
 } from "firebase/firestore";
 import Upload from "@/components/UploadModal/UploadComponent";
-import TimelineWrapper from "@/components/TimelineWrapper";
-import Timeline from "@/components/Timeline";
-import { usePostStore } from "@/store/postStore";
-import { FirebaseError } from "firebase/app";
+
+import Post from "@/components/Post";
 import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
+import LoadMorePosts from "./LoadMorePosts";
+import { iPost } from "@/types/interface";
 
+const PAGE_SIZE = 8;
+const fetchPost = (q: Query<DocumentData, DocumentData>) =>
+  getDocs(q).then((res) => {
+    const { docs } = res;
+    const data = docs.map((doc) => {
+      const {
+        like,
+        likes,
+        view,
+        createdAt,
+        description,
+        image,
+        title,
+        userId,
+        username,
+        address,
+        comments,
+        avartar,
+      } = doc.data();
+
+      return {
+        like,
+        likes,
+        view,
+        createdAt,
+        description,
+        image,
+        title,
+        userId,
+        username,
+        address,
+        comments,
+        id: doc.id,
+        avartar,
+      };
+    });
+    if (docs.length >= PAGE_SIZE)
+      return { posts: data, offset: docs[PAGE_SIZE - 1] };
+    else if (docs.length >= 1)
+      return { posts: data, offset: docs[docs.length] };
+    else return { posts: data, offset: null };
+  });
+
+async function NextFetch(
+  lastDoc: QueryDocumentSnapshot<DocumentData, DocumentData> | null
+) {
+  if (!lastDoc) return;
+  console.log(lastDoc.data().title);
+  const q = query(
+    collection(db, "posts"),
+    orderBy(`createdAt`, "desc"),
+    limit(PAGE_SIZE),
+    startAfter(lastDoc)
+  );
+  const { posts, offset } = await fetchPost(q);
+  console.log("NEXTEFT ", offset?.data().title);
+  return [<Post posts={posts} key={posts[0].id} />, offset];
+}
 export default function Home() {
-  const pageSize = 10;
   const route = useRouter();
 
+  //states
   const [isUploading, setIsUploading] = useState(false);
-  const [pageIndex, setPageIndex] = useState(1);
-  const [totalPage, setTotalPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [sort, setSort] = useState<string>("createdAt");
+
+  //refs
   const unsubRef = useContext(UnsubRefContext);
-  const firstDocRef = useRef<QueryDocumentSnapshot<
-    DocumentData,
-    DocumentData
-  > | null>(null);
+  //Zustand
+  const { setDisplayName } = useDisplayNameStore();
+  const [ initialPosts, setInitialPosts] = useState<iPost[]>([]);
   const lastDocRef = useRef<QueryDocumentSnapshot<
     DocumentData,
     DocumentData
   > | null>(null);
-
-  const { posts, setPosts } = usePostStore();
   const orderOptions: { [key: string]: string } = {
     createdAt: "시간순",
     likes: "좋아요",
     view: "조회수",
   };
-  const [sort, setSort] = useState<string>("createdAt");
-  const [q, setQ] = useState<Query<DocumentData, DocumentData>>(
-    query(
-      collection(db, "posts"),
-      orderBy(`${sort}`, "desc"),
-      limit(pageSize)
-    )
-  );
-  const { setDisplayName } = useDisplayNameStore();
+
   const onModalHandler = useCallback(() => {
     setIsUploading(true);
-  }, [isUploading]);
-  const handleOnPrev = () => {
-    console.log("onPrev ", firstDocRef.current?.data().title);
-    setQ(
-      query(
-        collection(db, "posts"),
-        orderBy(`${sort}`, "desc"),
-        endBefore(firstDocRef.current),
-        limitToLast(pageSize)
-      )
-    );
-    if (pageIndex === 1) return;
-    setPageIndex((prev) => prev - 1);
-  };
-
-  const handleOnNext = () => {
-    setQ(
-      query(
-        collection(db, "posts"),
-        orderBy(`${sort}`, "desc"),
-        startAfter(lastDocRef.current),
-
-        limit(pageSize)
-      )
-    );
-    if (pageIndex === totalPage) return;
-    setPageIndex((prev) => prev + 1);
-  };
+  }, [setIsUploading]);
 
   useEffect(() => {
-    const init = async () => {
+    //initialize
+    //fetch
+    if (!unsubRef) return;
+    const initialize = async () => {
+      setIsLoading(true);
       try {
         await auth.authStateReady();
-        const agg = await getCountFromServer(query(collection(db, "posts")));
-        const total = agg.data().count;
-
-        const totalPages = Math.ceil(total / pageSize);
-        setTotalPage(totalPages);
         if (!auth.currentUser) route.push("/signin");
-        if (auth.currentUser && auth.currentUser.displayName) {
+        
+        const initialQuery = query(
+          collection(db, "posts"),
+          orderBy(`${sort}`, "desc"),
+          limit(PAGE_SIZE)
+        );
+        const { posts, offset } = await fetchPost(initialQuery);
+        // if(offset)
+        lastDocRef.current = offset;
+        setInitialPosts(posts);
+      } catch (err) {
+        console.log("Error : ", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    initialize();
+    return onAuthStateChanged(
+      auth,
+      (user: User | null) => {
+        if (user && auth.currentUser && auth.currentUser.displayName) {
           setDisplayName(auth.currentUser.displayName);
         }
-      } catch (err) {
-        console.log(err);
-      }
-      //wait for firebase
-
-      // if (!auth.currentUser)
-    };
-
-    init();
-
-    if (!unsubRef) return;
-
-    const fetchPosts = async () => {
-      unsubRef.current = onSnapshot(
-        //query
-        q,
-        //onNext
-        (snapshot: QuerySnapshot<DocumentData, DocumentData>) => {
-          if (snapshot.empty) return; // empty = true
-          firstDocRef.current = snapshot.docs[0];
-          lastDocRef.current = snapshot.docs[snapshot.size - 1];
-
-          const posts = snapshot.docs.map((doc) => {
-            const {
-              like,
-              likes,
-              view,
-              createdAt,
-              description,
-              image,
-              title,
-              userId,
-              username,
-              address,
-              comments,
-              avartar,
-            } = doc.data();
-
-            return {
-              createdAt,
-              comments,
-              description,
-              like,
-              likes,
-              view,
-              image,
-              title,
-              userId,
-              username,
-              address,
-              id: doc.id,
-              avartar,
-            };
-          });
-          setPosts(posts);
-        },
-
-        //onError
-        (error: FirebaseError) => {
-          console.log(error, "=> Permission-denied due to Sign Out.");
-          return;
-        }
-      );
-    };
-    // fetchPosts();
-    return onAuthStateChanged(auth, (user: User | null) => {
-      if (user) fetchPosts();
-      else if (unsubRef) unsubRef.current?.();
-    });
-  }, [route, sort, setPosts, unsubRef, q]);
+        else if (!user && unsubRef) unsubRef.current?.();
+        else setInitialPosts([]);
+      },
+      (err) => console.log("error : ", err)
+    );
+  }, [route, sort, setInitialPosts, unsubRef]);
 
   return (
-    <div className="w-[100vw] h-max col-span-full row-[2/-1] p-2 ">
-      <section className="w-full h-max overflow-scroll">
+    <div className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 ">
+
         {isUploading ? (
           <Upload setter={setIsUploading} />
         ) : (
@@ -216,7 +190,10 @@ export default function Home() {
           </div>
         )}
 
-        <div className="w-full flex items-center justify-end active:outline-0">
+        <div className="w-full h-max flex items-center justify-end active:outline-0">
+          <div className="w-full">
+            <p>EXPLORE</p>
+          </div>
           <select
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
               console.log(e.currentTarget.value);
@@ -232,9 +209,23 @@ export default function Home() {
             })}
           </select>
         </div>
-        <div className="w-full h-full relative flex ">
-          <div className="w-6 md:w-12 flex items-center justify-center">
-            {pageIndex != 1 ? (
+
+
+            <LoadMorePosts
+              loadMorePosts={NextFetch}
+              lastDoc={lastDocRef.current}
+            >
+              <Post posts={initialPosts} key={lastDocRef.current?.data().id} />
+            </LoadMorePosts>
+
+
+
+    </div>
+  );
+}
+{
+  /* <div className="w-6 md:w-12 flex items-center justify-center">
+            {firstDocRef.current ? (
               <button onClick={handleOnPrev}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -250,12 +241,12 @@ export default function Home() {
                 </svg>
               </button>
             ) : null}
-          </div>
-          <TimelineWrapper>
-            <Timeline posts={posts} />
-          </TimelineWrapper>
-          <div className="w-6 md:w-12 flex items-center justify-center">
-            {pageIndex != totalPage ? (
+          </div> */
+}
+
+{
+  /* <div className="w-6 md:w-12 flex items-center justify-center">
+            {lastDocRef.current ? (
               <button onClick={handleOnNext}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -271,16 +262,26 @@ export default function Home() {
                 </svg>
               </button>
             ) : null}
-          </div>
-          {/* {index <= max ? (
-            <div className="w-full h-max flex items-center justify-center bg-red-600">
-              <div className="px-2 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-xl cursor-pointer">
-                <button onClick={handleShowMore}>Show More</button>
-              </div>
-            </div>
-          ) : null} */}
-        </div>
-      </section>
-    </div>
-  );
+          </div> */
 }
+
+//button functions
+// const handleOnPrev = () => {
+//   setQueryConstraint([
+//     orderBy(sort, "desc"),
+//     endBefore(firstDocRef.current),
+//     limitToLast(pageSize),
+//   ]);
+//   if (pageIndex === 1) return;
+//   setPageIndex((prev) => prev - 1);
+// };
+
+// const handleOnNext = () => {
+//   setQueryConstraint([
+//     orderBy(sort, "desc"),
+//     startAfter(lastDocRef.current),
+//     limit(pageSize),
+//   ]);
+//   if (pageIndex === totalPage) return;
+//   setPageIndex((prev) => prev + 1);
+// };
