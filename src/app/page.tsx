@@ -150,10 +150,10 @@ export default function Home() {
       },
       (err) => console.log("error : ", err)
     );
-  }, [route, sort, setInitialPosts, unsubRef]);
+  }, [route, sort, setInitialPosts, unsubRef, setDisplayName]);
 
   return (
-    <div className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 ">
+    <div className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
       {isUploading ? (
         <Upload setter={setIsUploading} />
       ) : (
@@ -188,8 +188,8 @@ export default function Home() {
       )}
 
       <div className="w-full h-max flex items-center justify-end active:outline-0">
-        <div className="w-full">
-          <p>EXPLORE</p>
+        <div className="w-full flex items-center justify-start px-4">
+          <h1 className="text-[clamp(2rem,1.875rem+2vw,4rem)]">EXPLORE</h1>
         </div>
         <select
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {

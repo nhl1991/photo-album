@@ -33,7 +33,7 @@ export default function CommentInput({ uid, displayName, id, }: {
 
     return (
         <div className="w-full h-max flex gap-2 items-center justify-center  bg-white rounded-xl p-1">
-            <input ref={inputRef} className="w-full h-6 px-4 py-4 outline-0 text-black" name="comment" type="text" onChange={(e) => debouncedComment(e)} placeholder="이 사진 어떤가요..?" />
+            <input ref={inputRef} className="w-full h-6 px-4 py-4 outline-0 text-black" name="comment" type="text" onChange={(e) => debouncedComment(e)} />
             <button className=" rounded-full bg-sky-400 hover:opacity-80 hover:cursor-pointer" onClick={onClick}>
                 <CommentUploadIcon className="w-10 px-2 py-1" />
             </button>

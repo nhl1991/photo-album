@@ -58,7 +58,8 @@ npm run dev
 
 ### CHANGE LOG
 25/09/05
-- Fix real-time update on Post modal.
+- Fix real-time update on Post modal
+- Fix UI
 25/09/04
 - Change Pagination to infinite scroll.
 - Future : Upload & Sort will be fixed.

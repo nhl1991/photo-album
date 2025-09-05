@@ -1,4 +1,4 @@
-import CommentIndicator from "@/components/buttons/CommentIndicator"
+import CommentIndicator from "@/components/indicators/CommentIndicator"
 import LikeButton from "@/components/buttons/LikeButton"
 import View from "@/components/buttons/ViewComponent"
 import Image from "next/image"

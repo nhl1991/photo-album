@@ -28,15 +28,15 @@ export default function SignUp() {
 
         try {
             setIsLoading(true);
-            
+
             if (emailRef.current && passwordRef.current) {
 
-                await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current?.value).then(async (res)=>{
+                await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current?.value).then(async (res) => {
                     await updateProfile(res.user, {
-                    displayName: username
+                        displayName: username
+                    });
                 });
-                });
-                
+
                 router.push('/');
             }
         } catch (e) {
@@ -51,7 +51,7 @@ export default function SignUp() {
 
     }
 
-    const onChange = useDebouncedCallback((event:ChangeEvent<HTMLInputElement>) => {
+    const onChange = useDebouncedCallback((event: ChangeEvent<HTMLInputElement>) => {
 
         if (event.target.id === "username") {
             setUsername(event.target.value);
@@ -61,7 +61,9 @@ export default function SignUp() {
 
     return (
         <div className="w-96 h-64  rounded-2xl p-4">
-
+            <div className="w-full flex items-center justify-center py-2">
+                <h1 className="text-[clamp(2rem,1.8rem+2vw,4rem)] font-bold">SIGN UP</h1>
+            </div>
             <form className="w-full h-full grid grid-cols-1 grid-rows-6 gap-2" onSubmit={onSubmit}>
                 <div className="col-span-full row-span-4 flex flex-col items-center justify-evenly px-4">
                     <input className="w-5/6 outline-0 border-white border-b-2 focus:border-b-sky-400" id="email" type="email" name="email" placeholder="Email" ref={emailRef} />
@@ -75,7 +77,7 @@ export default function SignUp() {
             <div className="flex flex-col justify-center">
                 <span className="text-center text-red-600"><p>{error.toUpperCase()}</p></span>
                 <Link className="w-full text-center my-2 bottom-0" href="/signin">Already have an account ?</Link>
-                
+
             </div>
 
         </div>

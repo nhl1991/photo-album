@@ -9,7 +9,7 @@ export default function CommentIndicator({ length }: {
     return (
 
         <div className="flex items-center justify-center">
-            <CommentIcon className="w-6" />
+            <CommentIcon className="w-4 md:w-8" />
             <p className="px-2">{length}</p>
         </div>
     )

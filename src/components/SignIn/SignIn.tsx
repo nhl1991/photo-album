@@ -20,6 +20,7 @@ export default function SignIn() {
 
         try {
             setIsLoading(true);
+            setError('')
             if (emailRef.current && passwordRef.current) {
                 // const user = await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
                 const user = await FirebaseAuthSignIn(emailRef.current.value, passwordRef.current.value);
@@ -43,6 +44,9 @@ export default function SignIn() {
 
     return (
         <div className="w-96 h-max  rounded-2xl p-4">
+            <div className="w-full flex items-center justify-center py-2">
+                <h1 className="text-[clamp(2rem,1.8rem+2vw,4rem)] font-bold">SIGN IN</h1>
+            </div>
             <form className="w-full h-full grid grid-cols-1 grid-rows-4 gap-2" onSubmit={onSubmit}>
                 <div className="items-center row-span-3 flex flex-col justify-evenly px-4">
                     <input className="w-5/6 outline-0 border-white border-b-2 focus:border-b-sky-400" id="email" type="email" name="email" placeholder="Email" ref={emailRef} />

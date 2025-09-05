@@ -68,7 +68,7 @@ export default function Page() {
     }, [unsubRef])
 
     return (
-        <div className="w-[100vw] h-[100vh] ">
+        <div className="w-[100vw] min-h-[100vh] flex items-center justify-center">
             <TimelineWrapper>
                 <Post posts={posts} />
             </TimelineWrapper>
