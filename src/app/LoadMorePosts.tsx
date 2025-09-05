@@ -60,7 +60,7 @@ export default function LoadMorePosts<
       </TimelineWrapper>
       <div className="flex items-center justify-center">
         <button onClick={() => loadMore()} disabled={disabled || loading}>
-          NEXT
+          Show more..
         </button>
       </div>
     </>

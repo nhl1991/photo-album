@@ -21,6 +21,7 @@ export default function CommentInput({ uid, displayName, id, }: {
     
 
     const onClick = async () => {
+        console.log(id);
         if (draft === "" || draft === undefined) return;
         const createdAt = Date.now();
         const postRef = doc(db, `/posts/${id}`);

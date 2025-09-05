@@ -20,7 +20,6 @@ import {
   query,
   QueryDocumentSnapshot,
   startAfter,
-
 } from "firebase/firestore";
 import Upload from "@/components/UploadModal/UploadComponent";
 
@@ -34,7 +33,9 @@ const PAGE_SIZE = 8;
 const fetchPost = (q: Query<DocumentData, DocumentData>) =>
   getDocs(q).then((res) => {
     const { docs } = res;
+
     const data = docs.map((doc) => {
+
       const {
         like,
         likes,
@@ -66,15 +67,15 @@ const fetchPost = (q: Query<DocumentData, DocumentData>) =>
         avartar,
       };
     });
-    console.log('fetch')
-    if (docs.length >= PAGE_SIZE) return { posts: data, offset: docs[PAGE_SIZE - 1] };
+    console.log("fetch");
+    if (docs.length >= PAGE_SIZE)
+      return { posts: data, offset: docs[PAGE_SIZE - 1] };
     else return { posts: data, offset: null };
   });
 
 async function NextFetch(
   lastDoc: QueryDocumentSnapshot<DocumentData, DocumentData> | null
 ) {
-
   if (!lastDoc) return [null, null] as const;
   console.log(lastDoc.data().title);
   const q = query(
@@ -101,7 +102,7 @@ export default function Home() {
   const unsubRef = useContext(UnsubRefContext);
   //Zustand
   const { setDisplayName } = useDisplayNameStore();
-  const [ initialPosts, setInitialPosts] = useState<iPost[]>([]);
+  const [initialPosts, setInitialPosts] = useState<iPost[]>([]);
   const lastDocRef = useRef<QueryDocumentSnapshot<
     DocumentData,
     DocumentData
@@ -121,11 +122,10 @@ export default function Home() {
     //fetch
     if (!unsubRef) return;
     const initialize = async () => {
-
       try {
         await auth.authStateReady();
         if (!auth.currentUser) route.push("/signin");
-        
+
         const initialQuery = query(
           collection(db, "posts"),
           orderBy(`${sort}`, "desc"),
@@ -145,8 +145,7 @@ export default function Home() {
       (user: User | null) => {
         if (user && auth.currentUser && auth.currentUser.displayName) {
           setDisplayName(auth.currentUser.displayName);
-        }
-        else if (!user && unsubRef) unsubRef.current?.();
+        } else if (!user && unsubRef) unsubRef.current?.();
         else setInitialPosts([]);
       },
       (err) => console.log("error : ", err)
@@ -155,138 +154,62 @@ export default function Home() {
 
   return (
     <div className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 ">
-
-        {isUploading ? (
-          <Upload setter={setIsUploading} />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-sky-400/80 p-2  fixed bottom-10 right-10 z-50">
-            <button
-              className="hover:opacity-80  cursor-pointer "
-              onClick={onModalHandler}
-            >
-              <svg
-                className="w-full h-full"
-                data-slot="icon"
-                fill="none"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
-                />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        <div className="w-full h-max flex items-center justify-end active:outline-0">
-          <div className="w-full">
-            <p>EXPLORE</p>
-          </div>
-          <select
-            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-              console.log(e.currentTarget.value);
-              setSort(e.currentTarget.value);
-            }}
+      {isUploading ? (
+        <Upload setter={setIsUploading} />
+      ) : (
+        <div className="w-16 h-16 rounded-full bg-sky-400/80 p-2  fixed bottom-10 right-10 z-50">
+          <button
+            className="hover:opacity-80  cursor-pointer "
+            onClick={onModalHandler}
           >
-            {Object.keys(orderOptions).map((item: string, index) => {
-              return (
-                <option key={index} value={item}>
-                  {orderOptions[item]}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-
-
-            <LoadMorePosts
-              loadMorePosts={NextFetch}
-              lastDoc={lastDocRef.current}
+            <svg
+              className="w-full h-full"
+              data-slot="icon"
+              fill="none"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
             >
-              <Post posts={initialPosts} key={lastDocRef.current?.data().id} />
-            </LoadMorePosts>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
 
+      <div className="w-full h-max flex items-center justify-end active:outline-0">
+        <div className="w-full">
+          <p>EXPLORE</p>
+        </div>
+        <select
+          onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+            console.log(e.currentTarget.value);
+            setSort(e.currentTarget.value);
+          }}
+        >
+          {Object.keys(orderOptions).map((item: string, index) => {
+            return (
+              <option key={index} value={item}>
+                {orderOptions[item]}
+              </option>
+            );
+          })}
+        </select>
+      </div>
 
-
+      <LoadMorePosts loadMorePosts={NextFetch} lastDoc={lastDocRef.current}>
+        <Post posts={initialPosts} key={lastDocRef.current?.data().id} />
+      </LoadMorePosts>
     </div>
   );
 }
-{
-  /* <div className="w-6 md:w-12 flex items-center justify-center">
-            {firstDocRef.current ? (
-              <button onClick={handleOnPrev}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-full"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4.72 9.47a.75.75 0 0 0 0 1.06l4.25 4.25a.75.75 0 1 0 1.06-1.06L6.31 10l3.72-3.72a.75.75 0 1 0-1.06-1.06L4.72 9.47Zm9.25-4.25L9.72 9.47a.75.75 0 0 0 0 1.06l4.25 4.25a.75.75 0 1 0 1.06-1.06L11.31 10l3.72-3.72a.75.75 0 0 0-1.06-1.06Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            ) : null}
-          </div> */
-}
-
-{
-  /* <div className="w-6 md:w-12 flex items-center justify-center">
-            {lastDocRef.current ? (
-              <button onClick={handleOnNext}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-full"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M15.28 9.47a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L13.69 10 9.97 6.28a.75.75 0 0 1 1.06-1.06l4.25 4.25ZM6.03 5.22l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L8.69 10 4.97 6.28a.75.75 0 0 1 1.06-1.06Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            ) : null}
-          </div> */
-}
-
-//button functions
-// const handleOnPrev = () => {
-//   setQueryConstraint([
-//     orderBy(sort, "desc"),
-//     endBefore(firstDocRef.current),
-//     limitToLast(pageSize),
-//   ]);
-//   if (pageIndex === 1) return;
-//   setPageIndex((prev) => prev - 1);
-// };
-
-// const handleOnNext = () => {
-//   setQueryConstraint([
-//     orderBy(sort, "desc"),
-//     startAfter(lastDocRef.current),
-//     limit(pageSize),
-//   ]);
-//   if (pageIndex === totalPage) return;
-//   setPageIndex((prev) => prev + 1);
-// };
-
-
-
-/**
- * Type 'undefined' is not assignable to type 'readonly [Element, QueryDocumentSnapshot<DocumentData, DocumentData> | null]'.ts(2322)
- */
