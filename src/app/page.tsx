@@ -13,13 +13,16 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import {
   collection,
   DocumentData,
+  endBefore,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   Query,
   query,
   QueryDocumentSnapshot,
   startAfter,
+  Unsubscribe,
 } from "firebase/firestore";
 import Upload from "@/components/UploadModal/UploadComponent";
 
@@ -35,7 +38,6 @@ const fetchPost = (q: Query<DocumentData, DocumentData>) =>
     const { docs } = res;
 
     const data = docs.map((doc) => {
-
       const {
         like,
         likes,
@@ -77,7 +79,7 @@ async function NextFetch(
   lastDoc: QueryDocumentSnapshot<DocumentData, DocumentData> | null
 ) {
   if (!lastDoc) return [null, null] as const;
-  console.log(lastDoc.data().title);
+
   const q = query(
     collection(db, "posts"),
     orderBy(`createdAt`, "desc"),
@@ -90,6 +92,8 @@ async function NextFetch(
   // if(posts === undefined) return [null, null] as const;
   return [<Post posts={posts} key={posts[0].id} />, offset] as const;
 }
+
+
 export default function Home() {
   const route = useRouter();
 
@@ -118,6 +122,7 @@ export default function Home() {
   }, [setIsUploading]);
 
   useEffect(() => {
+    
     //initialize
     //fetch
     if (!unsubRef) return;
@@ -131,6 +136,7 @@ export default function Home() {
           orderBy(`${sort}`, "desc"),
           limit(PAGE_SIZE)
         );
+        
         const { posts, offset } = await fetchPost(initialQuery);
         // if(offset)
         lastDocRef.current = offset;
@@ -140,20 +146,26 @@ export default function Home() {
       }
     };
     initialize();
+
     return onAuthStateChanged(
       auth,
       (user: User | null) => {
         if (user && auth.currentUser && auth.currentUser.displayName) {
           setDisplayName(auth.currentUser.displayName);
         } else if (!user && unsubRef) unsubRef.current?.();
-        else setInitialPosts([]);
+        else {
+          setInitialPosts([]);
+        }
       },
       (err) => console.log("error : ", err)
-    );
+    )
+    
+
+
   }, [route, sort, setInitialPosts, unsubRef, setDisplayName]);
 
   return (
-    <div className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
+    <main className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
       {isUploading ? (
         <Upload setter={setIsUploading} />
       ) : (
@@ -193,7 +205,7 @@ export default function Home() {
         </div>
         <select
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-            console.log(e.currentTarget.value);
+
             setSort(e.currentTarget.value);
           }}
         >
@@ -210,6 +222,6 @@ export default function Home() {
       <LoadMorePosts loadMorePosts={NextFetch} lastDoc={lastDocRef.current}>
         <Post posts={initialPosts} key={lastDocRef.current?.data().id} />
       </LoadMorePosts>
-    </div>
+    </main>
   );
 }

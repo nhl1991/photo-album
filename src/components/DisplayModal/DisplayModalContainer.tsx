@@ -88,8 +88,7 @@ export default function DisplayModalContainor({
           });
         }
       },
-      (err) => console.log(err.message),
-      () => console.log("Completed")
+      (err) => console.log(err.message)
     );
     const currentView = viewRef.current + 1;
     updateView(ref, currentView);

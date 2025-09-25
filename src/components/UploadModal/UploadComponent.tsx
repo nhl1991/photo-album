@@ -11,13 +11,18 @@ import UploadIcon from "../icons/UploadIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import CloseIcon from "../icons/CloseIcon";
 import { getAddressByGps } from "@/utils/google-geocode";
+import { useRouter } from "next/navigation";
+import { iPost } from "@/types/interface";
 
 
 export default function Upload({
   setter,
+
 }: {
-  setter: React.Dispatch<React.SetStateAction<boolean>>;
+  setter: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [fname, setFname] = useState("사진 없음");
   const [title, setTitle] = useState("");
@@ -125,6 +130,7 @@ export default function Upload({
       try {
         setIsLoading(true);
         const post = {
+          
           title,
           description,
           createdAt: Date.now(),
@@ -138,6 +144,7 @@ export default function Upload({
           view: 0,
         }
         const doc = await addDoc(collection(db, "posts"), post);
+
 
         const locationRef = ref(storage, `posts/${user.uid}/${doc.id}`);
         const result = await uploadBytes(locationRef, file);
@@ -154,6 +161,7 @@ export default function Upload({
         setTitle("");
         setFile(null);
         setIsLoading(false);
+        router.refresh();
       }
 
     // console.log(e);
@@ -163,6 +171,8 @@ export default function Upload({
     return () => {
       setFile(null);
       setFname("사진 없음");
+
+      
     };
   }, []);
 
@@ -291,7 +301,7 @@ export default function Upload({
                     </div>
                   ) : (
                     <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-gray-600 rounded-2xl">
-                      <p className="px-2 font-bold">UPLOAD</p>
+                      <p className="px-2 font-bold">{isLoading ? 'Uploading...' :'UPLOAD'}</p>
                       <UploadIcon className="w-8" />
                     </div>
                   )}

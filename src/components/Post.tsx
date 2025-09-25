@@ -17,6 +17,7 @@ export default function Post({ posts }: {
         setSelectedPostId(value.id);
     }
     const post = useMemo(() => {
+        // find same index of post that user clicked.
         return posts.find(p => p.id === selectedPostId);
     }, [selectedPostId, posts]);
 
