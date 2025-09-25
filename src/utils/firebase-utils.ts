@@ -8,11 +8,6 @@ import {
   updateDoc,
   Query,
   DocumentData,
-  query,
-  collection,
-  where,
-  orderBy,
-  limit,
 } from "firebase/firestore";
 
 import { Comment, iPostsParams } from "../types/interface";
