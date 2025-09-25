@@ -52,6 +52,8 @@ export default function LoadMorePosts<
 
   useEffect(() => {
     currentOffsetRef.current = lastDoc;
+
+    return setElements([])
   }, [lastDoc]);
 
   return (

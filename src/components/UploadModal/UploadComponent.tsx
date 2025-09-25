@@ -12,7 +12,6 @@ import DeleteIcon from "../icons/DeleteIcon";
 import CloseIcon from "../icons/CloseIcon";
 import { getAddressByGps } from "@/utils/google-geocode";
 import { useRouter } from "next/navigation";
-import { iPost } from "@/types/interface";
 
 
 export default function Upload({

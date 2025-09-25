@@ -13,7 +13,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import {
   collection,
   DocumentData,
-  endBefore,
+
   getDocs,
   limit,
   onSnapshot,
@@ -25,7 +25,6 @@ import {
   Unsubscribe,
 } from "firebase/firestore";
 import Upload from "@/components/UploadModal/UploadComponent";
-
 import Post from "@/components/Post";
 import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
@@ -93,7 +92,6 @@ async function NextFetch(
   return [<Post posts={posts} key={posts[0].id} />, offset] as const;
 }
 
-
 export default function Home() {
   const route = useRouter();
 
@@ -122,47 +120,80 @@ export default function Home() {
   }, [setIsUploading]);
 
   useEffect(() => {
-    
+    let unsub: Unsubscribe | null = null;
     //initialize
     //fetch
     if (!unsubRef) return;
     const initialize = async () => {
       try {
-        await auth.authStateReady();
-        if (!auth.currentUser) route.push("/signin");
 
-        const initialQuery = query(
+        const q = query(
           collection(db, "posts"),
           orderBy(`${sort}`, "desc"),
-          limit(PAGE_SIZE)
+          limit(PAGE_SIZE),
+          
         );
-        
-        const { posts, offset } = await fetchPost(initialQuery);
-        // if(offset)
-        lastDocRef.current = offset;
-        setInitialPosts(posts);
+        unsub = onSnapshot(q, (snapshot) => {
+          const posts = snapshot.docs.map((doc) => {
+
+            const {
+              like,
+              likes,
+              view,
+              createdAt,
+              description,
+              image,
+              title,
+              userId,
+              username,
+              address,
+              comments,
+              avartar,
+            } = doc.data();
+
+            return {
+              id: doc.id,
+              like,
+              likes,
+              view,
+              createdAt,
+              description,
+              image,
+              title,
+              userId,
+              username,
+              address,
+              comments,
+              avartar,
+            };
+          });
+
+          lastDocRef.current = snapshot.docs[PAGE_SIZE-1];
+          setInitialPosts(posts);
+        });
+        // setInitialPosts(posts);
       } catch (err) {
         console.log("Error : ", err);
       }
     };
+
     initialize();
-
-    return onAuthStateChanged(
-      auth,
-      (user: User | null) => {
-        if (user && auth.currentUser && auth.currentUser.displayName) {
-          setDisplayName(auth.currentUser.displayName);
-        } else if (!user && unsubRef) unsubRef.current?.();
-        else {
-          setInitialPosts([]);
-        }
-      },
-      (err) => console.log("error : ", err)
-    )
-    
-
-
-  }, [route, sort, setInitialPosts, unsubRef, setDisplayName]);
+    return () => {
+      onAuthStateChanged(
+        auth,
+        (user: User | null) => {
+          if (user && auth.currentUser && auth.currentUser.displayName) {
+            setDisplayName(auth.currentUser.displayName);
+          } else if (!user && unsubRef) unsubRef.current?.();
+          else {
+            setInitialPosts([]);
+          }
+        },
+        (err) => console.log("error : ", err)
+      );
+      unsub && unsub();
+    };
+  }, [route, sort, setInitialPosts, unsubRef, setDisplayName, lastDocRef]);
 
   return (
     <main className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
@@ -205,7 +236,6 @@ export default function Home() {
         </div>
         <select
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-
             setSort(e.currentTarget.value);
           }}
         >
