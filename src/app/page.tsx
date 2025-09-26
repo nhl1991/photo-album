@@ -232,7 +232,7 @@ export default function Home() {
 
       <div className="w-full h-max flex items-center justify-end active:outline-0">
         <div className="w-full flex items-center justify-start px-4">
-          <h1 className="text-[clamp(2rem,1.875rem+2vw,4rem)] bg-transparent bg-clip-text text-transparent" style={{WebkitTextStroke: 'white'}}>EXPLORE</h1>
+          <h1 className="text-[clamp(2rem,1.875rem+2vw,4rem)] bg-transparent bg-clip-text text-transparent" >EXPLORE</h1>
         </div>
         <select
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
