@@ -1,4 +1,4 @@
-import { auth, db } from "@/app/firebase";
+import { auth, db } from "@/lib/firebase";
 import { updateLike } from "@/utils/firebase-utils";
 import { doc, getDoc } from "firebase/firestore";
 

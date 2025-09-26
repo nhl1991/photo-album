@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { auth } from "../firebase"
+import { auth } from "@/lib/firebase"
 import { User, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import Avartar from "@/components/account/ui/Avartar";

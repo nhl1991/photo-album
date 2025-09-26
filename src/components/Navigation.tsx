@@ -10,7 +10,7 @@ import AccountIcon from "./icons/AccountIcon";
 import LogoutIcon from "./icons/LogoutIcon";
 import { UnsubRefContext } from "./contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
-import { auth } from "@/app/firebase";
+import { auth } from "@/lib/firebase";
 import FavoriteIcon from "./icons/FavoriteIcon";
 
 export default function Navigation() {

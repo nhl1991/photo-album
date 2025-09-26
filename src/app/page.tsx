@@ -6,8 +6,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { auth, db } from "./firebase";
-import { useRouter } from "next/navigation";
+import { auth, db } from "../lib/firebase";
+
 import { onAuthStateChanged, User } from "firebase/auth";
 import {
   collection,
@@ -90,7 +90,7 @@ async function NextFetch(
 }
 
 export default function Home() {
-  const route = useRouter();
+
 
   //states
   const [isUploading, setIsUploading] = useState(false);
@@ -189,7 +189,7 @@ export default function Home() {
       if (snapshotUnsub) snapshotUnsub();
       if (authUnsub) authUnsub();
     };
-  }, [route, sort, setInitialPosts, setDisplayName]);
+  }, [sort, setInitialPosts, setDisplayName]);
 
   return (
     <main className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">

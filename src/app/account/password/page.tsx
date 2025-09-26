@@ -1,5 +1,5 @@
 'use client'
-import { auth } from "@/app/firebase";
+import { auth } from "@/lib/firebase";
 import { FirebaseError } from "firebase/app";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 import { useRouter } from "next/navigation";

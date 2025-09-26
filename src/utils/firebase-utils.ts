@@ -12,7 +12,7 @@ import {
 
 import { Comment, iPostsParams } from "../types/interface";
 import { FirebaseError } from "firebase/app";
-import { auth, db } from "@/app/firebase";
+import { auth, db } from "@/lib/firebase";
 import {
   browserSessionPersistence,
   setPersistence,

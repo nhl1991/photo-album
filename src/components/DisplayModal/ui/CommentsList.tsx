@@ -1,6 +1,6 @@
 
 
-import { db } from "@/app/firebase";
+import { db } from "@/lib/firebase";
 import { deleteComment } from "@/utils/firebase-utils";
 import { Comment } from "@/types/interface";
 import { TimeConverter } from "@/utils/time-conversion";

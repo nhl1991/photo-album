@@ -1,4 +1,4 @@
-import { db } from "@/app/firebase"
+import { db } from "@/lib/firebase"
 import CommentUploadIcon from "@/components/icons/CommentUploadIcon";
 import { updateComment } from "@/utils/firebase-utils";
 import { doc } from "firebase/firestore";

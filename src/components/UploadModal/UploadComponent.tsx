@@ -6,7 +6,7 @@ import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Address from "./components/AddressInput";
-import { auth, db, storage } from "@/app/firebase";
+import { auth, db, storage } from "@/lib/firebase";
 import UploadIcon from "../icons/UploadIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import CloseIcon from "../icons/CloseIcon";

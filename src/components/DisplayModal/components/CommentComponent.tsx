@@ -1,4 +1,4 @@
-import { auth } from "@/app/firebase"
+import { auth } from "@/lib/firebase"
 import { Comment } from "@/types/interface";
 import CommentInput from "./CommentInput";
 import CommentsList from "../ui/CommentsList";
