@@ -2,7 +2,6 @@
 import React, {
   ChangeEvent,
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -13,7 +12,6 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import {
   collection,
   DocumentData,
-
   getDocs,
   limit,
   onSnapshot,
@@ -26,7 +24,6 @@ import {
 } from "firebase/firestore";
 import Upload from "@/components/UploadModal/UploadComponent";
 import Post from "@/components/Post";
-import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
 import LoadMorePosts from "./LoadMorePosts";
 import { iPost } from "@/types/interface";
@@ -100,8 +97,6 @@ export default function Home() {
 
   const [sort, setSort] = useState<string>("createdAt");
 
-  //refs
-  const unsubRef = useContext(UnsubRefContext);
   //Zustand
   const { setDisplayName } = useDisplayNameStore();
   const [initialPosts, setInitialPosts] = useState<iPost[]>([]);
@@ -120,10 +115,10 @@ export default function Home() {
   }, [setIsUploading]);
 
   useEffect(() => {
-    let unsub: Unsubscribe | null = null;
+    let snapshotUnsub: Unsubscribe | null = null;
+    let authUnsub: Unsubscribe | null = null;
     //initialize
     //fetch
-    if (!unsubRef) return;
     const initialize = async () => {
       try {
 
@@ -133,7 +128,7 @@ export default function Home() {
           limit(PAGE_SIZE),
           
         );
-        unsub = onSnapshot(q, (snapshot) => {
+        snapshotUnsub = onSnapshot(q, (snapshot) => {
           const posts = snapshot.docs.map((doc) => {
 
             const {
@@ -171,6 +166,17 @@ export default function Home() {
           lastDocRef.current = snapshot.docs[PAGE_SIZE-1];
           setInitialPosts(posts);
         });
+        authUnsub = onAuthStateChanged(
+        auth,
+        (user: User | null) => {
+          if (user && auth.currentUser && auth.currentUser.displayName) {
+            setDisplayName(auth.currentUser.displayName);
+          } else {
+            setInitialPosts([]);
+          }
+        },
+        (err) => console.log("error : ", err)
+      );
         // setInitialPosts(posts);
       } catch (err) {
         console.log("Error : ", err);
@@ -179,21 +185,11 @@ export default function Home() {
 
     initialize();
     return () => {
-      onAuthStateChanged(
-        auth,
-        (user: User | null) => {
-          if (user && auth.currentUser && auth.currentUser.displayName) {
-            setDisplayName(auth.currentUser.displayName);
-          } else if (!user && unsubRef) unsubRef.current?.();
-          else {
-            setInitialPosts([]);
-          }
-        },
-        (err) => console.log("error : ", err)
-      );
-      unsub && unsub();
+      
+      if (snapshotUnsub) snapshotUnsub();
+      if (authUnsub) authUnsub();
     };
-  }, [route, sort, setInitialPosts, setDisplayName, lastDocRef, unsubRef?.current]);
+  }, [route, sort, setInitialPosts, setDisplayName]);
 
   return (
     <main className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
