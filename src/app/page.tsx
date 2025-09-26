@@ -193,7 +193,7 @@ export default function Home() {
       );
       unsub && unsub();
     };
-  }, [route, sort, setInitialPosts, unsubRef, setDisplayName, lastDocRef]);
+  }, [route, sort, setInitialPosts, setDisplayName, lastDocRef, unsubRef?.current]);
 
   return (
     <main className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
@@ -232,7 +232,7 @@ export default function Home() {
 
       <div className="w-full h-max flex items-center justify-end active:outline-0">
         <div className="w-full flex items-center justify-start px-4">
-          <h1 className="text-[clamp(2rem,1.875rem+2vw,4rem)]">EXPLORE</h1>
+          <h1 className="text-[clamp(2rem,1.875rem+2vw,4rem)] bg-transparent bg-clip-text text-transparent" style={{WebkitTextStroke: 'white'}}>EXPLORE</h1>
         </div>
         <select
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {

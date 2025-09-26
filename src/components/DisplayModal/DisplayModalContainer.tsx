@@ -97,7 +97,7 @@ export default function DisplayModalContainor({
       unsubRef.current?.();
       unsubRef.current = null;
     };
-  }, [id]);
+  }, [id, unsubRef]);
 
   return (
     <div
