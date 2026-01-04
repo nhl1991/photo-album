@@ -4,18 +4,18 @@ import { db } from "@/lib/firebase";
 import { deleteComment } from "@/utils/firebase-utils";
 import { Comment } from "@/types/interface";
 import { TimeConverter } from "@/utils/time-conversion";
-import { doc, getDoc, getDocs } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { useEffect } from "react";
 import CommentContainer from "./CommentContainor";
 export default function CommentsList({ id,  comments }: { id: string, comments: Comment[] | null }) {
 
 
-    const onDelete = async (index: number) => {
-        const reference = doc(db, `/posts/${id}`);
-        if (comments)
-            deleteComment(reference, comments, index);
-        else return;
-    }
+    // const onDelete = async (index: number) => {
+    //     const reference = doc(db, `/posts/${id}`);
+    //     if (comments)
+    //         deleteComment(reference, comments, index);
+    //     else return;
+    // }
 
     useEffect(()=>{
         
