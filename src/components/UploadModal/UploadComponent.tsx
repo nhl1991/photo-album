@@ -6,18 +6,22 @@ import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Address from "./components/AddressInput";
-import { auth, db, storage } from "@/app/firebase";
+import { auth, db, storage } from "@/lib/firebase";
 import UploadIcon from "../icons/UploadIcon";
 import DeleteIcon from "../icons/DeleteIcon";
 import CloseIcon from "../icons/CloseIcon";
 import { getAddressByGps } from "@/utils/google-geocode";
+import { useRouter } from "next/navigation";
 
 
 export default function Upload({
   setter,
+
 }: {
-  setter: React.Dispatch<React.SetStateAction<boolean>>;
+  setter: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [fname, setFname] = useState("사진 없음");
   const [title, setTitle] = useState("");
@@ -125,6 +129,7 @@ export default function Upload({
       try {
         setIsLoading(true);
         const post = {
+          
           title,
           description,
           createdAt: Date.now(),
@@ -138,6 +143,7 @@ export default function Upload({
           view: 0,
         }
         const doc = await addDoc(collection(db, "posts"), post);
+
 
         const locationRef = ref(storage, `posts/${user.uid}/${doc.id}`);
         const result = await uploadBytes(locationRef, file);
@@ -154,6 +160,7 @@ export default function Upload({
         setTitle("");
         setFile(null);
         setIsLoading(false);
+        router.refresh();
       }
 
     // console.log(e);
@@ -163,6 +170,8 @@ export default function Upload({
     return () => {
       setFile(null);
       setFname("사진 없음");
+
+      
     };
   }, []);
 
@@ -170,12 +179,12 @@ export default function Upload({
     <div
       id="modal"
       ref={WrapperRef}
-      className="w-[100vw] h-[100vh] flex items-center justify-center bg-white/80 p-8 md:p-4 fixed top-0 left-0 z-50 animate-fade-In"
+      className="w-screen h-screen flex items-center justify-center bg-white/80 p-8 md:p-4 fixed top-0 left-0 z-50 animate-fade-In"
       onClick={(e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
       }}
     >
-      <div className="w-full md:w-1/3 relative grid grid-rows-12 grid-cols-1 text-white rounded-2xl bg-gray-500">
+      <div className="w-full md:max-w-xl relative grid grid-rows-12 grid-cols-1 text-white rounded-2xl bg-gray-500">
         <header className="w-full h-full flex items-center justify-center row-start-1 px-2 md:text-2xl">
           <div className="w-full h-full  border-b-2 border-b-gray-400 relative flex items-end justify-center">
             <input
@@ -291,7 +300,7 @@ export default function Upload({
                     </div>
                   ) : (
                     <div className="w-full h-full flex items-center-safe justify-center cursor-pointer bg-gray-600 rounded-2xl">
-                      <p className="px-2 font-bold">UPLOAD</p>
+                      <p className="px-2 font-bold">{isLoading ? 'Uploading...' :'UPLOAD'}</p>
                       <UploadIcon className="w-8" />
                     </div>
                   )}

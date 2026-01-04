@@ -9,7 +9,7 @@ import PostAddress from "./ui/PostAddress";
 import PostDescription from "./ui/PostDescription";
 import PostTitle from "./ui/PostTitle";
 import { useDisplayModalStore } from "@/store/modalStore";
-import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
+import { MouseEvent, useContext, useEffect, useState } from "react";
 import { getDatabaseRefById, updateView } from "@/utils/firebase-utils";
 import {
   doc,
@@ -17,7 +17,7 @@ import {
   DocumentReference,
   onSnapshot,
 } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db } from "@/lib/firebase";
 import { UnsubRefContext } from "../contexts/unsubscribeContext";
 
 type ModalPost = {
@@ -37,21 +37,18 @@ type ModalPost = {
 
 export default function DisplayModalContainor({
   id,
-  view,
 }: {
   id: string;
-  view: number;
 }) {
-
   const { setIsDisplaying } = useDisplayModalStore();
   const [modalPost, setModalPost] = useState<ModalPost>();
-  const viewRef = useRef<number>(view);
   const unsubRef = useContext(UnsubRefContext);
 
   useEffect(() => {
     if (!unsubRef || !id) return;
 
     const ref = getDatabaseRefById(id);
+    updateView(ref);
 
     const docRef: DocumentReference<DocumentData> = doc(db, "posts", id);
     unsubRef.current = onSnapshot(
@@ -88,17 +85,17 @@ export default function DisplayModalContainor({
           });
         }
       },
-      (err) => console.log(err.message),
-      () => console.log("Completed")
+      (err) => console.log(err.message)
     );
-    const currentView = viewRef.current + 1;
-    updateView(ref, currentView);
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
 
     return () => {
+      document.body.style.overflow = originalStyle;
       unsubRef.current?.();
       unsubRef.current = null;
     };
-  }, [id]);
+  }, [id, unsubRef]);
 
   return (
     <div

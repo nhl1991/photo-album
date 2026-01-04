@@ -1,14 +1,11 @@
-import { db } from "@/app/firebase"
+import { db } from "@/lib/firebase"
 import CommentUploadIcon from "@/components/icons/CommentUploadIcon";
 import { updateComment } from "@/utils/firebase-utils";
 import { doc } from "firebase/firestore";
 import { useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-export default function CommentInput({ uid, displayName, id, }: {
-    uid: string,
-    displayName: string | null,
-    id: string // doc.id;
-}) {
+import { User } from "firebase/auth";
+export default function CommentInput({ user, id }: {user: User, id:string}) {
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [draft, setDraft] = useState<string>()
@@ -21,6 +18,8 @@ export default function CommentInput({ uid, displayName, id, }: {
     
 
     const onClick = async () => {
+        if(!user) return;
+        const { uid, displayName } = user;
         console.log(id);
         if (draft === "" || draft === undefined) return;
         const createdAt = Date.now();

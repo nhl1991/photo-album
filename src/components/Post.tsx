@@ -17,12 +17,13 @@ export default function Post({ posts }: {
         setSelectedPostId(value.id);
     }
     const post = useMemo(() => {
+        // find same index of post that user clicked.
         return posts.find(p => p.id === selectedPostId);
     }, [selectedPostId, posts]);
 
     return (
         <>
-            {isDisplaying && post ? <DisplayModalContainor id={post.id} view={post.view} /> : null}
+            {isDisplaying && post ? <DisplayModalContainor id={post.id} /> : null}
             {
                 posts.map((post, idx) => {
                     return <article ref={articleRef} 

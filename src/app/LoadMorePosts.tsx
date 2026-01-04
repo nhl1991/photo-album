@@ -32,7 +32,7 @@ export default function LoadMorePosts<
         .then(([node, next]) => {
           if (abortController?.signal.aborted) return;
           if(!node) return;
-          console.log(next);
+          // console.log(next);
           setElements((prev) => [...prev, node]);
           if (next === null) {
             currentOffsetRef.current ??= null;
@@ -42,7 +42,9 @@ export default function LoadMorePosts<
 
           currentOffsetRef.current = next;
         })
-        .catch(() => {})
+        .catch((onRejected) => {
+          console.log(onRejected)
+        })
         .finally(() => setLoading(false));
     },
     [loadMorePosts]
@@ -50,6 +52,8 @@ export default function LoadMorePosts<
 
   useEffect(() => {
     currentOffsetRef.current = lastDoc;
+
+    return setElements([])
   }, [lastDoc]);
 
   return (
@@ -59,7 +63,7 @@ export default function LoadMorePosts<
         {elements}
       </TimelineWrapper>
       <div className="flex items-center justify-center">
-        <button onClick={() => loadMore()} disabled={disabled || loading}>
+        <button className="bg-sky-500 hover:bg-sky-600 cursor-pointer px-4 py-2 rounded-2xl flex items-center justify-center" onClick={() => loadMore()} disabled={disabled || loading}>
           {disabled && !loading ? 'End of contents':'Show more..'}
         </button>
       </div>

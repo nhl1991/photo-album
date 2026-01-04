@@ -3,7 +3,7 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ChangeEvent, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { auth } from "../../app/firebase";
+import { auth } from "../../lib/firebase";
 import { FirebaseError } from "firebase/app";
 import Link from "next/link";
 import { printErrorMessage } from "@/utils/firebase-utils";

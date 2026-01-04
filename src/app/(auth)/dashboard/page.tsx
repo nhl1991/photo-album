@@ -1,39 +1,35 @@
 'use client'
-import { auth, db } from "@/app/firebase";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase"
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { useContext, useEffect, useState } from "react";
-import { User, onAuthStateChanged } from "firebase/auth";
-import TimelineWrapper from "@/components/TimelineWrapper";
-
+import { onAuthStateChanged, User } from "firebase/auth";
 import { iPost } from "@/types/interface";
+import TimelineWrapper from "@/components/TimelineWrapper";
+import Timeline from "@/components/Post";
 import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { FirebaseError } from "firebase/app";
-import Post from "@/components/Post";
-
 
 export default function Page() {
-
-    const [posts, setPosts] = useState<iPost[]>([]);
+    const [posts, setPosts] = useState<iPost[]>([])
+    const [loading, setLoading] = useState(true);
     const unsubRef = useContext(UnsubRefContext);
-
-
-
     useEffect(() => {
-        if (!unsubRef) return;
-        // let unsubscribe:Unsubscribe|null = null;
+        // let unsubscribe: Unsubscribe | null = null;
 
         const fetchPosts = async () => {
+
+            if (!unsubRef) return;
             const user = auth.currentUser;
 
             if (!user) return;
+            setLoading(true);
 
             const postQuery = query(
                 collection(db, "posts"),
-                where("like", "array-contains-any", [user.uid]),
+                where("userId", "==", user.uid),
                 orderBy("createdAt", "desc"),
             )
             // const snapshot = await getDocs(postQuery);
-
             unsubRef.current = onSnapshot(postQuery, (snapshot) => {
                 const posts = snapshot.docs.map((doc) => {
                     const { like, likes, view, createdAt, description, image, title, userId, username, address, comments, avartar } = doc.data()
@@ -59,20 +55,21 @@ export default function Page() {
                 console.log(error, "=> Permission-denied due to Sign Out.");
                 return;
             })
-        }
-        return onAuthStateChanged(auth, (user: User | null) => {
+            setLoading(false);
 
+        }
+
+        return onAuthStateChanged(auth, (user: User | null) => {
+            console.log(user === null);
             if (user) fetchPosts();
             else if (unsubRef) unsubRef.current?.();
         })
-    }, [unsubRef])
-
+    }, [loading, unsubRef])
     return (
         <div className="w-[100vw] min-h-[100vh] flex items-center justify-center">
             <TimelineWrapper>
-                <Post posts={posts} />
+                <Timeline posts={posts} />
             </TimelineWrapper>
         </div>
-
     )
 }

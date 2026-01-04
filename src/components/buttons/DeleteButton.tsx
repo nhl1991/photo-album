@@ -2,7 +2,7 @@ import { MouseEvent } from "react";
 import { deleteObject, ref } from "firebase/storage";
 import { deleteDoc, doc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
-import { auth, db, storage } from "@/app/firebase";
+import { auth, db, storage } from "@/lib/firebase";
 import DeleteIcon from "../icons/DeleteIcon";
 import { useDisplayModalStore } from "@/store/modalStore";
 

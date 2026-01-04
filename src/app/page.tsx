@@ -2,29 +2,28 @@
 import React, {
   ChangeEvent,
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { auth, db } from "./firebase";
-import { useRouter } from "next/navigation";
+import { auth, db } from "../lib/firebase";
+
 import { onAuthStateChanged, User } from "firebase/auth";
 import {
   collection,
   DocumentData,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   Query,
   query,
   QueryDocumentSnapshot,
   startAfter,
+  Unsubscribe,
 } from "firebase/firestore";
 import Upload from "@/components/UploadModal/UploadComponent";
-
 import Post from "@/components/Post";
-import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
 import LoadMorePosts from "./LoadMorePosts";
 import { iPost } from "@/types/interface";
@@ -35,7 +34,6 @@ const fetchPost = (q: Query<DocumentData, DocumentData>) =>
     const { docs } = res;
 
     const data = docs.map((doc) => {
-
       const {
         like,
         likes,
@@ -77,7 +75,7 @@ async function NextFetch(
   lastDoc: QueryDocumentSnapshot<DocumentData, DocumentData> | null
 ) {
   if (!lastDoc) return [null, null] as const;
-  console.log(lastDoc.data().title);
+
   const q = query(
     collection(db, "posts"),
     orderBy(`createdAt`, "desc"),
@@ -90,16 +88,15 @@ async function NextFetch(
   // if(posts === undefined) return [null, null] as const;
   return [<Post posts={posts} key={posts[0].id} />, offset] as const;
 }
+
 export default function Home() {
-  const route = useRouter();
+
 
   //states
   const [isUploading, setIsUploading] = useState(false);
 
   const [sort, setSort] = useState<string>("createdAt");
 
-  //refs
-  const unsubRef = useContext(UnsubRefContext);
   //Zustand
   const { setDisplayName } = useDisplayNameStore();
   const [initialPosts, setInitialPosts] = useState<iPost[]>([]);
@@ -118,42 +115,84 @@ export default function Home() {
   }, [setIsUploading]);
 
   useEffect(() => {
+    let snapshotUnsub: Unsubscribe | null = null;
+    let authUnsub: Unsubscribe | null = null;
     //initialize
     //fetch
-    if (!unsubRef) return;
     const initialize = async () => {
       try {
-        await auth.authStateReady();
-        if (!auth.currentUser) route.push("/signin");
 
-        const initialQuery = query(
+        const q = query(
           collection(db, "posts"),
           orderBy(`${sort}`, "desc"),
-          limit(PAGE_SIZE)
+          limit(PAGE_SIZE),
+          
         );
-        const { posts, offset } = await fetchPost(initialQuery);
-        // if(offset)
-        lastDocRef.current = offset;
-        setInitialPosts(posts);
+        snapshotUnsub = onSnapshot(q, (snapshot) => {
+          const posts = snapshot.docs.map((doc) => {
+
+            const {
+              like,
+              likes,
+              view,
+              createdAt,
+              description,
+              image,
+              title,
+              userId,
+              username,
+              address,
+              comments,
+              avartar,
+            } = doc.data();
+
+            return {
+              id: doc.id,
+              like,
+              likes,
+              view,
+              createdAt,
+              description,
+              image,
+              title,
+              userId,
+              username,
+              address,
+              comments,
+              avartar,
+            };
+          });
+
+          lastDocRef.current = snapshot.docs[PAGE_SIZE-1];
+          setInitialPosts(posts);
+        });
+        authUnsub = onAuthStateChanged(
+        auth,
+        (user: User | null) => {
+          if (user && auth.currentUser && auth.currentUser.displayName) {
+            setDisplayName(auth.currentUser.displayName);
+          } else {
+            setInitialPosts([]);
+          }
+        },
+        (err) => console.log("error : ", err)
+      );
+        // setInitialPosts(posts);
       } catch (err) {
         console.log("Error : ", err);
       }
     };
+
     initialize();
-    return onAuthStateChanged(
-      auth,
-      (user: User | null) => {
-        if (user && auth.currentUser && auth.currentUser.displayName) {
-          setDisplayName(auth.currentUser.displayName);
-        } else if (!user && unsubRef) unsubRef.current?.();
-        else setInitialPosts([]);
-      },
-      (err) => console.log("error : ", err)
-    );
-  }, [route, sort, setInitialPosts, unsubRef, setDisplayName]);
+    return () => {
+      
+      if (snapshotUnsub) snapshotUnsub();
+      if (authUnsub) authUnsub();
+    };
+  }, [sort, setInitialPosts, setDisplayName]);
 
   return (
-    <div className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
+    <main className="w-[100vw] min-h-screen  col-span-full row-[2/-1] p-2 flex flex-col items-center justify-center ">
       {isUploading ? (
         <Upload setter={setIsUploading} />
       ) : (
@@ -187,13 +226,13 @@ export default function Home() {
         </div>
       )}
 
-      <div className="w-full h-max flex items-center justify-end active:outline-0">
-        <div className="w-full flex items-center justify-start px-4">
-          <h1 className="text-[clamp(2rem,1.875rem+2vw,4rem)]">EXPLORE</h1>
+      <div className="w-full h-max flex items-center justify-between active:outline-0 px-8">
+        <div className=" flex items-center justify-start px-2 gap-x-12">
+          <h1 className="text-[clamp(2rem,1.875rem+2vw,3rem)]" >EXPLORE</h1>
         </div>
         <select
+        className=""
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-            console.log(e.currentTarget.value);
             setSort(e.currentTarget.value);
           }}
         >
@@ -210,6 +249,6 @@ export default function Home() {
       <LoadMorePosts loadMorePosts={NextFetch} lastDoc={lastDocRef.current}>
         <Post posts={initialPosts} key={lastDocRef.current?.data().id} />
       </LoadMorePosts>
-    </div>
+    </main>
   );
 }
