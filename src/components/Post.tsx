@@ -23,7 +23,7 @@ export default function Post({ posts }: {
 
     return (
         <>
-            {isDisplaying && post ? <DisplayModalContainor id={post.id} view={post.view} /> : null}
+            {isDisplaying && post ? <DisplayModalContainor id={post.id} /> : null}
             {
                 posts.map((post, idx) => {
                     return <article ref={articleRef} 
