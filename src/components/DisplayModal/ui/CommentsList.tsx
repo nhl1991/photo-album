@@ -21,7 +21,6 @@ export default function CommentsList({
     <>
       {comments
         ? comments.map((comment: Comment, index) => {
-            console.log(comment);
             return (
               <div
                 className="w-full text-sm my-1 p-1 gap-1 bg-gray-800 rounded-2xl"
