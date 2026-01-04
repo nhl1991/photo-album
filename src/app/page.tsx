@@ -226,11 +226,12 @@ export default function Home() {
         </div>
       )}
 
-      <div className="w-full h-max flex items-center justify-end active:outline-0">
-        <div className="w-full flex items-center justify-start px-4">
-          <h1 className="text-[clamp(2rem,1.875rem+2vw,4rem)] bg-transparent bg-clip-text text-transparent" >EXPLORE</h1>
+      <div className="w-full h-max flex items-center justify-between active:outline-0 px-8">
+        <div className=" flex items-center justify-start px-2 gap-x-12">
+          <h1 className="text-[clamp(2rem,1.875rem+2vw,3rem)]" >EXPLORE</h1>
         </div>
         <select
+        className=""
           onChange={(e: ChangeEvent<HTMLSelectElement>) => {
             setSort(e.currentTarget.value);
           }}

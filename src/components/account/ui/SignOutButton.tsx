@@ -5,7 +5,7 @@ export default function SignOut() {
     const router = useRouter();
     const onClickLogout = async () => {
         await Logout();
-        router.push('/signin');
+        // router.push('/signin');
     }
 
     return (

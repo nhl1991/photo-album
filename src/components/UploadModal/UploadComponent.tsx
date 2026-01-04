@@ -179,12 +179,12 @@ export default function Upload({
     <div
       id="modal"
       ref={WrapperRef}
-      className="w-[100vw] h-[100vh] flex items-center justify-center bg-white/80 p-8 md:p-4 fixed top-0 left-0 z-50 animate-fade-In"
+      className="w-screen h-screen flex items-center justify-center bg-white/80 p-8 md:p-4 fixed top-0 left-0 z-50 animate-fade-In"
       onClick={(e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
       }}
     >
-      <div className="w-full md:w-1/3 relative grid grid-rows-12 grid-cols-1 text-white rounded-2xl bg-gray-500">
+      <div className="w-full md:max-w-xl relative grid grid-rows-12 grid-cols-1 text-white rounded-2xl bg-gray-500">
         <header className="w-full h-full flex items-center justify-center row-start-1 px-2 md:text-2xl">
           <div className="w-full h-full  border-b-2 border-b-gray-400 relative flex items-end justify-center">
             <input

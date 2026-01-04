@@ -17,7 +17,7 @@ import {
   DocumentReference,
   onSnapshot,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase"
+import { db } from "@/lib/firebase";
 import { UnsubRefContext } from "../contexts/unsubscribeContext";
 
 type ModalPost = {
@@ -42,16 +42,15 @@ export default function DisplayModalContainor({
   id: string;
   view: number;
 }) {
-
   const { setIsDisplaying } = useDisplayModalStore();
   const [modalPost, setModalPost] = useState<ModalPost>();
-  const viewRef = useRef<number>(view);
   const unsubRef = useContext(UnsubRefContext);
 
   useEffect(() => {
     if (!unsubRef || !id) return;
 
     const ref = getDatabaseRefById(id);
+    updateView(ref);
 
     const docRef: DocumentReference<DocumentData> = doc(db, "posts", id);
     unsubRef.current = onSnapshot(
@@ -90,10 +89,11 @@ export default function DisplayModalContainor({
       },
       (err) => console.log(err.message)
     );
-    const currentView = viewRef.current + 1;
-    updateView(ref, currentView);
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
 
     return () => {
+      document.body.style.overflow = originalStyle;
       unsubRef.current?.();
       unsubRef.current = null;
     };

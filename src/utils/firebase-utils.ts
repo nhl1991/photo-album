@@ -8,6 +8,7 @@ import {
   updateDoc,
   Query,
   DocumentData,
+  increment,
 } from "firebase/firestore";
 
 import { Comment, iPostsParams } from "../types/interface";
@@ -56,10 +57,10 @@ export async function updateDatabase(
 }
 
 //to be called when user clicks the post
-export async function updateView(reference: DocumentReference, view: number) {
-  if (reference instanceof DocumentReference && view)
+export async function updateView(reference: DocumentReference) {
+  if (reference instanceof DocumentReference)
     try {
-      await updateDoc(reference, { view });
+      await updateDoc(reference, { view: increment(1) });
     } catch (e) {
       if (e instanceof FirebaseError) {
         console.log(e.message);

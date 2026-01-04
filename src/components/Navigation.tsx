@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { User } from "firebase/auth";
@@ -14,7 +14,7 @@ import { auth } from "@/lib/firebase";
 import FavoriteIcon from "./icons/FavoriteIcon";
 
 export default function Navigation() {
-  const router = useRouter();
+  // const router = useRouter();
   const unsubRef = useContext(UnsubRefContext);
   const { displayName } = useDisplayNameStore();
   const [user, setUser] = useState<User | null>(null);
@@ -26,50 +26,68 @@ export default function Navigation() {
     if (!unsubRef.current)
       await Logout().then(() => {
         setUser(null);
-        router.push("/signin");
+        // router.push("/signin");
       });
     // await auth.signOut();
   };
 
-  useEffect(()=>{
-     auth.onAuthStateChanged((user)=>{
-      if(!user) return;
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (!user) return;
       else setUser(user);
-     })
-
-  })
-
+    });
+  });
 
   return (
-    <div className="w-full col-span-full flex gap-2 px-4 py-2 justify-end items-end">
+    <nav className="w-full col-span-full flex gap-2 px-12 py-8 justify-end items-end">
       {user ? (
-        <div className="text-xl rounded-2xl bg-gray-500 px-4 py-1 flex items-center ">
-          <p className="w-max mx-1 text-2xl">
-            {displayName ?? "Anonymous"}
-          </p>
-          <Link className="w-max mx-1" href={"/"}>
-            <TimelineIcon className="w-8" />
-          </Link>
-          <Link className="w-max mx-1" href={"/account/dashboard"}>
-            <DashboardIcon className="w-8" />
-          </Link>
-          <Link className="w-max mx-1" href={"/account/favorite"}>
-            <FavoriteIcon className="w-8" />
-          </Link>
-          <Link className="w-max" href={"/account"}>
-            <AccountIcon className="w-8" />
-          </Link>
-
-          <button
-            id="logout"
-            name="logout"
-            className="rounded-2xl mx-1 hover:cursor-pointer "
-            onClick={onLogout}
-          >
-            <LogoutIcon className="w-8" />
-          </button>
-        </div>
-      ) : null}
-    </div>
+        <ul className="text-xl rounded-2xl bg-gray-500 px-4 py-1 flex items-center ">
+          <li>
+            <p className="w-max mx-1 text-2xl">{displayName ?? "Anonymous"}</p>
+          </li>
+          <li>
+            <Link href={"/"}>
+              <TimelineIcon className="w-8" />
+            </Link>
+          </li>
+          <li>
+            <Link href={"/dashboard"}>
+              <DashboardIcon className="w-8" />
+            </Link>
+          </li>
+          <li>
+            <Link href={"/favorite"}>
+              <FavoriteIcon className="w-8" />
+            </Link>
+          </li>
+          <li>
+            <Link href={"/account"}>
+              <AccountIcon className="w-8" />
+            </Link>
+          </li>
+          <li>
+            <button
+              id="logout"
+              name="logout"
+              className="rounded-2xl mx-1 hover:cursor-pointer "
+              onClick={onLogout}
+            >
+              <LogoutIcon className="w-8" />
+            </button>
+          </li>
+        </ul>
+      ) : (
+        <ul>
+          <li>
+            <Link
+              href="/signin"
+              className="px-3 py-1.5 rounded-2xl bg-sky-400 hover:bg-sky-500 font-bold"
+            >
+              Sign In
+            </Link>
+          </li>
+        </ul>
+      )}
+    </nav>
   );
 }

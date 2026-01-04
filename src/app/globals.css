@@ -27,7 +27,7 @@ input:focus {
   @keyframes fadeIn{
     0% {
       position: absolute;
-      top: 100%;
+      opacity: 0;
     }
     100% {
       position: fixed;
@@ -43,7 +43,6 @@ input:focus {
       opacity: 1;
     }
     100% {
-      top: 100%;
       opacity: 0;
       display: hidden;
     }
