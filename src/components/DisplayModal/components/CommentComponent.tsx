@@ -31,7 +31,7 @@ export default function CommentComponent({ id, comments }: {
                 <CommentCount length={comments ? comments.length : 0} />
             </div>
             <div className="w-full col-start-1 h-full py-2 px-4  row-span-9 overflow-scroll text-sm md:text-xl">
-                <CommentsList id={id} comments={comments} />
+                <CommentsList comments={comments} />
             </div>
             <div className="w-full col-start-1 h-full flex items-center justify-center py-2 px-4 row-span-2">
                 {user ? <CommentInput user={user} id={id} /> : null}

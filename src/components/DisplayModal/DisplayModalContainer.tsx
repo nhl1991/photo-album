@@ -9,7 +9,7 @@ import PostAddress from "./ui/PostAddress";
 import PostDescription from "./ui/PostDescription";
 import PostTitle from "./ui/PostTitle";
 import { useDisplayModalStore } from "@/store/modalStore";
-import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
+import { MouseEvent, useContext, useEffect, useState } from "react";
 import { getDatabaseRefById, updateView } from "@/utils/firebase-utils";
 import {
   doc,
@@ -37,10 +37,8 @@ type ModalPost = {
 
 export default function DisplayModalContainor({
   id,
-  view,
 }: {
   id: string;
-  view: number;
 }) {
   const { setIsDisplaying } = useDisplayModalStore();
   const [modalPost, setModalPost] = useState<ModalPost>();
