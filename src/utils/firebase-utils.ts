@@ -22,7 +22,9 @@ import {
 
 export async function FirebaseAuthSignIn(email: string, password: string) {
   return await setPersistence(auth, browserSessionPersistence).then(() => {
-    return signInWithEmailAndPassword(auth, email, password);
+    return signInWithEmailAndPassword(auth, email, password).then(
+      (u) => u.user
+    );
   });
 }
 
@@ -43,7 +45,7 @@ export function getDatabaseRefById(id: string) {
 
 export async function updateDatabase(
   reference: DocumentReference,
-  data: iPostsParams
+  data: iPostsParams,
 ) {
   if (reference instanceof DocumentReference && data)
     try {
@@ -72,7 +74,7 @@ export async function updateView(reference: DocumentReference) {
 //this function will get modifed array of liked user list.
 export async function updateLike(
   reference: DocumentReference,
-  like: Array<string> | null
+  like: Array<string> | null,
 ) {
   const likeCount = like ? like.length : 0;
 
@@ -104,7 +106,7 @@ export async function updateComment(
   uid: string,
   displayName: string,
   comment: string,
-  createdAt: number
+  createdAt: number,
 ) {
   if (reference instanceof DocumentReference)
     try {
@@ -122,7 +124,7 @@ export async function updateComment(
 export async function deleteComment(
   reference: DocumentReference,
   comments: Comment[],
-  index: number
+  index: number,
 ) {
   if (reference instanceof DocumentReference)
     try {
@@ -189,7 +191,6 @@ export async function fetchPostByQuery(q: Query<DocumentData, DocumentData>) {
     (error: FirebaseError) => {
       console.log(error, "=> Permission-denied due to Sign Out.");
       return;
-    }
+    },
   );
 }
-

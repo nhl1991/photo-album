@@ -1,5 +1,5 @@
 import { Comment } from "@/types/interface";
-import { TimeConverter } from "@/utils/time-conversion";
+import { getTimeAgo } from "@/utils/time-conversion";
 
 import { useEffect } from "react";
 import CommentContainer from "./CommentContainor";
@@ -44,7 +44,7 @@ export default function CommentsList({
                                 : null} */}
                   <div className="px-2 py-1">
                     <p className=" text-white">
-                      {TimeConverter(comment.createdAt)}
+                      {getTimeAgo(comment.createdAt)}
                     </p>
                   </div>
                 </footer>

@@ -1,6 +1,6 @@
 
 
-export function TimeConverter(createdAt: number){
+export function getTimeAgo(createdAt: number){
     const elapsed = Date.now() - createdAt;
     const second = 1000;
     const minute = second * 60;

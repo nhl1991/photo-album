@@ -5,7 +5,7 @@ import ImageSection from "./components/ImageSection";
 import PostHeaderActions from "./components/PostHeaderActions";
 import ModalWrapper from "./ModalWrapper";
 import Author from "./ui/Authors";
-import PostAddress from "./ui/PostAddress";
+
 import PostDescription from "./ui/PostDescription";
 import PostTitle from "./ui/PostTitle";
 import { useDisplayModalStore } from "@/store/modalStore";
@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UnsubRefContext } from "../contexts/unsubscribeContext";
+import LocationInfo from "./ui/LocationInfo";
 
 type ModalPost = {
   id: string;
@@ -145,7 +146,7 @@ export default function DisplayModalContainor({
                 />
               </div>
               <div className="row-span-1">
-                <PostAddress address={modalPost.address} />
+                <LocationInfo address={modalPost.address} />
               </div>
               <div className="row-span-2">
                 <PostDescription description={modalPost.description} />

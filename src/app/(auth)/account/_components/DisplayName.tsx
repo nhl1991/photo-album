@@ -1,10 +1,11 @@
 import CompleteIcon from "@/components/icons/CompleteIcon";
 import EditIcon from "@/components/icons/EditIcon";
 import { useDisplayNameStore } from "@/store/displayNameStore";
+import { AuthUser } from "@/types/Auth";
 import { User, updateProfile } from "firebase/auth";
 import { ChangeEvent, useState } from "react";
 
-export default function DisplayName({ user }: { user: User | null }) {
+export default function DisplayName({ user }: { user: AuthUser }) {
   const [isEdit, setIsEdit] = useState(false); // boolean for Edit Display name.
   const [username, setUsername] = useState<string>("");
   const { setDisplayName } = useDisplayNameStore();

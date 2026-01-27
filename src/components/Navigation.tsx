@@ -12,82 +12,88 @@ import { UnsubRefContext } from "./contexts/unsubscribeContext";
 import { useDisplayNameStore } from "@/store/displayNameStore";
 import { auth } from "@/lib/firebase";
 import FavoriteIcon from "./icons/FavoriteIcon";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function Navigation() {
   // const router = useRouter();
-  const unsubRef = useContext(UnsubRefContext);
-  const { displayName } = useDisplayNameStore();
-  const [user, setUser] = useState<User | null>(null);
-  const onLogout = async () => {
-    if (!unsubRef) return;
+  const router = useRouter();
+  const [displayName, setDisplayName] = useState<string | null>("");
+  const { user, setUser } = useAuth();
 
-    unsubRef.current?.(); // 여기서 바로 해제 가능
-    unsubRef.current = null;
-    if (!unsubRef.current)
-      await Logout().then(() => {
-        setUser(null);
-        // router.push("/signin");
+  const onLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
       });
-    // await auth.signOut();
+      if (response.ok) {
+        await Logout();
+        setUser(null);
+        router.push('/home');
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (!user) return;
-      else setUser(user);
-    });
-  });
+    if (user) setDisplayName(user.displayName);
+  }, [user]);
 
   return (
-    <nav className="w-full col-span-full flex gap-2 px-12 py-8 justify-end items-end">
-      {user ? (
-        <ul className="text-xl rounded-2xl bg-gray-500 px-4 py-1 flex items-center ">
-          <li>
-            <p className="w-max mx-1 text-2xl">{displayName ?? "Anonymous"}</p>
-          </li>
-          <li>
-            <Link href={"/"}>
-              <TimelineIcon className="w-8" />
-            </Link>
-          </li>
-          <li>
-            <Link href={"/dashboard"}>
-              <DashboardIcon className="w-8" />
-            </Link>
-          </li>
-          <li>
-            <Link href={"/favorite"}>
-              <FavoriteIcon className="w-8" />
-            </Link>
-          </li>
-          <li>
-            <Link href={"/account"}>
-              <AccountIcon className="w-8" />
-            </Link>
-          </li>
-          <li>
-            <button
-              id="logout"
-              name="logout"
-              className="rounded-2xl mx-1 hover:cursor-pointer "
-              onClick={onLogout}
-            >
-              <LogoutIcon className="w-8" />
-            </button>
-          </li>
-        </ul>
-      ) : (
-        <ul>
-          <li>
+    <nav
+      className={`w-full flex items-center ${user ? "justify-center" : "justify-end"} h-16`}
+    >
+      <ul className="text-xl rounded-2xl  px-4 py-1 flex items-center ">
+        {user ? (
+          <>
+            <li>
+              <p className="w-max mx-1 text-2xl">
+                {displayName ?? "Anonymous"}
+              </p>
+            </li>
+            <li>
+              <Link href={"/home"}>
+                <TimelineIcon className="w-8" />
+              </Link>
+            </li>
+            <li>
+              <Link href={"/dashboard"}>
+                <DashboardIcon className="w-8" />
+              </Link>
+            </li>
+            <li>
+              <Link href={"/favorite"}>
+                <FavoriteIcon className="w-8" />
+              </Link>
+            </li>
+            <li>
+              <Link href={"/account"}>
+                <AccountIcon className="w-8" />
+              </Link>
+            </li>
+            <li>
+              <button
+                id="logout"
+                name="logout"
+                className="rounded-2xl mx-1 hover:cursor-pointer "
+                onClick={onLogout}
+              >
+                <LogoutIcon className="w-8" />
+              </button>
+            </li>
+          </>
+        ) : (
+          <li className="px-8">
             <Link
               href="/signin"
-              className="px-3 py-1.5 rounded-2xl bg-sky-400 hover:bg-sky-500 font-bold"
+              className="px-3 py-1.5 rounded-2xl btn-hover font-bold"
             >
               Sign In
             </Link>
           </li>
-        </ul>
-      )}
+        )}
+      </ul>
     </nav>
   );
 }

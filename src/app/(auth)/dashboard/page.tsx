@@ -8,10 +8,13 @@ import TimelineWrapper from "@/components/TimelineWrapper";
 import Timeline from "@/components/Post";
 import { UnsubRefContext } from "@/components/contexts/unsubscribeContext";
 import { FirebaseError } from "firebase/app";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Page() {
     const [posts, setPosts] = useState<iPost[]>([])
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+
     const unsubRef = useContext(UnsubRefContext);
     useEffect(() => {
         // let unsubscribe: Unsubscribe | null = null;
@@ -19,7 +22,7 @@ export default function Page() {
         const fetchPosts = async () => {
 
             if (!unsubRef) return;
-            const user = auth.currentUser;
+            // const user = auth.currentUser;
 
             if (!user) return;
             setLoading(true);

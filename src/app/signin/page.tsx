@@ -1,10 +1,10 @@
-import SignIn from "@/components/SignIn/SignIn";
+import SignIn from "@/app/signin/_components/SignIn";
 
 export default function Page(){
 
     return(
-        <div className="w-[100vw] h-[100vh] flex items-center justify-center">
+        <main className="w-screen h-screen flex items-center justify-center">
             <SignIn />
-        </div>
+        </main>
     )
 }
