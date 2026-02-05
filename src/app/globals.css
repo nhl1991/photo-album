@@ -1,4 +1,14 @@
 @import "tailwindcss";
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
 *::-webkit-scrollbar {
   display: none;
 }
@@ -8,12 +18,10 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active{
     -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
-
 body {
-  background: black;
-  color: white;
-  
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 input:focus {
@@ -48,4 +56,12 @@ input:focus {
     }
     
   }
+}
+
+
+.btn-hover {
+  @apply bg-indigo-500 hover:bg-indigo-600 cursor-pointer text-white font-bold;
+}
+.btn-wrap {
+  @apply px-3 py-1 rounded-xl;
 }
