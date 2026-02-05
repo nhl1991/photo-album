@@ -1,8 +1,6 @@
 import UploadIcon from "@/components/icons/UploadIcon";
-import ImagePreview from "./ImagePreview";
-import { getGPS } from "@/utils/exif-utils";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { GeocodeResults, Geometry } from "@/types/Geocode";
+import { GeocodeResults } from "@/types/Geocode";
 
 export default function ImageUploader({setFile, setGeocodeResults, setOnLoadComplete} : { setFile:Dispatch<SetStateAction<File | null>>, setGeocodeResults: Dispatch<SetStateAction<GeocodeResults | undefined>>,
   setOnLoadComplete: Dispatch<SetStateAction<boolean>>

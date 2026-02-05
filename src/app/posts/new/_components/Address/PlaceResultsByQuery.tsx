@@ -1,13 +1,11 @@
 import PlaceIcon from "@/components/icons/PlaceIcon";
-import { getPlaceDetail } from "@/lib/getPlaceDetail";
 import { GeocodeResults } from "@/types/Geocode";
-import { QueryResults } from "@/types/Places";
 
 export default function PlaceResultsByQuery({
   queryResults,
   handleSelectAddress,
 }: {
-  queryResults: QueryResults[] | null;
+  queryResults: GeocodeResults[] | null;
   handleSelectAddress: (place_id:string) => void
 }) {
 

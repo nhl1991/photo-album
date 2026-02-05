@@ -11,7 +11,7 @@ import ButtonItem from "./ButtonItem";
 import SignOut from "./SignOutButton";
 
 export default function AccountContainer() {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
     useEffect(()=>{
         if(!user) router.push('/signin')

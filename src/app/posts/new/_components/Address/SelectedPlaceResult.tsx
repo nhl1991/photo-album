@@ -1,6 +1,6 @@
 "use client";
 
-import { GeocodeResponse, GeocodeResults } from "@/types/Geocode";
+import { GeocodeResponse } from "@/types/Geocode";
 import { useQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect } from "react";
 

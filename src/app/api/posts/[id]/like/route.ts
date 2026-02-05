@@ -1,4 +1,4 @@
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { FieldValue } from "firebase-admin/firestore";
 import { revalidatePath } from "next/cache";

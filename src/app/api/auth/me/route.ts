@@ -3,7 +3,7 @@ import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await getSessionValue();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

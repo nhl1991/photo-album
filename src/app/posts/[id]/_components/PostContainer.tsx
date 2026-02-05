@@ -23,12 +23,12 @@ const deletePost = async (postId: string) => {
   });
 };
 export default function PostContainer() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  if (!id) return <p>ERROR</p>;
+  const postId = id;
 
-  const postId = id?.toString();
   useEffect(() => {
+    // if (!postId) return;
     const lastViewed = localStorage.getItem(postId);
     const updateView = async () => {
       await fetch(`/api/posts/${postId}/view`, {
@@ -49,15 +49,17 @@ export default function PostContainer() {
       console.log("View should be updated.");
       updateView();
     }
-  }, []);
+  }, [postId]);
+
   const { data, error, status, isPending } = useQuery({
     queryKey: [`post/${id}`],
     queryFn: () => fetchPost(postId),
     retry: false,
+    enabled: postId ? true : false,
   });
   const deleteMutation = useMutation({
     mutationFn: () => deletePost(postId),
-    onSuccess: () => router.push("/")
+    onSuccess: () => router.push("/"),
   });
   if (status === "error" && error) return <p>Error...</p>;
   if (isPending || deleteMutation.isPending) return <LoadingSpinner />;

@@ -1,13 +1,14 @@
 "use client"
 import { useState } from "react";
 import PlaceSearchInput from "./PlaceSearchInput";
-import { QueryResults } from "@/types/Places";
+
 import PlaceResultsByQuery from "./PlaceResultsByQuery";
+import { GeocodeResults } from "@/types/Geocode";
 export default function PlaceResultsByQueryContainer({ handleSelectAddress } : {
     handleSelectAddress: (place_id:string) => void
 }){
 
-    const [queryResults, setQueryResults] = useState<QueryResults[]|null>(null);
+    const [queryResults, setQueryResults] = useState<GeocodeResults[]|null>(null);
 
 
     return(

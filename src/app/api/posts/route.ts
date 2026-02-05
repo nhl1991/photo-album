@@ -1,9 +1,8 @@
 /**
  * Get All posts order by createdAt
  */
-import { adminAuth, adminDb, adminStorage } from "@/lib/firebase-admin";
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
-import { FieldValue } from "firebase-admin/firestore";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 const DOCS_SIZE = 8;
@@ -82,11 +81,12 @@ export async function POST(req: NextRequest) {
     content = getRequiredString(formData, "content");
     imageUrl = getRequiredString(formData, "imageUrl");
     imagePath = getRequiredString(formData, "imagePath");
-  } catch (err: any) {
-    return Response.json({ error: err.message }, { status: 400 });
+  } catch (err) {
+    console.log(err);
+    return Response.json({ error: "MISSING_REQUIRED_FIELD" }, { status: 400 });
   }
 
-  console.log(`posts/${userId}`);
+  // console.log(`posts/${userId}`);
 
   const postRef = adminDb.collection("posts").doc();
   await postRef.set({

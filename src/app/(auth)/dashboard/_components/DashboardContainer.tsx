@@ -18,7 +18,7 @@ const getMyPosts = async ({
 };
 
 export default function DashboradContainer() {
-  const { data, error, status, hasNextPage, isFetchingNextPage, 
+  const { data, status, hasNextPage, isFetchingNextPage, 
     fetchNextPage, } = useInfiniteQuery({
     queryKey: ["posts/myPosts"],
     queryFn: getMyPosts,

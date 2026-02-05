@@ -1,4 +1,4 @@
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { FieldValue } from "firebase-admin/firestore";
 import { cookies } from "next/headers";
@@ -72,7 +72,12 @@ export async function GET(
   else lastDoc = docs.at(-1);
   const raw = lastDoc ? lastDoc.get("createdAt") : null;
   const comments = docs.map((d) => {
-    const { uid, photoURL, content, displayName } = d.data() as any;
+    const { uid, photoURL, content, displayName } = d.data() as {
+      uid: string;
+      photoURL: string;
+      content: string;
+      displayName: string;
+    };
 
     return {
       photoURL,
@@ -94,4 +99,3 @@ export async function GET(
 
 // UPDATE
 export async function PATCH() {}
-

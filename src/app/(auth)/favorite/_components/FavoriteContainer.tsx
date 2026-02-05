@@ -2,7 +2,7 @@
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import PhotoPost from "@/components/common/PhotoPost";
 import PostsWrapper from "@/components/common/ui/PostsWrapper";
-import { Post, QueryData } from "@/types/Post";
+import { QueryData } from "@/types/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 const fetchFavoritePost = async ({
@@ -18,7 +18,7 @@ const fetchFavoritePost = async ({
 };
 
 export default function FavoriteContainer() {
-  const { data, error, status, hasNextPage, isFetchingNextPage, 
+  const { data, status, hasNextPage, isFetchingNextPage, 
     fetchNextPage, } = useInfiniteQuery({
     queryKey: ["posts/favorite"],
     queryFn: fetchFavoritePost,

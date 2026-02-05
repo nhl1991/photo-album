@@ -2,7 +2,7 @@ import { adminAuth } from "@/lib/firebase-admin";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const sessionCookie = (await cookies()).get("firebase_auth");
   const tokenId = sessionCookie ? sessionCookie.value : null;
   if (!sessionCookie) return NextResponse.json({ error: "Unauthorized" });

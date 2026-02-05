@@ -1,13 +1,10 @@
 "use client";
 import { GeocodeResults } from "@/types/Geocode";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getGPS } from "@/utils/exif-utils";
 import { useQuery } from "@tanstack/react-query";
 import { GpsTags } from "exifreader";
 import PlaceResultsByGeocode from "./PlaceResultsByGeocode";
-import PlaceResultsByQueryContainer from "./PlaceResultsByQueryContainer";
-import SelectedPlaceResult from "./SelectedPlaceResult";
-import { QueryResults } from "@/types/Places";
 import PlaceResultsByQuery from "./PlaceResultsByQuery";
 import PlaceSearchInput from "./PlaceSearchInput";
 import ResultsWrapper from "./ui/ResultsWrapper";
@@ -38,7 +35,7 @@ export default function AddressContainer({
 }) {
   const [gps, setGps] = useState<GpsTags>();
   const [hasGps, setHasGps] = useState<boolean>(false);
-  const [queryResults, setQueryResults] = useState<QueryResults[] | null>(null);
+  const [queryResults, setQueryResults] = useState<GeocodeResults[] | null>(null);
 
 
   useEffect(() => {

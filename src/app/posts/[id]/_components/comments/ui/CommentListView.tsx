@@ -2,7 +2,6 @@
 
 import { Comment } from "@/types/Comment";
 import Image from "next/image";
-import TimeAgo from "../../ui/TimeAgo";
 
 export default function CommentListView({ id, comment, children }: { id: string,comment: Comment, children:React.ReactNode }) {
   return (

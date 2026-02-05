@@ -1,3 +1,4 @@
+import { Geometry } from "@/types/Geocode";
 import { getGPS } from "./exif-utils";
 
 export async function getAddressByGps(file: File) {
@@ -23,7 +24,7 @@ export async function getAddressByGps(file: File) {
         ({ formattedAddress }: { formattedAddress: string }) =>
           formattedAddress,
       ),
-      gps: results.map(({geometry}: {geometry:any}) => geometry),
+      gps: results.map(({geometry}: {geometry:Geometry}) => geometry),
     };
   } catch (error) {
     console.log("<-------------EXIF Error START----------------->");

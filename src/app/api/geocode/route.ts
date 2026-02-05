@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     {
       ok: true,
       results: results.map((r:GeocodeResponse) => {
-        const {formatted_address , geometry, place_id} = r;
+        const {formatted_address , place_id} = r;
         return {formatted_address , place_id}})
       ,
     },

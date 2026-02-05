@@ -1,5 +1,5 @@
 import { storage } from "@/lib/firebase";
-import { User, updateProfile } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { ChangeEvent, useEffect, useState } from "react";
 import Image from "next/image";
@@ -8,14 +8,13 @@ import { AuthUser } from "@/types/Auth";
 
 export default function Avartar({user}: {user: AuthUser}) {
 
-    const [_, setAvatar] = useState<string | null>(null);
+    const [, setAvatar] = useState<string | null>(null);
 
     const handleOnProfileImage = async (e: ChangeEvent<HTMLInputElement>) => {
         if (!user) return;
         const { files } = e.target;
         if (files && files.length === 1) {
             const file = files[0];
-            file.type
             const locationRef = ref(storage, `avatars/${user.uid}`);
             const result = await uploadBytes(locationRef, file);
             const avatarUrl = await getDownloadURL(result.ref);

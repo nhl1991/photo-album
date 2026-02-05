@@ -1,5 +1,4 @@
-import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
-import { GOOGLE_API_KEY } from "./google-api-key";
+import { importLibrary } from "@googlemaps/js-api-loader";
 type PlacePrediction = {
   text: { text: string},
   placeId: string

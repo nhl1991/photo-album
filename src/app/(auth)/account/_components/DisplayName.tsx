@@ -1,7 +1,7 @@
 import CompleteIcon from "@/components/icons/CompleteIcon";
 import EditIcon from "@/components/icons/EditIcon";
 import { useAuth } from "@/hooks/useAuth";
-import { User, updateProfile } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import { ChangeEvent, useEffect, useState } from "react";
 
 export default function DisplayName() {

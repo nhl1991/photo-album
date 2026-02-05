@@ -1,9 +1,7 @@
 import { FormState } from "@/types/Form";
-import { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 export default function CreatePostForm({setForm} : {setForm: Dispatch<SetStateAction<FormState>>}) {
-    const titleRef = useRef<HTMLInputElement>(null);
-    const contentRef = useRef<HTMLTextAreaElement>(null);
     const handleChange = (
   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 ) => {
