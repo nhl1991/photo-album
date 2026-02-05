@@ -10,7 +10,7 @@ export default function DisplayName() {
   const { user } = useAuth();
   useEffect(()=>{
     if(user && user.displayName) setUsername(user.displayName);
-  },[])
+  },[user])
   const onClick = async () => {
     if(username==="") return;
     if (!user) return;

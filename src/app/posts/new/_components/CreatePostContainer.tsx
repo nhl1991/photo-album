@@ -1,5 +1,5 @@
 "use client";
-import { GeocodeResponse, GeocodeResults } from "@/types/Geocode";
+import { GeocodeResponse } from "@/types/Geocode";
 import { useEffect, useState } from "react";
 import ImagePreview from "./Image/ImagePreview";
 import ImageUploader from "./Image/ImageUploader";
@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import BlocksShuffle from "@/components/icons/BlocksShuffle";
 export default function CreatePostContainer() {
   // Image Uploader start
-  const [, setGeocodeResults] = useState<GeocodeResults>();
   const [file, setFile] = useState<File | null>(null);
   const [placeId, setPlaceId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>({ title: "", content: "" });

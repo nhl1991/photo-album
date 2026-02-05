@@ -28,7 +28,7 @@ export default function Avartar({user}: {user: AuthUser}) {
 
     useEffect(()=>{
         if(user) setAvatar(user.photoURL);
-    },[])
+    },[user])
 
     return (
         <div>
