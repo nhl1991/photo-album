@@ -4,6 +4,7 @@ import Loading from "@/app/loading";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import CommentListView from "./ui/CommentListView";
 import { Comment } from "@/types/Comment";
+import CommentDelete from "./CommentDelete";
 
 const getComment = async (pageParam: string|null, postId:string) => {
   const response = await fetch(`/api/posts/${postId}/comments${pageParam ? `?cursor=${pageParam}` : ''}`, {
@@ -31,11 +32,15 @@ export default function CommentList({ postId }: { postId: string }) {
 
   if (status === "pending") return <Loading />;
   if (status === "error") return <p>Error..</p>;
+  if(status === "success" && !data) return <p>No</p>
   if (status === "success" && data) return <>
   {
     data.pages.map((page)=>{
+      if(page.comments.length > 0)
         return page.comments.map((comment : Comment)=>{
-            return <CommentListView key={comment.id} comment={comment} />
+            return <CommentListView key={comment.id} id={comment.id} comment={comment}>
+              {comment.isMine ? <><CommentDelete postId={postId} commentId={comment.id} /></> : null}
+            </CommentListView>
         })
     })
   }

@@ -1,21 +1,24 @@
 import CompleteIcon from "@/components/icons/CompleteIcon";
 import EditIcon from "@/components/icons/EditIcon";
-import { useDisplayNameStore } from "@/store/displayNameStore";
-import { AuthUser } from "@/types/Auth";
+import { useAuth } from "@/hooks/useAuth";
 import { User, updateProfile } from "firebase/auth";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
-export default function DisplayName({ user }: { user: AuthUser }) {
+export default function DisplayName() {
   const [isEdit, setIsEdit] = useState(false); // boolean for Edit Display name.
-  const [username, setUsername] = useState<string>("");
-  const { setDisplayName } = useDisplayNameStore();
+  const [username, setUsername] = useState<string>('Anonymous');
+  const { user } = useAuth();
+  useEffect(()=>{
+    if(user && user.displayName) setUsername(user.displayName);
+  },[])
   const onClick = async () => {
+    if(username==="") return;
     if (!user) return;
     //Switch to Edit.
     if (isEdit === false) setIsEdit(true);
     else {
       await updateProfile(user, { displayName: username });
-      if (user.displayName) setDisplayName(user.displayName);
+      if (user.displayName) setUsername(user.displayName);
       setIsEdit(false);
     }
   };
@@ -26,9 +29,7 @@ export default function DisplayName({ user }: { user: AuthUser }) {
 
   return (
     <div
-      className={`flex border-2 rounded-2xl px-1 ${
-        isEdit ? "border-white" : "border-black"
-      }`}
+      className={`flex border-2 rounded-2xl px-1 `}
     >
       {isEdit ? (
         <input

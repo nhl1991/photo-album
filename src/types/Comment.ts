@@ -1,7 +1,7 @@
 
 export interface Comment {
-  username: string;
-  avatar: string;
+  displayName: string;
+  photoURL: string;
   content: string;
   id: string;
   isMine: boolean;

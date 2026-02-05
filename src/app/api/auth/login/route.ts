@@ -7,13 +7,12 @@ export async function POST(req: NextRequest) {
   const isProd = process.env.NODE_ENV === "production";
   const header = req.headers.get("Authorization");
   if (!header) return NextResponse.json("Unauthorized", { status: 401 });
-  const idToken = header.split(" ")[1];
+  const tokenId = header.split(" ")[1].trim();
   try {
-    // const decoded = await adminAuth.verifyIdToken(idToken);
-    // const userId = decoded.uid;
-    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+    const sessionCookie = await adminAuth.createSessionCookie(tokenId, {
       expiresIn: 1000 * 60 * 60 * 24 * 5,
     });
+    
 
     (await cookies()).set("session", sessionCookie, {
       httpOnly: true,

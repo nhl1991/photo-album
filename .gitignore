@@ -16,6 +16,8 @@
 #dev
 
 /src/app/account/delete-account/
+/src/app/migrate
+/src/app/api/migrate
 # next.js
 /.next/
 /out/

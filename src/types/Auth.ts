@@ -5,5 +5,6 @@ export type AuthUser = User|null|undefined
 
 export type AuthState = {
     user: AuthUser,
-    setUser: Dispatch<SetStateAction<AuthUser>>
+    status:string,
+    setUser: Dispatch<SetStateAction<AuthUser>>,
 }

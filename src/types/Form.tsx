@@ -1,0 +1,1 @@
+export type FormState = { title: string; content: string };

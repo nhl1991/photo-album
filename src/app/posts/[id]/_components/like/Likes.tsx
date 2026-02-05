@@ -30,7 +30,6 @@ export default function Likes({
     if (response.ok) {
       const result = await response.json();
       const { liked, length } = result.data;
-      console.log(liked, length);
       isLike(liked);
       setCount(length)
     }
@@ -38,11 +37,11 @@ export default function Likes({
   };
 
   return (
-    <>
+    <div className="flex items-center justify-center">
       <button onClick={() => handleOnClick(postId)}>
         <LikeIcon className="w-4 md:w-8" userLike={like} />
       </button>
       <LikeCount likeCount={count} />
-    </>
+    </div>
   );
 }

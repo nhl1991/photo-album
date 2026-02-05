@@ -2,6 +2,7 @@
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
 
 
 const projectId= process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
@@ -20,7 +21,9 @@ const app =
     ? getApps()[0]
     : initializeApp({
         credential: cert( { projectId , clientEmail, privateKey} ),
+        storageBucket: "gs://photo-album-by-next-js.firebasestorage.app"
       });
 
 export const adminAuth = getAuth(app);
 export const adminDb = getFirestore(app);
+export const adminStorage = getStorage(app);

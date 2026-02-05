@@ -1,32 +1,40 @@
 "use client";
 
 import Author from "@/components/common/ui/Author";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
 import PostHero from "./ui/PostHero";
 import ViewCount from "./view/ui/ViewCount";
 import Likes from "./like/Likes";
 import PostContent from "./ui/PostContent";
 import { useEffect } from "react";
 import Comments from "./comments/Comments";
+import PostDeleteButton from "./PostDeleteButton";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 const fetchPost = async (postId: string) => {
   const response = await fetch(`/api/posts/${postId}`);
   const result = await response.json();
   if (response.ok) return result;
   else throw new Error("Fetch Failed.");
 };
+const deletePost = async (postId: string) => {
+  await fetch(`/api/posts/${postId}`, {
+    method: "DELETE",
+  });
+};
 export default function PostContainer() {
   const { id } = useParams();
+  const router = useRouter();
   if (!id) return <p>ERROR</p>;
 
   const postId = id?.toString();
   useEffect(() => {
     const lastViewed = localStorage.getItem(postId);
     const updateView = async () => {
-      const response = await fetch(`/api/posts/${postId}/view`, {
-        method: 'POST'
-      })
-    }
+      await fetch(`/api/posts/${postId}/view`, {
+        method: "POST",
+      });
+    };
     let shouldUpdateView = false;
     if (lastViewed) {
       const last = Number(lastViewed);
@@ -37,30 +45,39 @@ export default function PostContainer() {
       shouldUpdateView = true;
     }
 
-    if(shouldUpdateView){
-      console.log('View should be updated.')
+    if (shouldUpdateView) {
+      console.log("View should be updated.");
       updateView();
     }
-
-
   }, []);
-  const { data, error, status } = useQuery({
+  const { data, error, status, isPending } = useQuery({
     queryKey: [`post/${id}`],
     queryFn: () => fetchPost(postId),
     retry: false,
   });
+  const deleteMutation = useMutation({
+    mutationFn: () => deletePost(postId),
+    onSuccess: () => router.push("/")
+  });
   if (status === "error" && error) return <p>Error...</p>;
-  if (status === "pending") return <p>Loading...</p>;
-
+  if (isPending || deleteMutation.isPending) return <LoadingSpinner />;
   if (status === "success" && data) {
-    const { post, liked } = data;
+    const { post, liked, isMine } = data;
 
     return (
       <>
         <article className="w-full flex flex-col gap-y-8 lg:max-w-5xl min-h-screen">
           <header className="rounded-xl shadow-xl p-2">
+            {isMine ? (
+              <ul className="flex justify-between gap-x-4 px-2">
+                <li className="">
+                  <PostDeleteButton onDelete={deleteMutation.mutateAsync} />
+                </li>
+                <li>UPDATE</li>
+              </ul>
+            ) : null}
             <PostHero
-              image={post.image}
+              image={post.imageUrl}
               address={post.address}
               createdAt={post.createdAt}
             />
@@ -68,8 +85,8 @@ export default function PostContainer() {
           <section className="rounded-xl shadow-xl p-2 min-h-60">
             <div className="flex justify-between items-center p-8">
               <Author
-                avartar={post.avartar}
-                username={post.username}
+                avartar={post.author.photoURL}
+                username={post.author.displayName}
                 className="w-10 h-10"
               />
               <div className="flex items-center justify-center">

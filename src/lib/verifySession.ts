@@ -7,8 +7,7 @@ export async function verifySessionCookie(tokenId: string) {
     const decode = await adminAuth.verifySessionCookie(tokenId, true);
     return decode;
   } catch (e) {
-    if(e instanceof FirebaseAuthError)
-        return null;
-    console.log(e);
+    if (e instanceof FirebaseAuthError) console.log(e);
+    return null;
   }
 }

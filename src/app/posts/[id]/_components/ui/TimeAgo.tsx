@@ -1,6 +1,6 @@
 "use client";
 
-import { getTimeAgo } from "@/utils/time-conversion";
+import { getTimeAgo } from "@/utils/getTimeAgo";
 
 export default function TimeAgo({ createdAt }: { createdAt: number }) {
    const timeAgo = getTimeAgo(createdAt);

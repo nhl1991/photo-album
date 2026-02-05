@@ -10,7 +10,7 @@ export default function PhotoPost({ item }: { item: Post }) {
         <div className="h-full flex flex-col justify-between">
           <figure className="w-60 h-48 relative">
             <Image
-              src={item.image}
+              src={item.imageUrl}
               fill
               className="object-cover "
               sizes="(max-width: 768px) 33vw, 20vw"

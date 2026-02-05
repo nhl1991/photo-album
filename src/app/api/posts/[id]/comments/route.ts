@@ -10,7 +10,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   // content validation
-  const { content, username, avatar } = await req.json();
+  const { content, displayName, photoURL } = await req.json();
 
   if (typeof content !== "string" || content.length === 0) {
     return NextResponse.json(
@@ -39,8 +39,8 @@ export async function POST(
     tx.create(commentRef, {
       content,
       uid: decode.uid,
-      username: username,
-      avatar: avatar,
+      displayName: displayName,
+      photoURL: photoURL,
       createdAt: FieldValue.serverTimestamp(),
     });
   });
@@ -72,12 +72,12 @@ export async function GET(
   else lastDoc = docs.at(-1);
   const raw = lastDoc ? lastDoc.get("createdAt") : null;
   const comments = docs.map((d) => {
-    const { uid, avatar, content, username } = d.data() as any;
+    const { uid, photoURL, content, displayName } = d.data() as any;
 
     return {
-      avatar,
+      photoURL,
       content,
-      username,
+      displayName,
       isMine: viewerUid ? viewerUid === uid : false,
       // 필요하면 commentId도
       id: d.id,
@@ -95,5 +95,3 @@ export async function GET(
 // UPDATE
 export async function PATCH() {}
 
-// DELETE
-export async function DELETE() {}
