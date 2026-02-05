@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import BlocksShuffle from "@/components/icons/BlocksShuffle";
 export default function CreatePostContainer() {
   // Image Uploader start
-  const [_, setGeocodeResults] = useState<GeocodeResults>();
+  const [, setGeocodeResults] = useState<GeocodeResults>();
   const [file, setFile] = useState<File | null>(null);
   const [placeId, setPlaceId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>({ title: "", content: "" });
@@ -114,8 +114,6 @@ export default function CreatePostContainer() {
             ) : (
               <ImageUploader
                 setFile={setFile}
-                setGeocodeResults={setGeocodeResults}
-                setOnLoadComplete={setOnLoadComplete}
               />
             )}
           </header>

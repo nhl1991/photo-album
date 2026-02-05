@@ -18,7 +18,6 @@ export default function Navigation() {
   const [displayName, setDisplayName] = useState<string | null>("");
   const { user, setUser, status } = useAuth();
   const iconClassName = "w-12 hover:stroke-lime-400"
-  const prefix = '/auth';
   const onLogout = async () => {
     try {
       const response = await fetch("/api/auth/logout", {

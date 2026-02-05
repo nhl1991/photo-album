@@ -18,7 +18,7 @@ export default function ImagePreview({
   useEffect(() => {
     const imageUrl = URL.createObjectURL(file);
     setPreview(imageUrl);
-  }, []);
+  }, [file]);
   if (preview)
     return (
       <div className="w-full max-w-[1024px] ">

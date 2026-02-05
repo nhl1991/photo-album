@@ -23,7 +23,6 @@ const initialFetch = async ({ pageParam, signal }: { pageParam: string | null, s
 export default function HomeContainer() {
   const {
     data,
-    error,
     status,
     fetchNextPage,
     hasNextPage,

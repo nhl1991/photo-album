@@ -49,7 +49,7 @@ export default function AddressContainer({
     };
 
     init();
-  }, []);
+  }, [file]);
 
   const { data, status } = useQuery({
     queryKey: ["geocode", gps?.Latitude, gps?.Longitude],

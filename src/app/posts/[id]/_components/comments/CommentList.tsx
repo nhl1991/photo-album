@@ -17,7 +17,7 @@ const getComment = async (pageParam: string|null, postId:string) => {
 };
 
 export default function CommentList({ postId }: { postId: string }) {
-  const { data, status, error } = useInfiniteQuery({
+  const { data, status } = useInfiniteQuery({
     queryKey: [`${postId}/comments`],
     queryFn: async ({pageParam}: {pageParam:string|null}) => {
         const data = await getComment(pageParam, postId)

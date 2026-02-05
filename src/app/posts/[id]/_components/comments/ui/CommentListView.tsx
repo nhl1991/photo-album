@@ -7,7 +7,7 @@ export default function CommentListView({ id, comment, children }: { id: string,
   return (
     <div className="flex flex-col justify-center border-2 rounded-2xl border-gray-200 p-4">
       <header className="flex justify-between items-center">
-        <div className="flex items-center gap-x-2">
+        <div id={id} className="flex items-center gap-x-2">
           <figure className="w-8 h-8 rounded-full overflow-hidden relative">
             {comment.photoURL ? (
               <Image

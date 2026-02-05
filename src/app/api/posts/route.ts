@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
   if (!decode)
     return NextResponse.json({ status: 401, message: "Unauthorized" });
   const { displayName, photoURL } = await adminAuth.getUser(decode.uid);
-  const userId = decode.uid;
+
   const formData = await req.formData();
   let title: string;
   let address: string;
