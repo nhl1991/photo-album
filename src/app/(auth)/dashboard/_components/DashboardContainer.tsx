@@ -13,6 +13,10 @@ const getMyPosts = async ({
   const response = await fetch(
     `/api/auth/posts/me${pageParam ? `?cursor=${pageParam}` : ""}`,
   );
+    if (!response.ok) {
+    const payload = await response.json();
+    throw new Error(payload.error ?? "UNKNOWN_ERROR");
+  }
   // if(response.ok)
   return await response.json();
 };

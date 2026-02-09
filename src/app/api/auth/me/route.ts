@@ -12,8 +12,6 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const user = await adminAuth.getUser(decode.uid);
-  console.log(user.displayName);
-  console.log(user.photoURL);
   await adminDb.doc(`/users/${decode.uid}`).set({
     displayName: user.displayName,
     photoURL: user.photoURL,

@@ -1,4 +1,6 @@
 // app/api/posts/route.ts
+import { handleApiError } from "@/lib/api/handleApiError";
+import { ApiError } from "@/lib/error/ApiError";
 import { adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { cookies } from "next/headers";
@@ -18,9 +20,9 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   let query = adminDb
-  .collection('posts')
-  .where("author.uid", "==", decode.uid).
-  orderBy("createdAt", "desc")
+    .collection("posts")
+    .where("author.uid", "==", decode.uid)
+    .orderBy("createdAt", "desc");
 
   if (cursor !== null && cursor !== undefined) {
     query = query.startAfter(Number(cursor));
@@ -28,7 +30,7 @@ export async function GET(req: Request) {
   const t0 = Date.now();
   try {
     const snap = await query.get();
-    
+
     const docs = snap.docs;
     let lastDoc;
     if (docs.length < DOCS_SIZE) lastDoc = null;
@@ -41,7 +43,7 @@ export async function GET(req: Request) {
     });
   } catch (e) {
     console.error("[posts] firestore fail", Date.now() - t0, "ms", e);
-    throw e;
+    handleApiError(e);
   }
 
   //   const snap = await query.get();
