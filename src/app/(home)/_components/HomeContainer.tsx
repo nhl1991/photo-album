@@ -1,6 +1,7 @@
 "use client";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import PhotoPost from "@/components/common/PhotoPost";
+import FeedEndNotice from "@/components/common/ui/FeedEndNotice";
 import PostsWrapper from "@/components/common/ui/PostsWrapper";
 import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 import { QueryData } from "@/types/Post";
@@ -65,7 +66,7 @@ export default function HomeContainer() {
               </button>
             )
           ) : (
-            <p>end of contents...</p>
+            <FeedEndNotice />
           )}
         </div>
       </div>

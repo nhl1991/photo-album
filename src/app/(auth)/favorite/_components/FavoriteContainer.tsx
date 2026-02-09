@@ -1,6 +1,7 @@
 "use client";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import PhotoPost from "@/components/common/PhotoPost";
+import FeedEndNotice from "@/components/common/ui/FeedEndNotice";
 import PostsWrapper from "@/components/common/ui/PostsWrapper";
 import { QueryData } from "@/types/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -59,7 +60,7 @@ export default function FavoriteContainer() {
               </button>
             )
           ) : (
-            <p>end of contents...</p>
+            <FeedEndNotice />
           )}
         </div>
       </div>
