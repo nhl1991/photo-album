@@ -101,7 +101,7 @@ export default function SignUpForm({
             type="submit"
             className="w-24 uppercase rounded-xl cursor-pointer px-2 py-1 btn-hover"
             disabled={isLoading}
-            value={"Sign In"}
+            value={"Sign Up"}
           />
         )}
       </div>
