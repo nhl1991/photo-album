@@ -1,10 +1,9 @@
-import SignUp from "@/components/SignUp/SignUp";
+import SignUp from "./_components/SignUp";
 
-export default function Page(){
-
-    return(
-        <div className="w-[100vw] h-[100vh] flex items-center justify-center">
-            <SignUp />
-        </div>
-    )
+export default function Page() {
+  return (
+    <main className="w-screen h-screen flex flex-col items-center justify-center">
+      <SignUp />
+    </main>
+  );
 }

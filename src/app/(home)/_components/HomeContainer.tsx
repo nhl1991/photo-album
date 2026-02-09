@@ -6,8 +6,13 @@ import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 import { QueryData } from "@/types/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-const initialFetch = async ({ pageParam, signal }: { pageParam: string | null, signal: AbortSignal }) => {
-
+const initialFetch = async ({
+  pageParam,
+  signal,
+}: {
+  pageParam: string | null;
+  signal: AbortSignal;
+}) => {
   const response = await fetch(
     `/api/posts${pageParam ? `?cursor=${pageParam}` : ""}`,
     {
@@ -21,35 +26,27 @@ const initialFetch = async ({ pageParam, signal }: { pageParam: string | null, s
 };
 
 export default function HomeContainer() {
-  const {
-    data,
-    status,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    retry: false,
-    queryKey: ["explore"],
-    queryFn: initialFetch,
-    initialPageParam: null,
-    getNextPageParam: ({ nextCursor }) => {
-      if (nextCursor) return `${nextCursor}`;
-      else return null;
-    },
-  });
+  const { data, status, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      retry: false,
+      queryKey: ["explore"],
+      queryFn: initialFetch,
+      initialPageParam: null,
+      getNextPageParam: ({ nextCursor }) => {
+        if (nextCursor) return `${nextCursor}`;
+        else return null;
+      },
+    });
 
-  // console.log(lastRef)
   if (status === "pending") return <LoadingSpinner />;
 
   if (status === "success" && data)
     return (
       <div>
         {data.pages.map((page, pageIndex) => {
-          // console.log(page);
           return (
             <PostsWrapper key={pageIndex}>
               {page.items.map((d: QueryData) => {
-                // console.log(d.title)
                 return <PhotoPost item={d} key={d.id} />;
               })}
             </PostsWrapper>

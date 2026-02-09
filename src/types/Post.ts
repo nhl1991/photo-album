@@ -1,3 +1,5 @@
+import { Comment } from "./interface";
+
 export interface QueryData extends Post {
   id: string;
 }

@@ -18,7 +18,6 @@ export async function POST(
   const decode = await verifySessionCookie(tokenId);
   if (decode) {
     const userId = decode.uid;
-    //   console.log(decode);
     const likeRef = adminDb.doc(`/posts/${postId}/likes/${userId}`);
 
     const postRef = adminDb.doc(`/posts/${postId}`);

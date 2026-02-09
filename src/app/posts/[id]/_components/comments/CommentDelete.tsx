@@ -1,5 +1,5 @@
 import DeleteIcon from "@/components/icons/DeleteIcon";
-import { QueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function CommentDelete({
   postId,
@@ -8,7 +8,7 @@ export default function CommentDelete({
   postId: string;
   commentId: string;
 }) {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   const handleOnClick = async () => {
     
     const response = await fetch(`/api/posts/${postId}/comments/${commentId}`, {

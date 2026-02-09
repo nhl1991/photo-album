@@ -7,7 +7,6 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const postId = (await params).id;
-  console.log(postId);
   const viewRef = adminDb.doc(`/posts/${postId}`);
   const data = await adminDb.runTransaction(async (tx) => {
     const viewSnap = await tx.get(viewRef);
