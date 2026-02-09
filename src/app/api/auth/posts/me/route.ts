@@ -43,7 +43,7 @@ export async function GET(req: Request) {
     });
   } catch (e) {
     console.error("[posts] firestore fail", Date.now() - t0, "ms", e);
-    handleApiError(e);
+    return handleApiError(e);
   }
 
   //   const snap = await query.get();
