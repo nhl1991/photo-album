@@ -15,7 +15,7 @@ export default function SignUp() {
         <SignUpForm setError={setError} />
         <div className="flex flex-col justify-center">
           <span className="p-2 text-center text-red-600">
-            <p>{error.toUpperCase()}</p>
+            {error.toUpperCase()}
           </span>
           <Link
             className="w-full text-center hover:text-blue-400"
