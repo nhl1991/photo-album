@@ -1,6 +1,5 @@
 // app/api/posts/route.ts
 import { handleApiError } from "@/lib/api/handleApiError";
-import { ApiError } from "@/lib/error/ApiError";
 import { adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { cookies } from "next/headers";
