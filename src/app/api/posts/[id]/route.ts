@@ -1,6 +1,7 @@
 import { getSessionValue } from "@/lib/auth/getSessionValue";
 import { adminDb, adminStorage } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
+import { Post } from "@/types/Post";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 /**
@@ -53,8 +54,14 @@ export async function DELETE(
   const postId = (await params).id;
   if (!postId)
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  const postData = (await adminDb.doc(`/posts/${postId}`).get()).data();
 
+  if (!postData)
+    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  if (postData.author.uid !== decode.uid)
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const likesRef = await adminDb.collection(`/posts/${postId}/likes`).get();
+
   let batch = adminDb.batch();
   let opCount = 0;
 
@@ -75,15 +82,16 @@ export async function DELETE(
     await batch.commit();
   }
 
-  const filePath = (await adminDb.doc(`posts/${postId}`).get()).data();
-  if (!filePath)
-    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
-  // console.log(postRef);
   try {
-    await adminStorage.bucket().file(filePath.imagePath).delete();
+    await adminStorage.bucket().file(postData.imagePath).delete();
     await adminDb.doc(`/posts/${postId}`).delete();
-    return NextResponse.json({ 
-        code: "SUCCESS",message: "STATUS_OK" }, { status: 200 });
+    return NextResponse.json(
+      {
+        code: "SUCCESS",
+        message: "STATUS_OK",
+      },
+      { status: 200 },
+    );
   } catch (err) {
     console.log(err);
     return NextResponse.json(

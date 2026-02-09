@@ -93,7 +93,7 @@ export async function GET(
 
   return NextResponse.json({
     comments: comments ?? [],
-    nextCursor: raw ? raw.toSring() : null,
+    nextCursor: raw ? raw.toString() : null,
   });
 }
 
