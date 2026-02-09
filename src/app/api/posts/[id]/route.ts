@@ -1,7 +1,6 @@
 import { getSessionValue } from "@/lib/auth/getSessionValue";
 import { adminDb, adminStorage } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
-import { Post } from "@/types/Post";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 /**
