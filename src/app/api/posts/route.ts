@@ -86,8 +86,6 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "MISSING_REQUIRED_FIELD" }, { status: 400 });
   }
 
-  // console.log(`posts/${userId}`);
-
   const postRef = adminDb.collection("posts").doc();
   await postRef.set({
     title,

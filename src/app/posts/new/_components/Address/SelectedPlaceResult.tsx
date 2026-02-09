@@ -30,7 +30,6 @@ export default function SelectedPlaceResult({
   });
   useEffect(() => {
   if (status === "success" && data) {
-    console.log(data[0]);
     setAddress(data[0])
   } else if (status !== "pending") {
     setAddress(null)

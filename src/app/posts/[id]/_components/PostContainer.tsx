@@ -46,7 +46,6 @@ export default function PostContainer() {
     }
 
     if (shouldUpdateView) {
-      console.log("View should be updated.");
       updateView();
     }
   }, [postId]);

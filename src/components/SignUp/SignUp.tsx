@@ -24,7 +24,7 @@ export default function SignUp() {
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (isLoading || !emailRef.current || !passwordRef.current) { console.log(email, password, isLoading); return; };
+        if (isLoading || !emailRef.current || !passwordRef.current)  return;
 
         try {
             setIsLoading(true);

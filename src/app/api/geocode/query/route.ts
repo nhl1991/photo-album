@@ -23,10 +23,6 @@ export async function POST(req: NextRequest) {
       { status: 404 },
     );
 
-
-    // console.log(results);
-    // results.map((r:GeocodeResponse) => console.log(r.geometry.location))
-
   return NextResponse.json(
     {
       ok: true,

@@ -29,7 +29,7 @@ export default function FavoriteContainer() {
     },
   });
 
-  // console.log(lastRef)
+
   if (status === "pending") return <LoadingSpinner />;
 
   if (status === "success" && data)

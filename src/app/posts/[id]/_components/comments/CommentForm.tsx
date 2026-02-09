@@ -8,7 +8,6 @@ export default function CommentForm({ postId }: { postId: string }) {
   const commentRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  console.log(user?.displayName);
   const handleOnSubmit = async () => {
     if(!commentRef || !commentRef.current) return;
     const content = commentRef.current.value.trim();

@@ -27,9 +27,9 @@ export async function getAddressByGps(file: File) {
       gps: results.map(({geometry}: {geometry:Geometry}) => geometry),
     };
   } catch (error) {
-    console.log("<-------------EXIF Error START----------------->");
+    console.log("<-------------EXIF_ERROR_START----------------->");
     console.error(error);
-    console.log("<-------------EXIF Error END----------------->");
+    console.log("<-------------EXIF_ERROR_END----------------->");
     return { ok: false, error: "Internal Error." };
   }
 }
