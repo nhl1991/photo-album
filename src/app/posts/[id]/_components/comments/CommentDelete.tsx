@@ -15,22 +15,33 @@ export default function CommentDelete({
   const handleOnClick = async () => {
     const confirm = window.confirm("Delete this comment?");
     if (!confirm) return;
-    setLoading(true);
-    const response = await fetch(`/api/posts/${postId}/comments/${commentId}`, {
-      method: "DELETE",
-    });
-    setLoading(false);
-
-    if (response.ok) {
-      queryClient.invalidateQueries({
-        queryKey: [`${postId}/comments`],
-      });
-    } else return alert("Failed to delete the comment. Try again.");
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `/api/posts/${postId}/comments/${commentId}`,
+        {
+          method: "DELETE",
+        },
+      );
+      if (response.ok) {
+        queryClient.invalidateQueries({
+          queryKey: [`${postId}/comments`],
+        });
+      }
+    } catch (e) {
+      alert("Failed to delete the comment. Try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <button id={commentId} onClick={handleOnClick}>
-      {loading ? <SixDotsRotate className="w-6" /> :<DeleteIcon className="w-6 hover:stroke-red-500 cursor-pointer" />}
+      {loading ? (
+        <SixDotsRotate className="w-6" />
+      ) : (
+        <DeleteIcon className="w-6 hover:stroke-red-500 cursor-pointer" />
+      )}
     </button>
   );
 }
