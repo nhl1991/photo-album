@@ -35,7 +35,7 @@ export default function DashboradContainer() {
 
   // console.log(lastRef)
   if (status === "pending") return <LoadingSpinner />;
-
+  if (status === "error") return <p>Error..</p>
   if (status === "success" && data)
     return (
       <div>
