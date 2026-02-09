@@ -36,12 +36,14 @@ export default function CommentDelete({
   };
 
   return (
-    <button id={commentId} onClick={handleOnClick}>
+    <>
       {loading ? (
         <SixDotsRotate className="w-6" />
       ) : (
-        <DeleteIcon className="w-6 hover:stroke-red-500 cursor-pointer" />
+        <button id={commentId} onClick={handleOnClick}>
+          <DeleteIcon className="w-6 hover:stroke-red-500 cursor-pointer" />
+        </button>
       )}
-    </button>
+    </>
   );
 }
