@@ -31,7 +31,7 @@ export default function DisplayName() {
 
   return (
     <div className="p-2">
-      <label className="px-2 font-bold" htmlFor="nickname">DisplayName</label>
+      <p className="px-2 font-bold">DisplayName</p>
       <div className={`flex border-2 border-gray-300 rounded-2xl px-1 `}>
         {isEdit ? (
           <input
