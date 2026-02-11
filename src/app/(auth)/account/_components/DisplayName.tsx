@@ -37,6 +37,7 @@ export default function DisplayName() {
           <input
             className="w-72 text-2xl px-4 py-1 text-center outline-0 focus:bg-transparent active:bg-transparent"
             type="text"
+            value={username}
             placeholder={user?.displayName ? user.displayName : "Anonymous"}
             onChange={onChangeUsername}
           />
