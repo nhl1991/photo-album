@@ -1,9 +1,16 @@
 import { Logout } from "@/utils/firebase-utils";
+import { useRouter } from "next/navigation";
 
 export default function SignOut() {
+  const router = useRouter();
   const onClickLogout = async () => {
-    await Logout();
-    // router.push('/signin');
+    const response = await fetch("/api/auth/logout", {
+      method: "GET",
+    });
+    if (response.ok) {
+      await Logout();
+      router.push("/signin");
+    } else return alert("Failed to Sign Out. Try again.");
   };
 
   return (
