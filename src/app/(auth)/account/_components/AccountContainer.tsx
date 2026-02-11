@@ -17,7 +17,8 @@ export default function AccountContainer() {
         if(!user) router.push('/signin')
     })
   return (
-      <div className="flex flex-col gap-1 items-center justify-center rounded-xl shadow-sm shadow-cyan-200 py-8 my-10 px-4">
+      <div className="flex flex-col gap-y-4 items-center justify-center rounded-xl shadow-xl px-4 py-2">
+
         <Avartar user={user} />
         <DisplayName />
         <ButtonGroup>
