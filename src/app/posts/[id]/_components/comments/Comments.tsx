@@ -10,7 +10,7 @@ export default function Comments({ postId }: { postId: string }) {
   return (
     <span className="flex flex-col gap-y-4">
       <CommentList postId={postId} />
-      {status==='authed' && user ? <CommentForm postId={postId} /> : <div className="flex flex-col items-center justify-center gap-y-4">
+      {user ? <CommentForm postId={postId} /> : <div className="flex flex-col items-center justify-center gap-y-4">
                 <p className="font-bold text-center">You need to sign in.</p>
                 <Link
                   href="/signin"
