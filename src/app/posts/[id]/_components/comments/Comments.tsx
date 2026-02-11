@@ -6,7 +6,7 @@ import Link from "next/link";
 
 // view, input
 export default function Comments({ postId }: { postId: string }) {
-  const { user,status } = useAuth();
+  const { user } = useAuth();
   return (
     <span className="flex flex-col gap-y-4">
       <CommentList postId={postId} />
