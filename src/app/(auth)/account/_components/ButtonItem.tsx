@@ -8,7 +8,7 @@ export default function ButtonItem({ children }: {
 
     return(
 
-        <div className="w-72 shadow-sm hover:shadow-cyan-200 dark:hover:shadow-purple-800 rounded-2xl text-center py-2">
+        <div className="w-72 hover:shadow-sm rounded-2xl text-center py-2">
             {children}
         </div>
     )
