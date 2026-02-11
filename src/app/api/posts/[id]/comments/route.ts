@@ -66,6 +66,7 @@ export async function GET(
   const session = (await cookies()).get("session");
   const decoded = session ? await verifySessionCookie(session.value) : null;
   const viewerUid = decoded?.uid ?? null;
+  
   const docs = (await query.get()).docs;
   let lastDoc;
   if (docs.length < 10) lastDoc = null;
@@ -78,6 +79,7 @@ export async function GET(
       content: string;
       displayName: string;
     };
+    
 
     return {
       photoURL,
