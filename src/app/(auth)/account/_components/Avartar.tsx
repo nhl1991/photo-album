@@ -69,6 +69,7 @@ export default function Avartar({ user }: { user: AuthUser }) {
           id="avartar"
           type="file"
           className="hidden"
+          accept="image/*"
           onChange={handleOnProfileImage}
         />
       </label>
