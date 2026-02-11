@@ -29,6 +29,7 @@ export default function CommentDelete({
         });
       }
     } catch (e) {
+      console.log(e);
       alert("Failed to delete the comment. Try again.");
     } finally {
       setLoading(false);
