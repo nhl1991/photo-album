@@ -13,7 +13,7 @@ export default function PhotoPost({ item }: { item: Post }) {
               src={item.imageUrl}
               fill
               className="object-cover "
-              sizes="(max-width: 768px) 33vw, 20vw"
+              sizes="(max-width: 768px) 10vw, 5vw"
               alt={item.title}
               loading="lazy"
             />
