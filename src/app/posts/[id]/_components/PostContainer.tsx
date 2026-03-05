@@ -11,6 +11,9 @@ import { useEffect } from "react";
 import Comments from "./comments/Comments";
 import PostDeleteButton from "./PostDeleteButton";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import PostEditButton from "./PostEditButton";
+
+
 const fetchPost = async (postId: string) => {
   const response = await fetch(`/api/posts/${postId}`);
   const result = await response.json();
@@ -64,17 +67,16 @@ export default function PostContainer() {
   if (isPending || deleteMutation.isPending) return <LoadingSpinner />;
   if (status === "success" && data) {
     const { post, liked, isMine } = data;
-
     return (
       <>
         <article className="w-full flex flex-col gap-y-8 lg:max-w-5xl min-h-screen">
           <header className="rounded-xl shadow-xl p-2">
             {isMine ? (
-              <ul className="flex justify-between gap-x-4 px-2">
+              <ul className="flex justify-end gap-x-4 px-2">
                 <li className="">
                   <PostDeleteButton onDelete={deleteMutation.mutateAsync} />
                 </li>
-                <li>UPDATE</li>
+                <li><PostEditButton onEdit={async ()=> {}}/></li>
               </ul>
             ) : null}
             <PostHero
@@ -91,7 +93,7 @@ export default function PostContainer() {
                 className="w-10 h-10"
               />
               <div className="flex items-center justify-center">
-                <ViewCount className="w-4 md:w-8" view={post.view} />
+                <ViewCount className="w-4 md:w-8" view={post.view+1} />
                 <div className="flex">
                   <Likes
                     postId={postId}
@@ -102,8 +104,8 @@ export default function PostContainer() {
                 </div>
               </div>
             </div>
-            <div>
-              <PostContent title={post.title} body={post.description} />
+            <div className="min-h-48">
+              <PostContent title={post.title} body={post.content ?? post.description} />
             </div>
           </section>
           {/* {JSON.stringify(data)} */}
