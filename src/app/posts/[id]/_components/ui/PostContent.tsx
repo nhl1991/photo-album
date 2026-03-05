@@ -1,3 +1,4 @@
+"use client"
 export default function PostContent({
   title,
   body,
@@ -8,7 +9,7 @@ export default function PostContent({
   return (
     <>
       <p className="text-[2rem]">{title}</p>
-      <p className="text-[1rem]">{body}</p>
+      <p className="text-[1rem] px-4">{body}</p>
     </>
   );
 }
