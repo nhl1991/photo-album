@@ -58,48 +58,66 @@ export default function SignUpForm({
     }
   };
   return (
-    <form className="flex flex-col gap-y-10 py-4" onSubmit={onSubmit}>
-      <div className="flex flex-col justify-evenly items-center gap-y-8 px-4">
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="email">EMAIL</label>
+    <form className="flex flex-col" onSubmit={onSubmit}>
+      <div className="flex flex-col gap-y-5">
+        <div className="flex flex-col">
+          <label
+            htmlFor="email"
+            className="font-mono-ui text-[11px] tracking-[0.08em] text-studio-dim mb-2"
+          >
+            EMAIL
+          </label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="w-full bg-transparent border-0 border-b border-studio-line text-studio-text text-[15px] pb-2.5 outline-none focus:border-b-studio-lime placeholder:text-studio-dim/60 transition-colors"
             id="email"
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="you@example.com"
             ref={emailRef}
           />
         </div>
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="password">PASSWORD</label>
+        <div className="flex flex-col">
+          <label
+            htmlFor="password"
+            className="font-mono-ui text-[11px] tracking-[0.08em] text-studio-dim mb-2"
+          >
+            PASSWORD
+          </label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="w-full bg-transparent border-0 border-b border-studio-line text-studio-text text-[15px] pb-2.5 outline-none focus:border-b-studio-lime placeholder:text-studio-dim/60 transition-colors"
             id="password"
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="••••••••"
             ref={passwordRef}
           />
+          <p className="font-mono-ui text-[10.5px] text-studio-dim mt-1.5">
+            8자 이상, 영문+숫자 조합
+          </p>
         </div>
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="username">USERNAME</label>
+        <div className="flex flex-col">
+          <label
+            htmlFor="username"
+            className="font-mono-ui text-[11px] tracking-[0.08em] text-studio-dim mb-2"
+          >
+            USERNAME
+          </label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="w-full bg-transparent border-0 border-b border-studio-line text-studio-text text-[15px] pb-2.5 outline-none focus:border-b-studio-lime placeholder:text-studio-dim/60 transition-colors"
             type="text"
             id="username"
-            placeholder="Username"
+            placeholder="username"
             ref={displayNameRef}
           />
         </div>
       </div>
-      <div className="w-full h-full flex items-center justify-center col-span-full row-start-4">
+      <div className="w-full flex items-center justify-center mt-8">
         {isLoading ? (
           <ThreeDotsBounce className="w-12 h-8" />
         ) : (
           <input
             type="submit"
-            className="w-24 uppercase rounded-xl cursor-pointer px-2 py-1 btn-hover"
+            className="w-full uppercase tracking-wide rounded-md cursor-pointer py-3.5 bg-studio-lime text-studio-bg font-semibold text-sm hover:bg-[#d7ec89] hover:-translate-y-px focus-visible:bg-[#d7ec89] transition-all"
             disabled={isLoading}
             value={"Sign Up"}
           />

@@ -3,6 +3,6 @@ export default function LikeCount({ likeCount}: { likeCount: number}){
     // useEffect(()=>{},[likeCount])
 
     return(
-        <p>{likeCount ?? 0}</p>
+        <p className="font-mono-ui px-2">{likeCount ?? 0}</p>
     )
 }

@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function CommentListView({ id, comment, children }: { id: string,comment: Comment, children:React.ReactNode }) {
   return (
-    <div className="flex flex-col justify-center border-2 rounded-2xl border-gray-200 p-4">
+    <div className="flex flex-col justify-center border-2 rounded-2xl border-studio-line bg-studio-panel p-4 text-studio-text">
       <header className="flex justify-between items-center">
         <div id={id} className="flex items-center gap-x-2">
           <figure className="w-8 h-8 rounded-full overflow-hidden relative">
@@ -25,7 +25,7 @@ export default function CommentListView({ id, comment, children }: { id: string,
         <div className="flex gap-x-3">{children}</div>
       </header>
       <section>
-      <p className="p-2">{comment.content}</p>
+      <p className="p-2 text-studio-dim">{comment.content}</p>
       </section>
       <footer>
       </footer>

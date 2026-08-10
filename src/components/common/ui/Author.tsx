@@ -16,7 +16,7 @@ export default function Author({
         >
           <Image src={avartar} alt="" fill  sizes="5vw"/>
         </figure>
-        <p className="text-[2rem] px-2">{username}</p>
+        <p className="text-[2rem] px-2 text-studio-text">{username}</p>
       </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import Loading from "@/app/loading";
+import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import CommentListView from "./ui/CommentListView";
 import { Comment } from "@/types/Comment";
@@ -30,9 +30,14 @@ export default function CommentList({ postId }: { postId: string }) {
     },
   });
 
-  if (status === "pending") return <Loading />;
-  if (status === "error") return <p>Error..</p>;
-  if(status === "success" && !data) return <p>No</p>
+  if (status === "pending")
+    return (
+      <div className="w-full flex items-center justify-center py-8">
+        <ThreeDotsBounce className="w-12 h-8" />
+      </div>
+    );
+  if (status === "error") return <p className="text-studio-dim">Error..</p>;
+  if(status === "success" && !data) return <p className="text-studio-dim">No</p>
   if (status === "success" && data) return <>
   {
     data.pages.map((page)=>{

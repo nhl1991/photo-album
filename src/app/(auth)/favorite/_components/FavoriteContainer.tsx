@@ -3,8 +3,12 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 import PhotoPost from "@/components/common/PhotoPost";
 import FeedEndNotice from "@/components/common/ui/FeedEndNotice";
 import PostsWrapper from "@/components/common/ui/PostsWrapper";
+import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
+import { useInfiniteScrollTrigger } from "@/hooks/useInfiniteScrollTrigger";
 import { QueryData } from "@/types/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
+
+const DOCS_SIZE = 8;
 
 const fetchFavoritePost = async ({
   pageParam,
@@ -31,6 +35,12 @@ export default function FavoriteContainer() {
   });
 
 
+  const sentinelRef = useInfiniteScrollTrigger({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
+
   if (status === "pending") return <LoadingSpinner />;
 
   if (status === "success" && data)
@@ -40,20 +50,27 @@ export default function FavoriteContainer() {
 
           return (
             <PostsWrapper key={pageIndex}>
-              {page.items.map((d: QueryData) => {
+              {page.items.map((d: QueryData, itemIndex: number) => {
 
-                return <PhotoPost item={d} key={d.id} />;
+                return (
+                  <PhotoPost
+                    item={d}
+                    index={pageIndex * DOCS_SIZE + itemIndex + 1}
+                    key={d.id}
+                  />
+                );
               })}
             </PostsWrapper>
           );
         })}
+        <div ref={sentinelRef} />
         <div className="w-full flex items-center justify-center py-4">
           {hasNextPage ? (
             isFetchingNextPage ? (
-              <p>Loading...</p>
+              <ThreeDotsBounce className="w-12 h-8" />
             ) : (
               <button
-                className="btn-wrap btn-hover"
+                className="btn-wrap font-mono-ui text-xs tracking-wide bg-studio-panel border border-studio-line text-studio-text hover:border-studio-lime-deep hover:text-studio-lime cursor-pointer transition-colors"
                 onClick={() => fetchNextPage()}
               >
                 NEXT

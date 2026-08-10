@@ -41,7 +41,7 @@ export default function CommentDelete({
       {loading ? (
         <SixDotsRotate className="w-6" />
       ) : (
-        <button id={commentId} onClick={handleOnClick}>
+        <button id={commentId} onClick={handleOnClick} className="text-studio-dim">
           <DeleteIcon className="w-6 hover:stroke-red-500 cursor-pointer" />
         </button>
       )}

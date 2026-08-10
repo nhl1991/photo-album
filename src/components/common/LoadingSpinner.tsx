@@ -1,7 +1,7 @@
 export default function LoadingSpinner() {
   return (
     <>
-      <div className="w-screen h-screen flex items-center justify-center">
+      <div className="w-full h-full min-h-[50vh] flex items-center justify-center">
         <svg
         className="w-12 h-12"
           fill="hsl(228, 97%, 42%)"

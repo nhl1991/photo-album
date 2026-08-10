@@ -63,14 +63,14 @@ export default function PostContainer() {
     mutationFn: () => deletePost(postId),
     onSuccess: () => router.push("/"),
   });
-  if (status === "error" && error) return <p>Error...</p>;
+  if (status === "error" && error) return <p className="text-studio-text">Error...</p>;
   if (isPending || deleteMutation.isPending) return <LoadingSpinner />;
   if (status === "success" && data) {
     const { post, liked, isMine } = data;
     return (
       <>
-        <article className="w-full flex flex-col gap-y-8 lg:max-w-5xl min-h-screen">
-          <header className="rounded-xl shadow-xl p-2">
+        <article className="w-full flex flex-col gap-y-8 lg:max-w-5xl min-h-screen font-display text-studio-text">
+          <header className="rounded-xl bg-studio-panel border border-studio-line p-2">
             {isMine ? (
               <ul className="flex justify-end gap-x-4 px-2">
                 <li className="">
@@ -85,14 +85,14 @@ export default function PostContainer() {
               createdAt={post.createdAt}
             />
           </header>
-          <section className="rounded-xl shadow-xl p-2 min-h-60">
+          <section className="rounded-xl bg-studio-panel border border-studio-line p-2 min-h-60">
             <div className="flex justify-between items-center p-8">
               <Author
                 avartar={post.author.photoURL}
                 username={post.author.displayName}
                 className="w-10 h-10"
               />
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center text-studio-dim font-mono-ui">
                 <ViewCount className="w-4 md:w-8" view={post.view+1} />
                 <div className="flex">
                   <Likes
@@ -109,7 +109,7 @@ export default function PostContainer() {
             </div>
           </section>
           {/* {JSON.stringify(data)} */}
-          <footer className="py-12 px-4 rounded-xl shadow-xl">
+          <footer className="py-12 px-4 rounded-xl bg-studio-panel border border-studio-line">
             <Comments postId={postId} />
           </footer>
         </article>

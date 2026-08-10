@@ -37,8 +37,8 @@ export default function Likes({
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <button onClick={() => handleOnClick(postId)}>
+    <div className="flex items-center justify-center text-studio-dim">
+      <button onClick={() => handleOnClick(postId)} className="cursor-pointer hover:text-studio-red transition-colors">
         <LikeIcon className="w-4 md:w-8" userLike={like} />
       </button>
       <LikeCount likeCount={count} />

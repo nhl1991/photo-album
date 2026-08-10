@@ -29,7 +29,20 @@ input:focus {
 }
 
 @theme {
-  
+
+  --color-studio-bg: #0a0c0f;
+  --color-studio-panel: #111418;
+  --color-studio-panel-2: #161a1f;
+  --color-studio-line: rgba(214,220,224,0.10);
+  --color-studio-text: #dfe3e6;
+  --color-studio-dim: #767e86;
+  --color-studio-lime: #c8e06a;
+  --color-studio-lime-deep: #a5bb52;
+  --color-studio-red: #e0685f;
+  --font-display: var(--font-space-grotesk);
+  --font-mono-ui: var(--font-jetbrains-mono);
+  --breakpoint-studio: 980px;
+
   --breakpoint-4k: 240rem;
   --animate-fade-In: fadeIn 1s;
   @keyframes fadeIn{

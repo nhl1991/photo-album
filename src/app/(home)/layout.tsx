@@ -8,9 +8,9 @@ export default function TimelineLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="w-screen min-h-screen flex flex-col items-center justify-center">
+    <div className="w-screen min-h-screen flex bg-studio-bg text-studio-text font-display">
       <Navigation />
-      {children}
-    </main>
+      <main className="flex-1 min-w-0">{children}</main>
+    </div>
   );
 }
