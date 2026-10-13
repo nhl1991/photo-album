@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   const { gps } = await req.json();
 
   const response = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${gps.Latitude},${gps.Longitude}&result_type=political&key=${process.env.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY}`,
+    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${gps.Latitude},${gps.Longitude}&result_type=political&key=${process.env.GOOGLE_GEOCODING_API_KEY}`,
   );
   if (!response.ok)
     return NextResponse.json(

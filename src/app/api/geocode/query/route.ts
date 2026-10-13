@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   const { place_id } = await req.json();
 
   const response = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?place_id=${place_id}&key=${process.env.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY}`,
+    `https://maps.googleapis.com/maps/api/geocode/json?place_id=${place_id}&key=${process.env.GOOGLE_GEOCODING_API_KEY}`,
   );
 
   const { results } = await response.json();
