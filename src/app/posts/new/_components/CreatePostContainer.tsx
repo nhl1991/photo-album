@@ -9,7 +9,7 @@ import SelectedPlaceResult from "./Address/SelectedPlaceResult";
 import PlaceIcon from "@/components/icons/PlaceIcon";
 import CreatePostForm from "./CreatePostForm";
 import { FormState } from "@/types/Form";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, deleteObject } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { collection, doc } from "firebase/firestore";
@@ -33,50 +33,61 @@ export default function CreatePostContainer() {
 
   const handleOnSubmit = async () => {
     if (!file) {
-      alert("Please upload an image.");
+      alert("이미지를 업로드해주세요.");
       return;
     }
     if (form.title.trim().length === 0) {
-      alert("Please enter a title.");
+      alert("제목을 입력해주세요.");
       return;
     }
     if (form.content.trim().length === 0) {
-      alert("Please enter some content.");
+      alert("내용을 입력해주세요.");
       return;
     }
     if (!user) {
-      alert("Auth failed.");
+      alert("로그인이 필요합니다.");
       return;
     }
     if (!address) {
-      alert("Address is not available");
+      alert("장소를 선택해주세요.");
       return;
     }
     setIsUploading(true);
-    const postId = doc(collection(db, "posts")).id; // ✅ 미리 ID 생성
+    const postId = doc(collection(db, "posts")).id; // 미리 ID 생성
 
     const imagePath = `posts/${user.uid}/${postId}`;
     const locationRef = ref(storage, imagePath);
-    const result = await uploadBytes(locationRef, file);
-    const url = await getDownloadURL(result.ref);
-    const { displayName, photoURL } = user;
-
-    const formData = new FormData();
-    formData.append("title", form.title);
-    formData.append("content", form.content);
-    formData.append("address", JSON.stringify(address));
-    formData.append("displayName", displayName ?? "Anonymous");
-    formData.append("photoURL", photoURL ?? "");
-    formData.append("imageUrl", url);
-    formData.append("imagePath", imagePath);
-    const response = await fetch("/api/posts", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (response.ok) {
+    try {
+      await uploadBytes(locationRef, file);
+    } catch (err) {
+      console.error(err);
+      alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
       setIsUploading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("postId", postId);
+      formData.append("title", form.title);
+      formData.append("content", form.content);
+      formData.append("address", JSON.stringify(address));
+
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok)
+        throw new Error(`POST_CREATE_FAILED_${response.status}`);
+
       router.push("/");
+    } catch (err) {
+      // !ok, fetch 예외 모두 여기로
+      console.error(err);
+      await deleteObject(locationRef).catch(console.error); // 이미지 정리 (실패해도 계속)
+      alert("게시물 생성에 실패했습니다. 다시 시도해주세요.");
+      setIsUploading(false);
     }
   };
 
@@ -111,9 +122,7 @@ export default function CreatePostContainer() {
                 setOnLoadComplete={setOnLoadComplete}
               />
             ) : (
-              <ImageUploader
-                setFile={setFile}
-              />
+              <ImageUploader setFile={setFile} />
             )}
           </header>
           <section className="p-2 min-h-60">
@@ -147,7 +156,7 @@ export default function CreatePostContainer() {
                   className="btn-wrap btn-hover"
                   onClick={() => {
                     if (!file && !onLoadComplete)
-                      alert("Upload the photo first.");
+                      alert("먼저 사진을 업로드해주세요.");
                     else setModal(true);
                   }}
                 >
@@ -169,7 +178,9 @@ export default function CreatePostContainer() {
 
           <footer>
             <div className="flex items-center justify-center py-4">
-              <button className="btn-wrap btn-hover" onClick={handleOnSubmit}>COMPLETE</button>
+              <button className="btn-wrap btn-hover" onClick={handleOnSubmit}>
+                COMPLETE
+              </button>
             </div>
           </footer>
         </article>

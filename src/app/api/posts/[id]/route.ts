@@ -51,14 +51,18 @@ export async function DELETE(
 
   // storage posts/{postId} 삭제
   const postId = (await params).id;
+
   if (!postId)
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
   const postData = (await adminDb.doc(`/posts/${postId}`).get()).data();
 
   if (!postData)
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+
   if (postData.author.uid !== decode.uid)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const expected = `posts/${decode.uid}/${postId}`;
   const likesRef = await adminDb.collection(`/posts/${postId}/likes`).get();
 
   let batch = adminDb.batch();
@@ -82,17 +86,9 @@ export async function DELETE(
   }
 
   try {
-    await adminStorage.bucket().file(postData.imagePath).delete();
     await adminDb.doc(`/posts/${postId}`).delete();
-    return NextResponse.json(
-      {
-        code: "SUCCESS",
-        message: "STATUS_OK",
-      },
-      { status: 200 },
-    );
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return NextResponse.json(
       {
         code: "POST_DELETE_FAILED",
@@ -101,4 +97,23 @@ export async function DELETE(
       { status: 500 },
     );
   }
+
+  if (postData.imagePath === expected) {
+    try {
+      await adminStorage
+        .bucket()
+        .file(expected)
+        .delete({ ignoreNotFound: true });
+    } catch (err) {
+      // 게시물은 삭제됨 -> 성공 응답 유지, 이미지는 고아 파일로 남음
+      console.error("[posts] image cleanup failed", expected, err);
+    }
+  }
+  return NextResponse.json(
+    {
+      code: "SUCCESS",
+      message: "STATUS_OK",
+    },
+    { status: 200 },
+  );
 }
