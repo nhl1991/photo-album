@@ -1,4 +1,5 @@
 "use client";
+import Container from "@/components/common/ui/Container";
 
 export default function PostLayout({
   children,
@@ -6,8 +7,8 @@ export default function PostLayout({
   children: React.ReactNode;
 }) {
   return (
-      <main className="w-screen min-h-screen flex items-center justify-center py-10">
-        {children}
+      <main className="min-h-screen pb-16">
+        <Container>{children}</Container>
       </main>
   );
 }

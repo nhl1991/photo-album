@@ -1,7 +1,7 @@
 export default function SixDotsRotate({ className }: { className: string }) {
   return (
     <svg
-      fill="hsl(228, 97%, 42%)"
+      fill="currentColor"
       viewBox="0 0 24 24"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
