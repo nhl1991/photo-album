@@ -1,6 +1,6 @@
 "use client";
 // import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Logout } from "../utils/firebase-utils";
 import LogoutIcon from "./icons/LogoutIcon";
@@ -22,6 +22,8 @@ export default function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
   const [displayName, setDisplayName] = useState<string | null>("");
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, setUser, status } = useAuth();
   const onLogout = async () => {
@@ -32,7 +34,7 @@ export default function Navigation() {
       if (response.ok) {
         await Logout();
         setUser(null);
-        router.push('/');
+        router.push("/");
       }
     } catch (e) {
       console.log(e);
@@ -41,10 +43,10 @@ export default function Navigation() {
 
   useEffect(() => {
     const init = async () => {
-      await fetch('/api/auth/me', {
-        method:'GET'
-      })
-    }
+      await fetch("/api/auth/me", {
+        method: "GET",
+      });
+    };
     init();
 
     if (user) setDisplayName(user.displayName);
@@ -56,11 +58,26 @@ export default function Navigation() {
 
   useEffect(() => {
     if (!menuOpen) return;
+
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key !== "Escape") return;
+      // 현재 포커스를 가진 DOM 요소가 메뉴 컨테이너 내부에 있는지 확인
+      const isFocusInsideMenu = mobileMenuRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (isFocusInsideMenu) {
+        menuButtonRef.current?.focus();
+      }
+
+      setMenuOpen(false);
     };
+
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [menuOpen]);
 
   const isAuthed = status === "Authed" && user;
@@ -106,9 +123,11 @@ export default function Navigation() {
                   </Link>
                 ))}
               </nav>
-              <Link href={"/posts/new"} className="btn-primary ml-4 hidden min-h-9 px-4 lg:inline-flex">
-                <UploadIcon className="w-4" />
-                새 게시물
+              <Link
+                href={"/posts/new"}
+                className="btn-primary ml-4 hidden min-h-9 px-4 lg:inline-flex"
+              >
+                <UploadIcon className="w-4" />새 게시물
               </Link>
               <span
                 className="ml-2 hidden max-w-32 truncate text-sm text-muted xl:block"
@@ -127,6 +146,7 @@ export default function Navigation() {
                 <LogoutIcon className="w-5" />
               </button>
               <button
+                ref={menuButtonRef}
                 type="button"
                 className="icon-btn text-ink lg:hidden"
                 aria-expanded={menuOpen}
@@ -137,8 +157,19 @@ export default function Navigation() {
                 {menuOpen ? (
                   <CloseIcon className="w-6" />
                 ) : (
-                  <svg className="w-6" fill="none" strokeWidth={1.5} stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 7.5h16.5M3.75 12h16.5m-16.5 4.5h16.5" />
+                  <svg
+                    className="w-6"
+                    fill="none"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 7.5h16.5M3.75 12h16.5m-16.5 4.5h16.5"
+                    />
                   </svg>
                 )}
               </button>
@@ -153,27 +184,30 @@ export default function Navigation() {
 
       {isAuthed && menuOpen ? (
         <div
+          ref={mobileMenuRef}
           id="mobile-menu"
           className="border-t border-line bg-canvas lg:hidden"
         >
           <Container className="py-4">
             <p className="eyebrow pb-3">{displayName ?? "Anonymous"}</p>
             <ul className="flex flex-col">
-              {[{ href: "/", label: "둘러보기" }, { href: "/posts/new", label: "새 게시물" }, ...accountLinks].map(
-                ({ href, label }) => (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      className={`flex min-h-12 items-center border-b border-line text-base ${
-                        pathname === href ? "text-ink" : "text-muted"
-                      }`}
-                      aria-current={pathname === href ? "page" : undefined}
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ),
-              )}
+              {[
+                { href: "/", label: "둘러보기" },
+                { href: "/posts/new", label: "새 게시물" },
+                ...accountLinks,
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className={`flex min-h-12 items-center border-b border-line text-base ${
+                      pathname === href ? "text-ink" : "text-muted"
+                    }`}
+                    aria-current={pathname === href ? "page" : undefined}
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <button
                   className="flex min-h-12 w-full items-center gap-2 text-base text-muted cursor-pointer"
