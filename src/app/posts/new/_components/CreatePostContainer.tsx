@@ -33,23 +33,23 @@ export default function CreatePostContainer() {
 
   const handleOnSubmit = async () => {
     if (!file) {
-      alert("Please upload an image.");
+      alert("이미지를 업로드해주세요.");
       return;
     }
     if (form.title.trim().length === 0) {
-      alert("Please enter a title.");
+      alert("제목을 입력해주세요.");
       return;
     }
     if (form.content.trim().length === 0) {
-      alert("Please enter some content.");
+      alert("내용을 입력해주세요.");
       return;
     }
     if (!user) {
-      alert("Auth failed.");
+      alert("로그인이 필요합니다.");
       return;
     }
     if (!address) {
-      alert("Address is not available");
+      alert("장소를 선택해주세요.");
       return;
     }
     setIsUploading(true);
@@ -60,26 +60,34 @@ export default function CreatePostContainer() {
     try {
       await uploadBytes(locationRef, file);
     } catch (err) {
-      // 실패시 업로드 파일 삭제
-      deleteObject(locationRef);
       console.error(err);
-    }
-    await uploadBytes(locationRef, file);
-
-    const formData = new FormData();
-    formData.append("postId", postId);
-    formData.append("title", form.title);
-    formData.append("content", form.content);
-    formData.append("address", JSON.stringify(address));
-
-    const response = await fetch("/api/posts", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (response.ok) {
+      alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
       setIsUploading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("postId", postId);
+      formData.append("title", form.title);
+      formData.append("content", form.content);
+      formData.append("address", JSON.stringify(address));
+
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok)
+        throw new Error(`POST_CREATE_FAILED_${response.status}`);
+
       router.push("/");
+    } catch (err) {
+      // !ok, fetch 예외 모두 여기로
+      console.error(err);
+      await deleteObject(locationRef).catch(console.error); // 이미지 정리 (실패해도 계속)
+      alert("게시물 생성에 실패했습니다. 다시 시도해주세요.");
+      setIsUploading(false);
     }
   };
 
@@ -148,7 +156,7 @@ export default function CreatePostContainer() {
                   className="btn-wrap btn-hover"
                   onClick={() => {
                     if (!file && !onLoadComplete)
-                      alert("Upload the photo first.");
+                      alert("먼저 사진을 업로드해주세요.");
                     else setModal(true);
                   }}
                 >

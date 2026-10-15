@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   // get session from server
   const session = (await cookies()).get("session");
   if (!session)
-    return NextResponse.json({ status: 401, message: "Unauthorized" });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   // extract token from session
   const tokenId = session.value;
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
   // decoding token
   const decode = await verifySessionCookie(tokenId);
   if (!decode)
-    return NextResponse.json({ status: 401, message: "Unauthorized" });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   const { displayName, photoURL } = await adminAuth.getUser(decode.uid);
 
   const formData = await req.formData();
