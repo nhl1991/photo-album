@@ -9,6 +9,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import Container from "@/components/common/ui/Container";
+import PageHeading from "@/components/common/ui/PageHeading";
 
 export default function Page() {
   const password_current = useRef<HTMLInputElement>(null);
@@ -40,17 +42,21 @@ export default function Page() {
   }, 300);
 
   return (
-    <div className="w-full h-full flex justify-center items-center ">
-      <div className="w-1/2 h-[90vh] p-4 ">
-        <div className="w-full h-full flex flex-col justify-evenly items-center p-4 gap-3.5">
+    <main className="min-h-screen pb-16">
+      <Container>
+      <div className="mx-auto w-full max-w-xl">
+        <div className="mb-8">
+          <PageHeading title="Change password" />
+        </div>
+        <div className="card p-6 sm:p-8">
           {isValid ? (
             <NewPasswordForm />
           ) : (
             <div>
-              <Message>현재 비밀번호를 입력하세요.</Message>
-              <div className="flex">
+              <Message htmlFor="password_current">현재 비밀번호를 입력하세요.</Message>
+              <div className="flex items-center gap-2">
                 <input
-                  className="w-64 border-b-2 border-white focus:outline-0 py-1"
+                  className="field-input"
                   id="password_current"
                   type="password"
                   ref={password_current}
@@ -58,9 +64,10 @@ export default function Page() {
                   autoComplete="false"
                 />
                 <svg
-                  className={`w-8 ${
-                    isValid ? "stroke-sky-400" : "stroke-gray-600"
+                  className={`w-7 shrink-0 ${
+                    isValid ? "text-accent" : "text-line-strong"
                   }`}
+                  stroke="currentColor"
                   data-slot="icon"
                   fill="none"
                   strokeWidth={1.5}
@@ -79,7 +86,8 @@ export default function Page() {
           )}
         </div>
       </div>
-    </div>
+      </Container>
+    </main>
   );
 }
 
@@ -113,10 +121,11 @@ function NewPasswordForm() {
   };
 
   return (
-    <form className="w-full h-full" onSubmit={onSubmit}>
-      <Message>새 비밀번호를 입력하세요.</Message>
+    <form className="flex flex-col gap-y-5" onSubmit={onSubmit}>
+      <div>
+      <Message htmlFor="password_new">새 비밀번호를 입력하세요.</Message>
       <input
-        className="w-64 border-b-2 border-white focus:outline-0 py-1"
+        className="field-input"
         id="password_new"
         type="password"
         ref={password_new}
@@ -124,10 +133,12 @@ function NewPasswordForm() {
         onChange={onChangePassword}
         autoComplete="false"
       />
+      </div>
 
-      <Message>새 비밀번호를 다시 한번 입력하세요.</Message>
+      <div>
+      <Message htmlFor="passowrd_confirm">새 비밀번호를 다시 한번 입력하세요.</Message>
       <input
-        className="w-64 border-b-2 border-white focus:outline-0 py-1"
+        className="field-input"
         id="passowrd_confirm"
         type="password"
         ref={password_confirm}
@@ -135,11 +146,12 @@ function NewPasswordForm() {
         onChange={onChangePassword}
         autoComplete="false"
       />
+      </div>
 
       <button
         type="submit"
-        className={`w-max h-max p-2 rounded-xl ${
-          isComplete ? "bg-sky-400 cursor-pointer" : "bg-sky-400/20"
+        className={`btn-primary min-h-11 w-full ${
+          isComplete ? "" : "opacity-50"
         }`}
       >
         비밀번호 변경
@@ -148,10 +160,18 @@ function NewPasswordForm() {
   );
 }
 
-function Message({ children }: { children: React.ReactNode }) {
+function Message({
+  children,
+  htmlFor,
+}: {
+  children: React.ReactNode;
+  htmlFor: string;
+}) {
   return (
     <>
-      <p className="text-2xl font-bold my-4">{children}</p>
+      <label htmlFor={htmlFor} className="field-label">
+        {children}
+      </label>
     </>
   );
 }

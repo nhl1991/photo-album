@@ -26,7 +26,7 @@ export default function SignOut() {
   return (
     <>
       <button
-        className="rounded-2xl px-4 py-1 font-semibold cursor-pointer"
+        className="flex min-h-14 w-full items-center px-5 text-left text-muted transition-colors hover:bg-canvas hover:text-ink cursor-pointer"
         onClick={onClickLogout}
       >
         LOGOUT

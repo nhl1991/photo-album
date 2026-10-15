@@ -8,8 +8,8 @@ export default function ButtonItem({ children }: {
 
     return(
 
-        <div className="w-72 hover:shadow-sm rounded-2xl text-center py-2">
+        <li className="text-sm text-ink [&>a]:flex [&>a]:min-h-14 [&>a]:items-center [&>a]:justify-between [&>a]:px-5 [&>a]:transition-colors [&>a:hover]:bg-canvas">
             {children}
-        </div>
+        </li>
     )
 }
