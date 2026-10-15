@@ -10,13 +10,13 @@ export default function Author({
   avartar: string;
 }) {
   return (
-      <div className="flex">
+      <div className="flex items-center gap-3">
         <figure
-          className={`${className} relative rounded-full overflow-hidden`}
+          className={`${className} relative shrink-0 rounded-full overflow-hidden bg-line`}
         >
           <Image src={avartar} alt="" fill  sizes="5vw"/>
         </figure>
-        <p className="text-[2rem] px-2">{username}</p>
+        <p className="text-sm font-medium text-ink">{username}</p>
       </div>
   );
 }

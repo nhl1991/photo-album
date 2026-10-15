@@ -39,10 +39,12 @@ export default function CommentDelete({
   return (
     <>
       {loading ? (
-        <SixDotsRotate className="w-6" />
+        <span role="status" aria-label="Deleting" className="inline-flex h-10 w-10 items-center justify-center text-accent">
+          <SixDotsRotate className="w-5" />
+        </span>
       ) : (
-        <button id={commentId} onClick={handleOnClick}>
-          <DeleteIcon className="w-6 hover:stroke-red-500 cursor-pointer" />
+        <button id={commentId} onClick={handleOnClick} className="icon-btn hover:text-danger" aria-label="Delete comment">
+          <DeleteIcon className="w-5" />
         </button>
       )}
     </>

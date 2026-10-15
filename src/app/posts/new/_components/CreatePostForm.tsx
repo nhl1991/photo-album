@@ -9,20 +9,28 @@ export default function CreatePostForm({setForm} : {setForm: Dispatch<SetStateAc
   setForm(prev => ({ ...prev, [name]: value }));
 };
   return (
-    <div className="w-full flex flex-col items-center justify-center gap-y-4">
+    <div className="flex w-full flex-col gap-y-5">
+      <div>
+      <label className="field-label" htmlFor="post-title">Title</label>
       <input
-        className="w-full rounded-xl border-2 px-3 py-1"
+        className="field-input"
+        id="post-title"
         type="text"
         name="title"
         placeholder="Write your title"
         onChange={handleChange}
       />
+      </div>
+      <div>
+      <label className="field-label" htmlFor="post-content">Content</label>
       <textarea
         name="content"
-        className="w-full h-96 flex flex-col items-center justify-center rounded-xl border-2 px-3 py-1 resize-none"
+        id="post-content"
+        className="field-input h-64 resize-none md:h-80"
         placeholder="Write your content"
         onChange={handleChange}
       ></textarea>
+      </div>
     </div>
   );
 }

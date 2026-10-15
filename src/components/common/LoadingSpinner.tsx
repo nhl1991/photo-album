@@ -1,10 +1,14 @@
-export default function LoadingSpinner() {
+export default function LoadingSpinner({
+  className = "min-h-[50vh]",
+}: {
+  className?: string;
+}) {
   return (
     <>
       <div
         role="status"
         aria-label="Loading"
-        className="flex min-h-[50vh] w-full items-center justify-center text-accent"
+        className={`flex w-full items-center justify-center text-accent ${className}`}
       >
         <svg
           className="w-10 h-10"

@@ -20,11 +20,11 @@ export default function PostHero({
   );
   return (
     <>
-      <div className="w-full h-12 flex justify-end items-center"></div>
-      <figure className="relative w-full max-w-[1024px] aspect-[16/9]">
-        <div className="absolute z-50 right-0 ">
+      <figure className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface ring-1 ring-line">
+        <div className="absolute right-3 top-3 z-10">
           <button
-            className="cursor-pointer "
+            className="icon-btn bg-canvas/80 text-ink backdrop-blur hover:bg-canvas"
+            aria-label={objectFit === "object-cover" ? "Show whole image" : "Fill frame"}
             onClick={() =>
               setObjectFit((prev) =>
                 prev === "object-contain" ? "object-cover" : "object-contain",
@@ -32,9 +32,9 @@ export default function PostHero({
             }
           >
             {objectFit === "object-cover" ? (
-              <CollapseIcon className="w-8 hover:fill-gray-500" />
+              <CollapseIcon className="w-5" />
             ) : (
-              <ExpandIcon className="w-8 hover:fill-gray-500" />
+              <ExpandIcon className="w-5" />
             )}
           </button>
         </div>
@@ -43,11 +43,11 @@ export default function PostHero({
           className={objectFit}
           fill
           alt="Post"
-          sizes="(max-width: 768px) 50vw, 35vw"
+          sizes="(max-width: 1024px) 100vw, 1024px"
           priority
         />
       </figure>
-      <div className="w-full h-12 flex justify-between items-center">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 pt-3">
         <LocationInfo address={address.formatted_address} />
         <TimeAgo createdAt={createdAt} />
       </div>

@@ -35,13 +35,13 @@ export default function SelectedPlaceResult({
     setAddress(null)
   }
 }, [status, data, setAddress])
-  if (status === "error") return <p>에러..</p>;
-  if (status === "success" && !data) return <p>주소 없음</p>;
+  if (status === "error") return <p role="alert" className="text-sm text-danger">에러..</p>;
+  if (status === "success" && !data) return <p className="text-sm text-muted">주소 없음</p>;
   if (status === "success" && data) {
     const place = data[0];
     return (
       <>
-          <p key={place.place_id} className="w-max flex items-center justify-center gap-x-1 px-3 py-1 rounded-xl bg-lime-500 text-white font-bold md:text-base text-xs">
+          <p key={place.place_id} className="inline-flex max-w-full items-center gap-x-1 rounded-full bg-accent/10 px-3.5 py-1.5 text-xs font-medium text-ink md:text-sm">
             {place.formatted_address ?? "SEARCH THE PLACE"}
           </p>
       </>

@@ -63,16 +63,21 @@ export default function PostContainer() {
     mutationFn: () => deletePost(postId),
     onSuccess: () => router.push("/"),
   });
-  if (status === "error" && error) return <p>Error...</p>;
+  if (status === "error" && error)
+    return (
+      <p role="alert" className="py-24 text-center text-sm text-danger">
+        Error...
+      </p>
+    );
   if (isPending || deleteMutation.isPending) return <LoadingSpinner />;
   if (status === "success" && data) {
     const { post, liked, isMine } = data;
     return (
       <>
-        <article className="w-full flex flex-col gap-y-8 lg:max-w-5xl min-h-screen">
-          <header className="rounded-xl shadow-xl p-2">
+        <article className="mx-auto flex w-full max-w-5xl flex-col pt-6 md:pt-10">
+          <header>
             {isMine ? (
-              <ul className="flex justify-end gap-x-4 px-2">
+              <ul className="mb-3 flex justify-end gap-x-1">
                 <li className="">
                   <PostDeleteButton onDelete={deleteMutation.mutateAsync} />
                 </li>
@@ -85,15 +90,18 @@ export default function PostContainer() {
               createdAt={post.createdAt}
             />
           </header>
-          <section className="rounded-xl shadow-xl p-2 min-h-60">
-            <div className="flex justify-between items-center p-8">
+          <section className="mx-auto w-full max-w-3xl pt-8 md:pt-12">
+            <div className="min-h-24">
+              <PostContent title={post.title} body={post.content ?? post.description} />
+            </div>
+            <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-y border-line py-4">
               <Author
                 avartar={post.author.photoURL}
                 username={post.author.displayName}
                 className="w-10 h-10"
               />
-              <div className="flex items-center justify-center">
-                <ViewCount className="w-4 md:w-8" view={post.view+1} />
+              <div className="flex items-center gap-5 text-sm text-muted">
+                <ViewCount className="w-5" view={post.view+1} />
                 <div className="flex">
                   <Likes
                     postId={postId}
@@ -104,12 +112,10 @@ export default function PostContainer() {
                 </div>
               </div>
             </div>
-            <div className="min-h-48">
-              <PostContent title={post.title} body={post.content ?? post.description} />
-            </div>
           </section>
           {/* {JSON.stringify(data)} */}
-          <footer className="py-12 px-4 rounded-xl shadow-xl">
+          <footer className="mx-auto w-full max-w-3xl pt-12">
+            <h2 className="eyebrow mb-4">Comments</h2>
             <Comments postId={postId} />
           </footer>
         </article>

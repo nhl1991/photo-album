@@ -1,6 +1,6 @@
 "use client";
 
-import Loading from "@/app/loading";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import CommentListView from "./ui/CommentListView";
 import { Comment } from "@/types/Comment";
@@ -30,10 +30,10 @@ export default function CommentList({ postId }: { postId: string }) {
     },
   });
 
-  if (status === "pending") return <Loading />;
-  if (status === "error") return <p>Error..</p>;
-  if(status === "success" && !data) return <p>No</p>
-  if (status === "success" && data) return <>
+  if (status === "pending") return <LoadingSpinner className="min-h-24" />;
+  if (status === "error") return <p role="alert" className="text-sm text-danger">Error..</p>;
+  if(status === "success" && !data) return <p className="text-sm text-muted">No</p>
+  if (status === "success" && data) return <div className="divide-y divide-line border-t border-line empty:border-t-0">
   {
     data.pages.map((page)=>{
       if(page.comments.length > 0)
@@ -45,5 +45,5 @@ export default function CommentList({ postId }: { postId: string }) {
     })
   }
     {/* {JSON.stringify(data)} */}
-  </>;
+  </div>;
 }

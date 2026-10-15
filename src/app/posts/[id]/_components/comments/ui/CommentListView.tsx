@@ -5,10 +5,10 @@ import Image from "next/image";
 
 export default function CommentListView({ id, comment, children }: { id: string,comment: Comment, children:React.ReactNode }) {
   return (
-    <div className="flex flex-col justify-center border-2 rounded-2xl border-gray-200 p-4">
+    <div className="flex flex-col justify-center py-5">
       <header className="flex justify-between items-center">
         <div id={id} className="flex items-center gap-x-2">
-          <figure className="w-8 h-8 rounded-full overflow-hidden relative">
+          <figure className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-line">
             {comment.photoURL ? (
               <Image
                 alt={`${comment.displayName} profile image`}
@@ -20,12 +20,12 @@ export default function CommentListView({ id, comment, children }: { id: string,
               />
             ) : null}
           </figure>
-          <p className="font-bold text-xl">{comment.displayName}</p>
+          <p className="text-sm font-medium text-ink">{comment.displayName}</p>
         </div>
-        <div className="flex gap-x-3">{children}</div>
+        <div className="flex gap-x-1">{children}</div>
       </header>
       <section>
-      <p className="p-2">{comment.content}</p>
+      <p className="whitespace-pre-line pl-10 pt-1 text-sm leading-relaxed text-ink/90">{comment.content}</p>
       </section>
       <footer>
       </footer>

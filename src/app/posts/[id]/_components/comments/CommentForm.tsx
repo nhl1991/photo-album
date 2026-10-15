@@ -34,8 +34,8 @@ export default function CommentForm({ postId }: { postId: string }) {
   };
   if (user)
     return (
-      <div className="flex items-center justify-center border-2 rounded-2xl border-gray-200 py-1 px-3">
-        <figure className="w-8 h-8 rounded-full overflow-hidden relative">
+      <div className="flex items-center gap-3 rounded-full border border-line-strong bg-surface py-1.5 pl-2 pr-1.5 focus-within:border-accent">
+        <figure className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-line">
           {user.photoURL ? (
             <Image
               alt={`${user.displayName} profile image`}
@@ -49,19 +49,21 @@ export default function CommentForm({ postId }: { postId: string }) {
         </figure>
         <input
           type="text"
-          className="w-full px-4"
+          className="w-full min-w-0 bg-transparent text-sm text-ink placeholder:text-muted outline-none"
           name="comment"
+          aria-label="Comment"
           placeholder="댓글"
           ref={commentRef}
         />
         <button
           type="submit"
-          className="rounded-xl px-3 py-1 bg-sky-400"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent transition-colors hover:bg-accent/90 cursor-pointer"
+          aria-label="Post comment"
           name="submit"
           value="등록"
           onClick={handleOnSubmit}
         >
-          <CommentUploadIcon className="w-4 h-4 stroke-white" />
+          <CommentUploadIcon className="w-4 h-4" />
         </button>
       </div>
     );

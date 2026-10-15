@@ -2,7 +2,7 @@
 export default function ResultsWrapper({children} : {children: React.ReactNode}){
 
     return(
-        <ul className="flex gap-x-2 flex-wrap gap-y-2 px-16">
+        <ul className="flex flex-wrap gap-2 px-5 pt-5 empty:hidden">
             {children}
         </ul>
     )

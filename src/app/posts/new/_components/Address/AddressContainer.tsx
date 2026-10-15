@@ -59,8 +59,8 @@ export default function AddressContainer({
   
 
   if (hasGps) {
-    if (status === "pending") return <LoadingSpinner />;
-    if (status === "error") return <p>Error ...</p>;
+    if (status === "pending") return <LoadingSpinner className="min-h-40" />;
+    if (status === "error") return <p role="alert" className="px-5 py-8 text-center text-sm text-danger">Error ...</p>;
     if (status === "success" && data) {
       const { results }: { results: GeocodeResults[] } = data;
       if (Array.isArray(results))
