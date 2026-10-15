@@ -9,7 +9,7 @@ import SelectedPlaceResult from "./Address/SelectedPlaceResult";
 import PlaceIcon from "@/components/icons/PlaceIcon";
 import CreatePostForm from "./CreatePostForm";
 import { FormState } from "@/types/Form";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, deleteObject } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { collection, doc } from "firebase/firestore";
@@ -53,22 +53,25 @@ export default function CreatePostContainer() {
       return;
     }
     setIsUploading(true);
-    const postId = doc(collection(db, "posts")).id; // ✅ 미리 ID 생성
+    const postId = doc(collection(db, "posts")).id; // 미리 ID 생성
 
     const imagePath = `posts/${user.uid}/${postId}`;
     const locationRef = ref(storage, imagePath);
-    const result = await uploadBytes(locationRef, file);
-    const url = await getDownloadURL(result.ref);
-    const { displayName, photoURL } = user;
+    try {
+      await uploadBytes(locationRef, file);
+    } catch (err) {
+      // 실패시 업로드 파일 삭제
+      deleteObject(locationRef);
+      console.error(err);
+    }
+    await uploadBytes(locationRef, file);
 
     const formData = new FormData();
+    formData.append("postId", postId);
     formData.append("title", form.title);
     formData.append("content", form.content);
     formData.append("address", JSON.stringify(address));
-    formData.append("displayName", displayName ?? "Anonymous");
-    formData.append("photoURL", photoURL ?? "");
-    formData.append("imageUrl", url);
-    formData.append("imagePath", imagePath);
+
     const response = await fetch("/api/posts", {
       method: "POST",
       body: formData,
@@ -111,9 +114,7 @@ export default function CreatePostContainer() {
                 setOnLoadComplete={setOnLoadComplete}
               />
             ) : (
-              <ImageUploader
-                setFile={setFile}
-              />
+              <ImageUploader setFile={setFile} />
             )}
           </header>
           <section className="p-2 min-h-60">
@@ -169,7 +170,9 @@ export default function CreatePostContainer() {
 
           <footer>
             <div className="flex items-center justify-center py-4">
-              <button className="btn-wrap btn-hover" onClick={handleOnSubmit}>COMPLETE</button>
+              <button className="btn-wrap btn-hover" onClick={handleOnSubmit}>
+                COMPLETE
+              </button>
             </div>
           </footer>
         </article>

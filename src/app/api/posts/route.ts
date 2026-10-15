@@ -1,8 +1,9 @@
 /**
  * Get All posts order by createdAt
  */
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { adminAuth, adminDb, adminStorage } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
+import { getDownloadURL } from "firebase-admin/storage";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 const DOCS_SIZE = 8;
@@ -69,25 +70,34 @@ export async function POST(req: NextRequest) {
   const { displayName, photoURL } = await adminAuth.getUser(decode.uid);
 
   const formData = await req.formData();
+
+  let postId: string;
   let title: string;
   let address: string;
   let content: string;
-  let imageUrl: string;
-  let imagePath: string;
 
   try {
     title = getRequiredString(formData, "title");
     address = getRequiredString(formData, "address");
     content = getRequiredString(formData, "content");
-    imageUrl = getRequiredString(formData, "imageUrl");
-    imagePath = getRequiredString(formData, "imagePath");
+    postId = getRequiredString(formData, "postId");
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return Response.json({ error: "MISSING_REQUIRED_FIELD" }, { status: 400 });
   }
 
-  const postRef = adminDb.collection("posts").doc();
-  await postRef.set({
+  if (!/^[A-Za-z0-9]{20}$/.test(postId))
+    return NextResponse.json({ error: "INVALID_POST_ID" }, { status: 400 });
+
+  const postRef = adminDb.collection("posts").doc(postId);
+  const expectedPath = `posts/${decode.uid}/${postId}`;
+
+  const file = adminStorage.bucket().file(expectedPath);
+  const [exists] = await file.exists();
+  if (!exists)
+    return NextResponse.json({ error: "IMAGE_NOT_FOUND" }, { status: 400 });
+  const imageUrl = await getDownloadURL(file);
+  await postRef.create({
     title,
     content,
     author: {
@@ -100,7 +110,7 @@ export async function POST(req: NextRequest) {
     likeCount: 0,
     comments: null,
     imageUrl: imageUrl, // 클라에서 쓸 URL
-    imagePath: imagePath,
+    imagePath: expectedPath,
     createdAt: Date.now(),
   });
 
