@@ -43,11 +43,8 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
 
-    if (
-      data.status === "ZERO_RESULTS" ||
-      !Array.isArray(data.results) ||
-      data.results.length === 0
-    )
+    // 1. 정말로 결과가 없음 → 404
+    if (data.status === "ZERO_RESULTS")
       return NextResponse.json(
         {
           ok: false,
@@ -56,6 +53,7 @@ export async function POST(req: NextRequest) {
         { status: 404 },
       );
 
+    // 2. 그 외 OK가 아닌 상태(REQUEST_DENIED, OVER_QUERY_LIMIT 등) → 로그 + 502
     if (data.status !== "OK") {
       console.error("[geocode]", data.status, data.error_message);
       return NextResponse.json(
@@ -63,6 +61,16 @@ export async function POST(req: NextRequest) {
         { status: 502 },
       );
     }
+
+    // 3. OK인데 결과가 비어 있음(방어용) → 404
+    if (!Array.isArray(data.results) || data.results.length === 0)
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Please try a different image or enter the address manually.",
+        },
+        { status: 404 },
+      );
 
     return NextResponse.json(
       {
