@@ -48,10 +48,14 @@ export default function AccountContainer() {
             </Link>
           </ButtonItem>
           <ButtonItem>
-            <Link href={"/delete-account"}>
+            {/* Account deletion is not implemented yet (/delete-account does not exist). */}
+            <span
+              aria-disabled="true"
+              className="flex min-h-14 cursor-not-allowed items-center justify-between px-5 text-muted"
+            >
               <span>DELETE ACCOUNT</span>
-              <Chevron />
-            </Link>
+              <span className="rounded-full border border-line px-2 py-0.5 text-xs">Coming soon</span>
+            </span>
           </ButtonItem>
           <ButtonItem>
             <SignOut />
