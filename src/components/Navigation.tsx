@@ -186,7 +186,7 @@ export default function Navigation() {
         <div
           ref={mobileMenuRef}
           id="mobile-menu"
-          className="border-t border-line bg-canvas lg:hidden"
+          className="max-h-[calc(100dvh-4rem-1px)] overflow-y-auto overscroll-contain border-t border-line bg-canvas lg:hidden"
         >
           <Container className="py-4">
             <p className="eyebrow pb-3">{displayName ?? "Anonymous"}</p>
