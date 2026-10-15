@@ -1,38 +1,91 @@
+import { rateLimit } from "@/lib/ratelimit";
+import { verifySessionCookie } from "@/lib/verifySession";
 import { GeocodeResponse } from "@/types/Geocode";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { gps } = await req.json();
-
-  const response = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${gps.Latitude},${gps.Longitude}&result_type=political&key=${process.env.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY}`,
-  );
-  if (!response.ok)
+  const session = (await cookies()).get("session");
+  const decode = session ? await verifySessionCookie(session.value) : null;
+  if (!decode)
     return NextResponse.json(
-      { ok: false, error: "External API Error." },
-      { status: 502 },
+      { ok: false, error: "Unauthorized" },
+      { status: 401 },
     );
-  const { results } = await response.json();
-  if (!results)
+
+  try {
+    // geocode 라우트: 세션 검증 직후
+    const rl = await rateLimit(`geocode_${decode.uid}`, 30, 60_000);
+    if (!rl.ok)
+      return NextResponse.json(
+        { ok: false, error: "Too many requests." },
+        { status: 429, headers: { "Retry-After": String(rl.retryAfter) } },
+      );
+    
+    const { gps } = await req.json();
+    const lat = gps?.Latitude,
+      lng = gps?.Longitude;
+    if (
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lng) ||
+      Math.abs(lat) > 90 ||
+      Math.abs(lng) > 180
+    )
+      return NextResponse.json(
+        { ok: false, error: "Invalid GPS coordinates." },
+        { status: 400 },
+      );
+
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&result_type=political&key=${process.env.GOOGLE_GEOCODING_API_KEY}`,
+    );
+
+    if (!response.ok)
+      return NextResponse.json(
+        { ok: false, error: "External API Error." },
+        { status: 502 },
+      );
+
+    const data = await response.json();
+
+    if (
+      data.status === "ZERO_RESULTS" ||
+      !Array.isArray(data.results) ||
+      data.results.length === 0
+    )
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Please try a different image or enter the address manually.",
+        },
+        { status: 404 },
+      );
+
+    if (data.status !== "OK") {
+      console.error("[geocode]", data.status, data.error_message);
+      return NextResponse.json(
+        { ok: false, error: "External API Error." },
+        { status: 502 },
+      );
+    }
+
     return NextResponse.json(
       {
-        ok: false,
-        error: "Please try a different image or enter the address manually.",
+        ok: true,
+        results: data.results.map((r: GeocodeResponse) => {
+          const { formatted_address, place_id } = r;
+          return { formatted_address, place_id };
+        }),
       },
-      { status: 404 },
+      { status: 200 },
     );
-
-
-  return NextResponse.json(
-    {
-      ok: true,
-      results: results.map((r:GeocodeResponse) => {
-        const {formatted_address , place_id} = r;
-        return {formatted_address , place_id}})
-      ,
-    },
-    { status: 200 },
-  );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { ok: false, error: "Internal Server Error." },
+      { status: 500 },
+    );
+  }
 }
 
 /**
