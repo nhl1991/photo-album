@@ -1,38 +1,94 @@
+import { rateLimit } from "@/lib/ratelimit";
+import { verifySessionCookie } from "@/lib/verifySession";
 import { GeocodeResponse } from "@/types/Geocode";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { place_id } = await req.json();
-
-  const response = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?place_id=${place_id}&key=${process.env.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY}`,
-  );
-
-  const { results } = await response.json();
-  if (!response.ok)
+  const session = (await cookies()).get("session");
+  const decode = session ? await verifySessionCookie(session.value) : null;
+  if (!decode)
     return NextResponse.json(
-      { ok: false, error: "External API Error." },
-      { status: 502 },
+      { ok: false, error: "Unauthorized" },
+      { status: 401 },
     );
-  if (!results)
+
+  try {
+    // geocode 라우트: 세션 검증 직후
+    const rl = await rateLimit(`geocode_${decode.uid}`, 30, 60_000);
+    if (!rl.ok)
+      return NextResponse.json(
+        { ok: false, error: "Too many requests." },
+        { status: 429, headers: { "Retry-After": String(rl.retryAfter) } },
+      );
+
+    const { place_id } = await req.json();
+    if (
+      typeof place_id !== "string" ||
+      !/^[A-Za-z0-9_-]{10,300}$/.test(place_id)
+    )
+      return NextResponse.json(
+        { ok: false, error: "Invalid place_id." },
+        { status: 400 },
+      );
+
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?place_id=${encodeURIComponent(place_id)}&key=${process.env.GOOGLE_GEOCODING_API_KEY}`,
+    );
+    if (!response.ok)
+      return NextResponse.json(
+        { ok: false, error: "External API Error." },
+        { status: 502 },
+      );
+
+    const data = await response.json();
+
+    // 1. 정말로 결과가 없음 → 404
+    if (data.status === "ZERO_RESULTS")
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Please try a different image or enter the address manually.",
+        },
+        { status: 404 },
+      );
+
+    // 2. 그 외 OK가 아닌 상태(REQUEST_DENIED, OVER_QUERY_LIMIT 등) → 로그 + 502
+    if (data.status !== "OK") {
+      console.error("[geocode]", data.status, data.error_message);
+      return NextResponse.json(
+        { ok: false, error: "External API Error." },
+        { status: 502 },
+      );
+    }
+
+    // 3. OK인데 결과가 비어 있음(방어용) → 404
+    if (!Array.isArray(data.results) || data.results.length === 0)
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Please try a different image or enter the address manually.",
+        },
+        { status: 404 },
+      );
+
     return NextResponse.json(
       {
-        ok: false,
-        error: "Please try a different image or enter the address manually.",
+        ok: true,
+        results: data.results.map((r: GeocodeResponse) => {
+          const { formatted_address, geometry, place_id } = r;
+          return { formatted_address, geometry, place_id };
+        }),
       },
-      { status: 404 },
+      { status: 200 },
     );
-
-  return NextResponse.json(
-    {
-      ok: true,
-      results: results.map((r:GeocodeResponse) => {
-        const {formatted_address , geometry, place_id} = r;
-        return {formatted_address , geometry, place_id}})
-      ,
-    },
-    { status: 200 },
-  );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { ok: false, error: "Internal Server Error." },
+      { status: 500 },
+    );
+  }
 }
 
 /**
