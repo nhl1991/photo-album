@@ -1,10 +1,17 @@
+import Brand from "@/components/common/ui/Brand";
+import Container from "@/components/common/ui/Container";
 import SignIn from "@/app/signin/_components/SignIn";
 
 export default function Page(){
 
     return(
-        <main className="w-screen h-screen flex flex-col items-center justify-center">
-            <SignIn />
+        <main className="flex min-h-screen flex-col">
+            <Container className="flex h-16 items-center border-b border-line">
+                <Brand />
+            </Container>
+            <div className="flex flex-1 items-start justify-center px-4 py-12 sm:items-center">
+                <SignIn />
+            </div>
         </main>
     )
 }

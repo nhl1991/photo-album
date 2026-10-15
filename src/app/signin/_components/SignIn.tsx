@@ -10,22 +10,24 @@ export default function SignIn() {
   useEffect(() => setError(""), []);
 
   return (
-    <>
+    <div className="w-full max-w-sm">
       <SignInHero />
-      <div className="w-[360px] h-[360px]  rounded-xl p-4 shadow-md shadow-black relative flex flex-col items-center justify-center">
+      <div className="card p-6 sm:p-8">
         <SignInForm setError={setError} />
-        <div className="flex flex-col justify-center">
-          <span className="p-2 text-center text-red-600">
-            <p>{error.toUpperCase()}</p>
-          </span>
-          <Link
-            className="w-full text-center hover:text-blue-400"
-            href="/signup"
-          >
-            Create an account ?
-          </Link>
-        </div>
+        {error ? (
+          <p role="alert" className="mt-4 rounded-lg border border-danger/30 bg-danger/5 px-3 py-2 text-center text-sm text-danger">
+            {error.toUpperCase()}
+          </p>
+        ) : null}
       </div>
-    </>
+      <p className="mt-6 text-center text-sm text-muted">
+        <Link
+          className="font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
+          href="/signup"
+        >
+          Create an account ?
+        </Link>
+      </p>
+    </div>
   );
 }
