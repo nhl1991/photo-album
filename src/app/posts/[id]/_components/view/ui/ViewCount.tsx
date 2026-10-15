@@ -11,7 +11,7 @@ export default function ViewCount({ className, view }: { className: string, view
             </svg>
             <p>
                 {formatCount(view)}
-                <span className="sr-only"> views</span>
+                <span className="sr-only"> 조회</span>
             </p>
         </div>
     )

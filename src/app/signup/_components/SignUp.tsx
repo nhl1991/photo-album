@@ -20,11 +20,12 @@ export default function SignUp() {
         ) : null}
       </div>
       <p className="mt-6 text-center text-sm text-muted">
+        이미 계정이 있으신가요?{" "}
         <Link
           className="font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
           href="/signin"
         >
-          Already have an account ?
+          로그인
         </Link>
       </p>
     </div>

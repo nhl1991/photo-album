@@ -20,7 +20,7 @@ export default function AccountContainer() {
   return (
       <div className="mx-auto w-full max-w-xl">
         <div className="mb-8">
-          <PageHeading title="Account" description="Manage your profile and settings." />
+          <PageHeading title="계정" description="프로필과 계정 설정을 관리합니다." />
         </div>
         <section className="card mb-6 flex flex-col items-center gap-6 p-6 sm:flex-row sm:p-8">
           <Avartar user={user} />
@@ -29,21 +29,21 @@ export default function AccountContainer() {
         <ButtonGroup>
           <ButtonItem>
             <Link href={"/password"}>
-              <span>CHANGE PASSWORD</span>
+              <span>비밀번호 변경</span>
               <Chevron />
             </Link>
           </ButtonItem>
 
           <ButtonItem>
             <Link href={"/dashboard"}>
-              <span>MY DASHBOARD</span>
+              <span>내 대시보드</span>
               <Chevron />
             </Link>
           </ButtonItem>
 
           <ButtonItem>
             <Link href={"/favorite"}>
-              <span>FAVORITE</span>
+              <span>즐겨찾기</span>
               <Chevron />
             </Link>
           </ButtonItem>
@@ -53,8 +53,8 @@ export default function AccountContainer() {
               aria-disabled="true"
               className="flex min-h-14 cursor-not-allowed items-center justify-between px-5 text-muted"
             >
-              <span>DELETE ACCOUNT</span>
-              <span className="rounded-full border border-line px-2 py-0.5 text-xs">Coming soon</span>
+              <span>계정 삭제</span>
+              <span className="rounded-full border border-line px-2 py-0.5 text-xs">준비 중</span>
             </span>
           </ButtonItem>
           <ButtonItem>

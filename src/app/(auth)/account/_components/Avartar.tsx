@@ -36,14 +36,14 @@ export default function Avartar({ user }: { user: AuthUser }) {
   return (
     <div>
       <label htmlFor="avartar" className="group block rounded-full hover:cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
-        <span className="sr-only">Change profile photo</span>
+        <span className="sr-only">프로필 사진 변경</span>
         <div className="relative h-28 w-28 overflow-hidden rounded-full bg-line text-muted ring-1 ring-line transition-opacity duration-300 group-hover:opacity-85">
           {user && avatar ? (
             <Image
               src={avatar}
               className="object-cover"
               fill
-              alt="image"
+              alt="프로필 사진"
               sizes="(max-width: 768px) 80vw, 20vw"
               priority
             />

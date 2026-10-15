@@ -2,7 +2,7 @@ import PostsWrapper from "./PostsWrapper";
 
 export default function PhotoGridSkeleton({ count = 8 }: { count?: number }) {
   return (
-    <div role="status" aria-label="Loading photos">
+    <div role="status" aria-label="사진을 불러오는 중">
       <PostsWrapper>
         {Array.from({ length: count }, (_, i) => (
           <div key={i} className="animate-pulse">

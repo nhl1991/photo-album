@@ -12,9 +12,9 @@ import Brand from "./common/ui/Brand";
 import Container from "./common/ui/Container";
 
 const accountLinks = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/favorite", label: "Favorites" },
-  { href: "/account", label: "Account" },
+  { href: "/dashboard", label: "대시보드" },
+  { href: "/favorite", label: "즐겨찾기" },
+  { href: "/account", label: "계정" },
 ];
 
 export default function Navigation() {
@@ -76,13 +76,13 @@ export default function Navigation() {
       <Container className="grid h-16 grid-cols-[1fr_auto] items-center md:grid-cols-[1fr_auto_1fr]">
         <Brand className="justify-self-start" />
 
-        <nav aria-label="Main" className="hidden md:block">
+        <nav aria-label="주요 메뉴" className="hidden md:block">
           <Link
             href="/"
             className={linkClass("/")}
             aria-current={pathname === "/" ? "page" : undefined}
           >
-            Explore
+            둘러보기
           </Link>
         </nav>
 
@@ -92,7 +92,7 @@ export default function Navigation() {
           ) : isAuthed ? (
             <>
               <nav
-                aria-label="Account"
+                aria-label="계정 메뉴"
                 className="hidden items-center gap-6 lg:flex"
               >
                 {accountLinks.map(({ href, label }) => (
@@ -108,7 +108,7 @@ export default function Navigation() {
               </nav>
               <Link href={"/posts/new"} className="btn-primary ml-4 hidden min-h-9 px-4 lg:inline-flex">
                 <UploadIcon className="w-4" />
-                New post
+                새 게시물
               </Link>
               <span
                 className="ml-2 hidden max-w-32 truncate text-sm text-muted xl:block"
@@ -121,8 +121,8 @@ export default function Navigation() {
                 name="logout"
                 className="icon-btn hidden lg:inline-flex"
                 onClick={onLogout}
-                aria-label="Sign out"
-                title="Sign out"
+                aria-label="로그아웃"
+                title="로그아웃"
               >
                 <LogoutIcon className="w-5" />
               </button>
@@ -131,7 +131,7 @@ export default function Navigation() {
                 className="icon-btn text-ink lg:hidden"
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-label={menuOpen ? "메뉴 닫기" : "메뉴 열기"}
                 onClick={() => setMenuOpen((prev) => !prev)}
               >
                 {menuOpen ? (
@@ -145,7 +145,7 @@ export default function Navigation() {
             </>
           ) : (
             <Link href="/signin" className="btn-secondary min-h-9 px-4">
-              Sign In
+              로그인
             </Link>
           )}
         </div>
@@ -159,7 +159,7 @@ export default function Navigation() {
           <Container className="py-4">
             <p className="eyebrow pb-3">{displayName ?? "Anonymous"}</p>
             <ul className="flex flex-col">
-              {[{ href: "/", label: "Explore" }, { href: "/posts/new", label: "New post" }, ...accountLinks].map(
+              {[{ href: "/", label: "둘러보기" }, { href: "/posts/new", label: "새 게시물" }, ...accountLinks].map(
                 ({ href, label }) => (
                   <li key={href}>
                     <Link
@@ -180,7 +180,7 @@ export default function Navigation() {
                   onClick={onLogout}
                 >
                   <LogoutIcon className="w-5" />
-                  Sign out
+                  로그아웃
                 </button>
               </li>
             </ul>

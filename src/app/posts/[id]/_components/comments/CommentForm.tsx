@@ -51,14 +51,14 @@ export default function CommentForm({ postId }: { postId: string }) {
           type="text"
           className="w-full min-w-0 bg-transparent text-sm text-ink placeholder:text-muted outline-none"
           name="comment"
-          aria-label="Comment"
+          aria-label="댓글"
           placeholder="댓글"
           ref={commentRef}
         />
         <button
           type="submit"
           className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent transition-colors hover:bg-accent/90 cursor-pointer"
-          aria-label="Post comment"
+          aria-label="댓글 등록"
           name="submit"
           value="등록"
           onClick={handleOnSubmit}

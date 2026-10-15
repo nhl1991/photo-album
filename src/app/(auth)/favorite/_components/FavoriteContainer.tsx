@@ -34,7 +34,7 @@ export default function FavoriteContainer() {
 
   const heading = (
     <div className="mb-8">
-      <PageHeading title="Favorites" description="Photos you have liked." />
+      <PageHeading title="즐겨찾기" description="좋아요한 사진" />
     </div>
   );
 

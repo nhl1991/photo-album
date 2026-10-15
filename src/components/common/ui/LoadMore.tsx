@@ -15,7 +15,7 @@ export default function LoadMore({
     <div className="flex w-full items-center justify-center py-12">
       {hasNextPage ? (
         isFetchingNextPage ? (
-          <span role="status" aria-label="Loading more" className="text-accent">
+          <span role="status" aria-label="불러오는 중" className="text-accent">
             <ThreeDotsBounce className="h-8 w-12" />
           </span>
         ) : (
@@ -23,7 +23,7 @@ export default function LoadMore({
             className="btn-secondary min-h-12 w-full max-w-64"
             onClick={onLoadMore}
           >
-            Show more
+            더 보기
             <ChevronDoubleDown className="w-4" />
           </button>
         )

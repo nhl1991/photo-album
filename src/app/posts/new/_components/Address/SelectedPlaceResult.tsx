@@ -42,7 +42,7 @@ export default function SelectedPlaceResult({
     return (
       <>
           <p key={place.place_id} className="inline-flex max-w-full items-center gap-x-1 rounded-full bg-accent/10 px-3.5 py-1.5 text-xs font-medium text-ink md:text-sm">
-            {place.formatted_address ?? "SEARCH THE PLACE"}
+            {place.formatted_address ?? "장소를 검색하세요"}
           </p>
       </>
     );

@@ -38,7 +38,7 @@ export default function DashboradContainer() {
 
   const heading = (
     <div className="mb-8">
-      <PageHeading title="Dashboard" description="Photos you have shared." />
+      <PageHeading title="대시보드" description="내가 올린 사진" />
     </div>
   );
 
@@ -53,7 +53,7 @@ export default function DashboradContainer() {
     return (
       <>
         {heading}
-        <p role="alert" className="py-16 text-center text-sm text-danger">Error..</p>
+        <p role="alert" className="py-16 text-center text-sm text-danger">게시물을 불러오지 못했습니다.</p>
       </>
     );
 

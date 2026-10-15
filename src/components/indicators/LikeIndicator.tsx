@@ -14,7 +14,7 @@ export default function LikeIndicator({
       </svg>
       <p>
         {formatCount(length)}
-        <span className="sr-only"> likes</span>
+        <span className="sr-only"> 좋아요</span>
       </p>
     </div>
   );

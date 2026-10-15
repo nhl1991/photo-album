@@ -1,7 +1,7 @@
 export default function SignInHero() {
   return (
     <div className="mb-8 text-center">
-      <h1 className="font-serif text-[clamp(2.25rem,1.8rem+2vw,3rem)] leading-tight tracking-tight text-ink">Sign in</h1>
+      <h1 className="font-serif text-[clamp(2.25rem,1.8rem+2vw,3rem)] leading-tight tracking-tight text-ink">로그인</h1>
     </div>
   );
 }

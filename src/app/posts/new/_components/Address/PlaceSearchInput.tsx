@@ -38,10 +38,10 @@ export default function PlaceSearchInput({
       <input
         type="text"
         className="field-input min-w-0 flex-1"
-        aria-label="Search places"
+        aria-label="장소 검색"
         id="query"
         name="place query"
-        placeholder="Enter an address to search."
+        placeholder="검색할 주소를 입력하세요."
         ref={queryRef}
         onChange={handleOnChange}
       />
@@ -49,7 +49,7 @@ export default function PlaceSearchInput({
         onClick={handleOnClick}
         className="btn-secondary shrink-0"
       >
-        SEARCH
+        검색
       </button>
     </div>
   );

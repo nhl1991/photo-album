@@ -14,7 +14,7 @@ export default function ImageUploader({
     const { files } = fileRef.current;
     if (!files) return;
     if (files[0].size > 1024 * 1024 * 10) {
-      alert("You can upload less than 10MB.");
+      alert("10MB 이하의 파일만 업로드할 수 있습니다.");
       return;
     }
     const selected = files[0];
@@ -47,7 +47,7 @@ export default function ImageUploader({
           className="flex h-full w-full flex-col items-center justify-center gap-3 text-muted transition-colors hover:text-ink cursor-pointer"
         >
           <UploadIcon className="w-10 h-10" />
-          <p className="text-sm">Upload your photo.</p>
+          <p className="text-sm">사진을 업로드하세요.</p>
         </label>
         <input
           type="file"

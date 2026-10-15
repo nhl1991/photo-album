@@ -66,7 +66,7 @@ export default function PostContainer() {
   if (status === "error" && error)
     return (
       <p role="alert" className="py-24 text-center text-sm text-danger">
-        Error...
+        게시물을 불러오지 못했습니다.
       </p>
     );
   if (isPending || deleteMutation.isPending) return <LoadingSpinner />;
@@ -115,7 +115,7 @@ export default function PostContainer() {
           </section>
           {/* {JSON.stringify(data)} */}
           <footer className="mx-auto w-full max-w-3xl pt-12">
-            <h2 className="eyebrow mb-4">Comments</h2>
+            <h2 className="eyebrow mb-4">댓글</h2>
             <Comments postId={postId} />
           </footer>
         </article>

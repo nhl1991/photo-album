@@ -42,7 +42,7 @@ export default function Likes({
         className={`icon-btn -ml-2 h-9 w-9 hover:text-like ${like ? "text-like" : "text-ink"}`}
         onClick={() => handleOnClick(postId)}
         aria-pressed={like}
-        aria-label="Like"
+        aria-label="좋아요"
       >
         <LikeIcon className="w-5" userLike={like} />
       </button>

@@ -31,8 +31,8 @@ export default function CommentList({ postId }: { postId: string }) {
   });
 
   if (status === "pending") return <LoadingSpinner className="min-h-24" />;
-  if (status === "error") return <p role="alert" className="text-sm text-danger">Error..</p>;
-  if(status === "success" && !data) return <p className="text-sm text-muted">No</p>
+  if (status === "error") return <p role="alert" className="text-sm text-danger">댓글을 불러오지 못했습니다.</p>;
+  if(status === "success" && !data) return <p className="text-sm text-muted">댓글이 없습니다.</p>
   if (status === "success" && data) return <div className="divide-y divide-line border-t border-line empty:border-t-0">
   {
     data.pages.map((page)=>{

@@ -21,11 +21,12 @@ export default function SignIn() {
         ) : null}
       </div>
       <p className="mt-6 text-center text-sm text-muted">
+        계정이 없으신가요?{" "}
         <Link
           className="font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
           href="/signup"
         >
-          Create an account ?
+          회원가입
         </Link>
       </p>
     </div>

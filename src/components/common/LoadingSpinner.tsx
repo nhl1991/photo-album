@@ -7,7 +7,7 @@ export default function LoadingSpinner({
     <>
       <div
         role="status"
-        aria-label="Loading"
+        aria-label="불러오는 중"
         className={`flex w-full items-center justify-center text-accent ${className}`}
       >
         <svg

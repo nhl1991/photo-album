@@ -31,7 +31,7 @@ export default function DisplayName() {
 
   return (
     <div className="w-full min-w-0 flex-1">
-      <p className="field-label">DisplayName</p>
+      <p className="field-label">표시 이름</p>
       <div className={`flex items-center rounded-lg border bg-surface pl-3.5 pr-1 ${isEdit ? "border-accent" : "border-line"}`}>
         {isEdit ? (
           <input
@@ -47,7 +47,7 @@ export default function DisplayName() {
           </p>
         )}
 
-        <button id="nickname" className="icon-btn" onClick={handleOnClick} aria-label={isEdit ? "Save display name" : "Edit display name"}>
+        <button id="nickname" className="icon-btn" onClick={handleOnClick} aria-label={isEdit ? "표시 이름 저장" : "표시 이름 수정"}>
           {isEdit ? (
             <CompleteIcon className="w-5" />
           ) : (

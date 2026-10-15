@@ -111,11 +111,11 @@ export default function CreatePostContainer() {
       {isUploading ? (
         <div role="status" className="flex min-h-[70vh] flex-col items-center justify-center gap-4 text-accent">
           <BlocksShuffle className="w-20 h-20" />
-          <p className="eyebrow">Uploading</p>
+          <p className="eyebrow">업로드 중</p>
         </div>
       ) : (
         <article className="mx-auto flex w-full max-w-5xl flex-col gap-y-6">
-          <PageHeading title="New post" />
+          <PageHeading title="새 게시물" />
           <header className={`relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-xl bg-surface ${file ? "ring-1 ring-line" : "border border-dashed border-line-strong"}`}>
             {file ? (
               <ImagePreview
@@ -139,9 +139,9 @@ export default function CreatePostContainer() {
                   <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-surface px-5 py-3">
                     <div className="flex items-center gap-2 text-ink">
                       <PlaceIcon className="w-5" />
-                      <h2 id="places-title" className="text-sm font-medium uppercase tracking-[0.2em]">PLACES</h2>
+                      <h2 id="places-title" className="text-sm font-medium uppercase tracking-[0.2em]">장소 검색</h2>
                     </div>
-                    <button className="icon-btn" onClick={() => setModal(false)} aria-label="Close">
+                    <button className="icon-btn" onClick={() => setModal(false)} aria-label="닫기">
                       <CloseIcon className="w-6" />
                     </button>
                   </div>
@@ -156,7 +156,7 @@ export default function CreatePostContainer() {
               <div className="flex items-center justify-between gap-x-4">
                 <h2 className="eyebrow flex items-center gap-1.5 text-ink">
                   <PlaceIcon className="w-4" />
-                  PLACE
+                  장소
                 </h2>
 
                 <button
@@ -167,7 +167,7 @@ export default function CreatePostContainer() {
                     else setModal(true);
                   }}
                 >
-                  SEARCH
+                  장소 검색
                 </button>
               </div>
               <SelectedPlaceResult place_id={placeId} setAddress={setAddress} />
@@ -186,7 +186,7 @@ export default function CreatePostContainer() {
           <footer>
             <div className="flex items-center justify-end py-2">
               <button className="btn-primary min-h-12 w-full px-10 sm:w-auto" onClick={handleOnSubmit}>
-                COMPLETE
+                게시하기
               </button>
             </div>
           </footer>

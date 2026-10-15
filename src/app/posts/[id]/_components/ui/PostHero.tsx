@@ -24,7 +24,7 @@ export default function PostHero({
         <div className="absolute right-3 top-3 z-10">
           <button
             className="icon-btn bg-canvas/80 text-ink backdrop-blur hover:bg-canvas"
-            aria-label={objectFit === "object-cover" ? "Show whole image" : "Fill frame"}
+            aria-label={objectFit === "object-cover" ? "이미지 전체 보기" : "프레임 채우기"}
             onClick={() =>
               setObjectFit((prev) =>
                 prev === "object-contain" ? "object-cover" : "object-contain",

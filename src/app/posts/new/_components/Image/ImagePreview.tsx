@@ -34,8 +34,8 @@ export default function ImagePreview({
           />
         </figure>
         <div className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-black/45 p-1 text-white backdrop-blur">
-          <button className="icon-btn h-9 w-9 text-white hover:bg-white/15 hover:text-white" aria-label={objectFit === "object-cover" ? "Show whole image" : "Fill frame"} onClick={()=> setObjectFit((prev) => prev === 'object-contain' ? 'object-cover' : 'object-contain')}>{objectFit === "object-cover" ? <CollapseIcon className="w-5" /> : <ExpandIcon className="w-5" />}</button>
-          <button className="icon-btn h-9 w-9 text-white hover:bg-white/15 hover:text-white" aria-label="Remove photo" onClick={() => setFile(null)}><DeleteIcon className="w-5" /></button>
+          <button className="icon-btn h-9 w-9 text-white hover:bg-white/15 hover:text-white" aria-label={objectFit === "object-cover" ? "이미지 전체 보기" : "프레임 채우기"} onClick={()=> setObjectFit((prev) => prev === 'object-contain' ? 'object-cover' : 'object-contain')}>{objectFit === "object-cover" ? <CollapseIcon className="w-5" /> : <ExpandIcon className="w-5" />}</button>
+          <button className="icon-btn h-9 w-9 text-white hover:bg-white/15 hover:text-white" aria-label="사진 삭제" onClick={() => setFile(null)}><DeleteIcon className="w-5" /></button>
         </div>
       </div>
     );

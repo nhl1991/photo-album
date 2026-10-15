@@ -46,7 +46,7 @@ export default function Page() {
       <Container>
       <div className="mx-auto w-full max-w-xl">
         <div className="mb-8">
-          <PageHeading title="Change password" />
+          <PageHeading title="비밀번호 변경" />
         </div>
         <div className="card p-6 sm:p-8">
           {isValid ? (

@@ -54,31 +54,31 @@ export default function SignInForm({
     <form className="flex flex-col gap-y-6" onSubmit={onSubmit}>
       <div className="flex flex-col gap-y-5">
         <div>
-          <label className="field-label" htmlFor="email">EMAIL</label>
+          <label className="field-label" htmlFor="email">이메일</label>
           <input
             className="field-input"
             id="email"
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="이메일"
             ref={emailRef}
           />
         </div>
         <div>
-          <label className="field-label" htmlFor="password">Password</label>
+          <label className="field-label" htmlFor="password">비밀번호</label>
           <input
             className="field-input"
             id="password"
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="비밀번호"
             ref={passwordRef}
           />
         </div>
       </div>
       <div className="flex min-h-11 items-center justify-center">
         {isLoading ? (
-          <span role="status" aria-label="Loading" className="text-accent">
+          <span role="status" aria-label="로그인 중" className="text-accent">
             <ThreeDotsBounce className="w-12 h-8" />
           </span>
         ) : (
@@ -86,7 +86,7 @@ export default function SignInForm({
             type="submit"
             className="btn-primary min-h-11 w-full"
             disabled={isLoading}
-            value={"Sign In"}
+            value={"로그인"}
           />
         )}
       </div>
