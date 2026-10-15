@@ -67,7 +67,7 @@ html {
 body {
   background: var(--canvas);
   color: var(--ink);
-  font-family: var(--font-sans);
+  @apply font-sans;
 }
 
 :focus-visible {
