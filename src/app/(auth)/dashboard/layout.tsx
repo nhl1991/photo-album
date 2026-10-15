@@ -1,12 +1,14 @@
 "use client";
+import Container from "@/components/common/ui/Container";
+
 export default function TimelineLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <main className="w-screen min-h-screen flex flex-col items-center justify-center">
-      {children}
+    <main className="min-h-screen pb-16">
+      <Container>{children}</Container>
     </main>
   );
 }

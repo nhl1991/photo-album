@@ -35,14 +35,15 @@ export default function Avartar({ user }: { user: AuthUser }) {
 
   return (
     <div>
-      <label htmlFor="avartar" className="hover:cursor-pointer">
-        <div className="w-36 h-36 bg-gray-500 relative rounded-full overflow-hidden hover:scale-105 transition-all duration-300">
+      <label htmlFor="avartar" className="group block rounded-full hover:cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
+        <span className="sr-only">프로필 사진 변경</span>
+        <div className="relative h-28 w-28 overflow-hidden rounded-full bg-line text-muted ring-1 ring-line transition-opacity duration-300 group-hover:opacity-85">
           {user && avatar ? (
             <Image
               src={avatar}
               className="object-cover"
               fill
-              alt="image"
+              alt="프로필 사진"
               sizes="(max-width: 768px) 80vw, 20vw"
               priority
             />
@@ -68,7 +69,7 @@ export default function Avartar({ user }: { user: AuthUser }) {
         <input
           id="avartar"
           type="file"
-          className="hidden"
+          className="sr-only"
           accept="image/*"
           onChange={handleOnProfileImage}
         />

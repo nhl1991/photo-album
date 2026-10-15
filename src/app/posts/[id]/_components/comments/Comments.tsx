@@ -8,15 +8,15 @@ import Link from "next/link";
 export default function Comments({ postId }: { postId: string }) {
   const { user } = useAuth();
   return (
-    <span className="flex flex-col gap-y-4">
+    <span className="flex flex-col gap-y-6">
       <CommentList postId={postId} />
-      {user ? <CommentForm postId={postId} /> : <div className="flex flex-col items-center justify-center gap-y-4">
-                <p className="font-bold text-center">You need to sign in.</p>
+      {user ? <CommentForm postId={postId} /> : <div className="card flex flex-col items-center justify-center gap-y-4 px-6 py-8">
+                <p className="text-center text-sm text-muted">댓글을 작성하려면 로그인하세요.</p>
                 <Link
                   href="/signin"
-                  className="px-3 py-1.5 rounded-2xl btn-hover font-bold"
+                  className="btn-primary"
                 >
-                  Sign In
+                  로그인
                 </Link>
               </div>}
       

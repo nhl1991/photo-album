@@ -15,21 +15,21 @@ export default function SignOut() {
         setUser(null);
         router.push("/signin");
       } else {
-        alert("Failed to Sign Out. Try again.");
+        alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (e) {
       console.log(e);
-      alert("Failed to Sign Out. Try again.");
+      alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   return (
     <>
       <button
-        className="rounded-2xl px-4 py-1 font-semibold cursor-pointer"
+        className="flex min-h-14 w-full items-center px-5 text-left text-muted transition-colors hover:bg-canvas hover:text-ink cursor-pointer"
         onClick={onClickLogout}
       >
-        LOGOUT
+        로그아웃
       </button>
     </>
   );

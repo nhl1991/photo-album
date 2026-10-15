@@ -30,28 +30,28 @@ export default function DisplayName() {
   };
 
   return (
-    <div className="p-2">
-      <p className="px-2 font-bold">DisplayName</p>
-      <div className={`flex border-2 border-gray-300 rounded-2xl px-1 `}>
+    <div className="w-full min-w-0 flex-1">
+      <p className="field-label">표시 이름</p>
+      <div className={`flex items-center rounded-lg border bg-surface pl-3.5 pr-1 ${isEdit ? "border-accent" : "border-line"}`}>
         {isEdit ? (
           <input
-            className="w-72 text-2xl px-4 py-1 text-center outline-0 focus:bg-transparent active:bg-transparent"
+            className="min-w-0 flex-1 bg-transparent py-2.5 font-serif text-xl text-ink outline-0"
             type="text"
             value={username}
             placeholder={user?.displayName ? user.displayName : "Anonymous"}
             onChange={onChangeUsername}
           />
         ) : (
-          <p className="w-72 text-2xl px-2 py-1 text-center">
+          <p className="min-w-0 flex-1 truncate py-2.5 font-serif text-xl text-ink">
             {user?.displayName ? user.displayName : "Anonymous"}
           </p>
         )}
 
-        <button id="nickname" className="relative w-8 m-1" onClick={handleOnClick}>
+        <button id="nickname" className="icon-btn" onClick={handleOnClick} aria-label={isEdit ? "표시 이름 저장" : "표시 이름 수정"}>
           {isEdit ? (
-            <CompleteIcon className="w-6 hover:stroke-cyan-400 cursor-pointer" />
+            <CompleteIcon className="w-5" />
           ) : (
-            <EditIcon className="w-6 hover:stroke-cyan-400 cursor-pointer" />
+            <EditIcon className="w-5" />
           )}
         </button>
       </div>

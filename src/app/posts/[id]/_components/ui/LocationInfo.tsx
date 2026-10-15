@@ -5,9 +5,9 @@ export default function LocationInfo({ address }: { address: string }) {
 
     return (
         <>
-            {address ? <div className="w-max flex items-center p-1 text-xs md:text-xl">
-                <PlaceIcon className="w-8" />
-                <p className="text-left px-2 my-1 relative">
+            {address ? <div className="flex min-w-0 items-center gap-1.5 text-sm text-muted">
+                <PlaceIcon className="w-4 shrink-0" />
+                <p className="truncate">
                     {address}</p></div> : null}
         </>
     )

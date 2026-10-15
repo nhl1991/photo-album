@@ -1,10 +1,19 @@
-export default function LoadingSpinner() {
+export default function LoadingSpinner({
+  className = "min-h-[50vh]",
+}: {
+  className?: string;
+}) {
   return (
     <>
-      <div className="w-screen h-screen flex items-center justify-center">
+      <div
+        role="status"
+        aria-label="불러오는 중"
+        className={`flex w-full items-center justify-center text-accent ${className}`}
+      >
         <svg
-        className="w-12 h-12"
-          fill="hsl(228, 97%, 42%)"
+          className="w-10 h-10"
+          fill="currentColor"
+          aria-hidden="true"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >

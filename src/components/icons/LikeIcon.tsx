@@ -11,9 +11,9 @@ const LikeIcon = ({
     <svg
       className={className}
       data-slot="icon"
-      fill={userLike ? "red" : "none"}
+      fill={userLike ? "currentColor" : "none"}
       strokeWidth={1.5}
-      stroke={userLike ? "red" : "black"}
+      stroke="currentColor"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"

@@ -37,9 +37,14 @@ export default function Likes({
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <button onClick={() => handleOnClick(postId)}>
-        <LikeIcon className="w-4 md:w-8" userLike={like} />
+    <div className="flex items-center gap-1">
+      <button
+        className={`icon-btn -ml-2 h-9 w-9 hover:text-like ${like ? "text-like" : "text-ink"}`}
+        onClick={() => handleOnClick(postId)}
+        aria-pressed={like}
+        aria-label="좋아요"
+      >
+        <LikeIcon className="w-5" userLike={like} />
       </button>
       <LikeCount likeCount={count} />
     </div>

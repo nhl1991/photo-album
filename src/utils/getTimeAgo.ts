@@ -9,17 +9,17 @@ export function getTimeAgo(createdAt: number){
     const year = day * 365;
 
     if(elapsed > year){
-        return `${(elapsed/year).toFixed(0)} ${(elapsed/year) < 2 ? "year" : "years"} ago`;
+        return `${(elapsed/year).toFixed(0)}년 전`;
     }else if(elapsed > day){
         //day
-        return `${(elapsed/day).toFixed(0)} ${(elapsed/day) < 2 ? "day" : "days"} ago`;
+        return `${(elapsed/day).toFixed(0)}일 전`;
     }else if(elapsed > hour){
         //hour
-        return `${(elapsed/hour).toFixed(0)} ${(elapsed/hour) < 2 ? "hour" : "hours"} ago`;
+        return `${(elapsed/hour).toFixed(0)}시간 전`;
     }else if(elapsed > minute){
-        return `${(elapsed/minute).toFixed(0)} ${elapsed/minute < 2 ? "minute": "minutes"} ago`;
+        return `${(elapsed/minute).toFixed(0)}분 전`;
     }else {
-        return `${(elapsed/second).toFixed(0)} ${elapsed/second < 2 ? "second": "seconds"} ago`
+        return `${(elapsed/second).toFixed(0)}초 전`
         }
     
 

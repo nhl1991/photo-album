@@ -1,38 +1,94 @@
 @import "tailwindcss";
+
+/* Design tokens — light (default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #faf9f6;
+  --surface: #ffffff;
+  --ink: #252622;
+  --muted: #6b6c64;
+  --accent: #515744;
+  --on-accent: #ffffff;
+  --line: #e8e7e2;
+  --line-strong: #8a8b83; /* form controls: >= 3:1 against canvas */
+  --danger: #a3392b;
+  --like: #b4483a;
+  --overlay: rgb(20 21 18 / 0.45);
 }
+
+/* Design tokens — dark (follows system setting) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --canvas: #141512;
+    --surface: #1c1d19;
+    --ink: #ecebe6;
+    --muted: #a3a49b;
+    --accent: #b7be9f;
+    --on-accent: #141512;
+    --line: #2e2f2a;
+    --line-strong: #6e6f67;
+    --danger: #e58a7c;
+    --like: #e08a7a;
+    --overlay: rgb(0 0 0 / 0.6);
   }
 }
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-danger: var(--danger);
+  --color-like: var(--like);
+  --color-overlay: var(--overlay);
+
+  --font-sans: var(--font-geist-sans), "Apple SD Gothic Neo", "Noto Sans KR",
+    system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), "Noto Serif KR", Georgia, serif;
+}
+
 *::-webkit-scrollbar {
   display: none;
 }
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-box-shadow: 0 0 0 30px white inset !important;
-}
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--surface) inset !important;
+  -webkit-text-fill-color: var(--ink);
 }
 
-input:focus {
-  @apply outline-0;
+html {
+  color-scheme: light dark;
+}
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  @apply font-sans;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @theme {
-  
   --breakpoint-4k: 240rem;
   --animate-fade-In: fadeIn 1s;
-  @keyframes fadeIn{
+  @keyframes fadeIn {
     0% {
       position: absolute;
       opacity: 0;
@@ -40,13 +96,11 @@ input:focus {
     100% {
       position: fixed;
       opacity: 1;
-
     }
-    
   }
-  
+
   --animate-fade-Out: fadeOut 1s ease-out forwards;
-  @keyframes fadeOut{
+  @keyframes fadeOut {
     0% {
       opacity: 1;
     }
@@ -54,14 +108,36 @@ input:focus {
       opacity: 0;
       display: hidden;
     }
-    
   }
 }
 
-
-.btn-hover {
-  @apply bg-indigo-500 hover:bg-indigo-600 cursor-pointer text-white font-bold;
+@utility eyebrow {
+  @apply text-[11px] font-medium uppercase tracking-[0.25em] text-muted;
 }
-.btn-wrap {
-  @apply px-3 py-1 rounded-xl;
+
+@utility btn {
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-on-accent hover:bg-accent/90;
+}
+@utility btn-secondary {
+  @apply btn border border-line-strong/60 bg-transparent text-ink hover:border-ink hover:bg-surface;
+}
+@utility btn-ghost {
+  @apply btn text-muted hover:bg-surface hover:text-ink;
+}
+@utility icon-btn {
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-full text-muted transition-colors duration-200 cursor-pointer hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-muted;
+}
+
+@utility field-label {
+  @apply mb-1.5 block text-sm font-medium text-ink;
+}
+@utility field-input {
+  @apply block w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-base text-ink placeholder:text-muted transition-colors focus:border-accent focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent;
+}
+
+@utility card {
+  @apply rounded-2xl border border-line bg-surface;
 }

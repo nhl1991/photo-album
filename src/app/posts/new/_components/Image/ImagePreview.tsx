@@ -21,11 +21,11 @@ export default function ImagePreview({
   }, [file]);
   if (preview)
     return (
-      <div className="w-full max-w-[1024px] ">
-        <figure className="relative w-full aspect-[16/9]  overflow-scroll">
+      <div className="h-full w-full">
+        <figure className="relative h-full w-full">
           <Image
             src={preview}
-            className={`${objectFit} rounded-xl`}
+            className={objectFit}
             fill
             alt=""
             sizes="(max-width: 768px) 100vw, 70vw"
@@ -33,9 +33,9 @@ export default function ImagePreview({
             onLoad={() => setOnLoadComplete(true)}
           />
         </figure>
-        <div className="flex items-center justify-center absolute top-5 right-5 z-20 stroke-white hover:stroke-white/50 cursor-pointer">
-          <button onClick={()=> setObjectFit((prev) => prev === 'object-contain' ? 'object-cover' : 'object-contain')}>{objectFit === "object-cover" ? <CollapseIcon className="w-8" /> : <ExpandIcon className="w-8" />}</button>
-          <button onClick={() => setFile(null)}><DeleteIcon className="w-8 stroke-white hover:stroke-white/50 cursor-pointer" /></button>
+        <div className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-black/45 p-1 text-white backdrop-blur">
+          <button className="icon-btn h-9 w-9 text-white hover:bg-white/15 hover:text-white" aria-label={objectFit === "object-cover" ? "이미지 전체 보기" : "프레임 채우기"} onClick={()=> setObjectFit((prev) => prev === 'object-contain' ? 'object-cover' : 'object-contain')}>{objectFit === "object-cover" ? <CollapseIcon className="w-5" /> : <ExpandIcon className="w-5" />}</button>
+          <button className="icon-btn h-9 w-9 text-white hover:bg-white/15 hover:text-white" aria-label="사진 삭제" onClick={() => setFile(null)}><DeleteIcon className="w-5" /></button>
         </div>
       </div>
     );

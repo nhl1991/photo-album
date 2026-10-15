@@ -26,9 +26,9 @@ export default function SignUpForm({
     )
       return;
     const requiredFields = [
-      { ref: emailRef, message: "Please enter your email." },
-      { ref: passwordRef, message: "Please enter your password." },
-      { ref: displayNameRef, message: "Please enter your username." },
+      { ref: emailRef, message: "이메일을 입력해주세요." },
+      { ref: passwordRef, message: "비밀번호를 입력해주세요." },
+      { ref: displayNameRef, message: "사용자 이름을 입력해주세요." },
     ];
 
     for (const { ref, message } of requiredFields) {
@@ -58,50 +58,52 @@ export default function SignUpForm({
     }
   };
   return (
-    <form className="flex flex-col gap-y-10 py-4" onSubmit={onSubmit}>
-      <div className="flex flex-col justify-evenly items-center gap-y-8 px-4">
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="email">EMAIL</label>
+    <form className="flex flex-col gap-y-6" onSubmit={onSubmit}>
+      <div className="flex flex-col gap-y-5">
+        <div>
+          <label className="field-label" htmlFor="email">이메일</label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="field-input"
             id="email"
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="이메일"
             ref={emailRef}
           />
         </div>
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="password">PASSWORD</label>
+        <div>
+          <label className="field-label" htmlFor="password">비밀번호</label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="field-input"
             id="password"
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="비밀번호"
             ref={passwordRef}
           />
         </div>
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="username">USERNAME</label>
+        <div>
+          <label className="field-label" htmlFor="username">사용자 이름</label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="field-input"
             type="text"
             id="username"
-            placeholder="Username"
+            placeholder="사용자 이름"
             ref={displayNameRef}
           />
         </div>
       </div>
-      <div className="w-full h-full flex items-center justify-center col-span-full row-start-4">
+      <div className="flex min-h-11 items-center justify-center">
         {isLoading ? (
-          <ThreeDotsBounce className="w-12 h-8" />
+          <span role="status" aria-label="가입 중" className="text-accent">
+            <ThreeDotsBounce className="w-12 h-8" />
+          </span>
         ) : (
           <input
             type="submit"
-            className="w-24 uppercase rounded-xl cursor-pointer px-2 py-1 btn-hover"
+            className="btn-primary min-h-11 w-full"
             disabled={isLoading}
-            value={"Sign Up"}
+            value={"가입하기"}
           />
         )}
       </div>

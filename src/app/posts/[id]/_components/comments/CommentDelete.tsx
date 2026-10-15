@@ -13,7 +13,7 @@ export default function CommentDelete({
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState<boolean>(false);
   const handleOnClick = async () => {
-    const confirm = window.confirm("Delete this comment?");
+    const confirm = window.confirm("이 댓글을 삭제할까요?");
     if (!confirm) return;
     try {
       setLoading(true);
@@ -30,7 +30,7 @@ export default function CommentDelete({
       }
     } catch (e) {
       console.log(e);
-      alert("Failed to delete the comment. Try again.");
+      alert("댓글 삭제에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setLoading(false);
     }
@@ -39,10 +39,12 @@ export default function CommentDelete({
   return (
     <>
       {loading ? (
-        <SixDotsRotate className="w-6" />
+        <span role="status" aria-label="삭제 중" className="inline-flex h-10 w-10 items-center justify-center text-accent">
+          <SixDotsRotate className="w-5" />
+        </span>
       ) : (
-        <button id={commentId} onClick={handleOnClick}>
-          <DeleteIcon className="w-6 hover:stroke-red-500 cursor-pointer" />
+        <button id={commentId} onClick={handleOnClick} className="icon-btn hover:text-danger" aria-label="댓글 삭제">
+          <DeleteIcon className="w-5" />
         </button>
       )}
     </>

@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { collection, doc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import BlocksShuffle from "@/components/icons/BlocksShuffle";
+import PageHeading from "@/components/common/ui/PageHeading";
 export default function CreatePostContainer() {
   // Image Uploader start
   const [file, setFile] = useState<File | null>(null);
@@ -108,13 +109,14 @@ export default function CreatePostContainer() {
   return (
     <>
       {isUploading ? (
-        <>
-          <BlocksShuffle className="w-48 h-48" />
-          <p>Uploading</p>
-        </>
+        <div role="status" className="flex min-h-[70vh] flex-col items-center justify-center gap-4 text-accent">
+          <BlocksShuffle className="w-20 h-20" />
+          <p className="eyebrow">업로드 중</p>
+        </div>
       ) : (
-        <article className="w-full flex flex-col gap-y-4 lg:max-w-5xl min-h-screen">
-          <header className="flex items-center justify-center rounded-xl shadow-xl p-2 relative w-full max-w-[1024px] aspect-[16/9] overflow-hidden">
+        <article className="mx-auto flex w-full max-w-5xl flex-col gap-y-6">
+          <PageHeading title="새 게시물" />
+          <header className={`relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-xl bg-surface ${file ? "ring-1 ring-line" : "border border-dashed border-line-strong"}`}>
             {file ? (
               <ImagePreview
                 file={file}
@@ -125,17 +127,22 @@ export default function CreatePostContainer() {
               <ImageUploader setFile={setFile} />
             )}
           </header>
-          <section className="p-2 min-h-60">
+          <section className="flex flex-col gap-y-6">
             {file && onLoadComplete && modal ? (
-              <div className="w-screen h-screen bg-black/30 flex flex-col items-center justify-center gap-y-2 rounded-xl shadow-xl py-2 fixed top-0 left-0 z-50">
-                <div className="max-w-[768px] w-full h-[384px] bg-white dark:bg-slate-900 rounded-xl relative overflow-scroll">
-                  <div className="flex justify-end items-center p-2">
-                    <div className="w-full flex items-center justify-center">
-                      <PlaceIcon className="w-6" />
-                      <h1 className="text-center font-bold">PLACES</h1>
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="places-title"
+                  className="card relative max-h-[80vh] w-full max-w-2xl overflow-y-auto shadow-2xl"
+                >
+                  <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-surface px-5 py-3">
+                    <div className="flex items-center gap-2 text-ink">
+                      <PlaceIcon className="w-5" />
+                      <h2 id="places-title" className="text-sm font-medium uppercase tracking-[0.2em]">장소 검색</h2>
                     </div>
-                    <button onClick={() => setModal(false)}>
-                      <CloseIcon className="w-8" />
+                    <button className="icon-btn" onClick={() => setModal(false)} aria-label="닫기">
+                      <CloseIcon className="w-6" />
                     </button>
                   </div>
                   <AddressContainer
@@ -145,28 +152,28 @@ export default function CreatePostContainer() {
                 </div>
               </div>
             ) : null}
-            <div className="p-8 rounded-xl shadow-xl flex flex-col gap-y-4">
-              <div className="w-max flex gap-x-4 ">
-                <h2 className="flex text-white items-center px-3 py-1 bg-lime-500 rounded-xl ">
+            <div className="card flex flex-col gap-y-4 p-6 sm:p-8">
+              <div className="flex items-center justify-between gap-x-4">
+                <h2 className="eyebrow flex items-center gap-1.5 text-ink">
                   <PlaceIcon className="w-4" />
-                  PLACE
+                  장소
                 </h2>
 
                 <button
-                  className="btn-wrap btn-hover"
+                  className="btn-secondary min-h-9 px-4"
                   onClick={() => {
                     if (!file && !onLoadComplete)
                       alert("먼저 사진을 업로드해주세요.");
                     else setModal(true);
                   }}
                 >
-                  SEARCH
+                  장소 검색
                 </button>
               </div>
               <SelectedPlaceResult place_id={placeId} setAddress={setAddress} />
             </div>
 
-            <div className="flex justify-between items-center p-8  rounded-xl shadow-xl">
+            <div className="card p-6 sm:p-8">
               {/* <Author
                 avartar={post.avartar}
                 username={post.username}
@@ -177,9 +184,9 @@ export default function CreatePostContainer() {
           </section>
 
           <footer>
-            <div className="flex items-center justify-center py-4">
-              <button className="btn-wrap btn-hover" onClick={handleOnSubmit}>
-                COMPLETE
+            <div className="flex items-center justify-end py-2">
+              <button className="btn-primary min-h-12 w-full px-10 sm:w-auto" onClick={handleOnSubmit}>
+                게시하기
               </button>
             </div>
           </footer>

@@ -34,21 +34,22 @@ export default function PlaceSearchInput({
   };
 
   return (
-    <div className="flex items-center justify-center py-8 gap-x-4">
+    <div className="flex items-center gap-2 px-5 py-5">
       <input
         type="text"
-        className="w-72 border-b-2 border-gray-500 focus:border-sky-400"
+        className="field-input min-w-0 flex-1"
+        aria-label="장소 검색"
         id="query"
         name="place query"
-        placeholder="Enter an address to search."
+        placeholder="검색할 주소를 입력하세요."
         ref={queryRef}
         onChange={handleOnChange}
       />
       <button
         onClick={handleOnClick}
-        className="px-3 py-1 rounded-xl btn-hover"
+        className="btn-secondary shrink-0"
       >
-        SEARCH
+        검색
       </button>
     </div>
   );

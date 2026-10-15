@@ -51,40 +51,42 @@ export default function SignInForm({
     }
   };
   return (
-    <form className="flex flex-col gap-y-10 py-4" onSubmit={onSubmit}>
-      <div className="flex flex-col justify-evenly items-center gap-y-8 px-4">
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="email">EMAIL</label>
+    <form className="flex flex-col gap-y-6" onSubmit={onSubmit}>
+      <div className="flex flex-col gap-y-5">
+        <div>
+          <label className="field-label" htmlFor="email">이메일</label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="field-input"
             id="email"
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="이메일"
             ref={emailRef}
           />
         </div>
-        <div className="flex flex-col text-sm font-bold">
-          <label htmlFor="password">Password</label>
+        <div>
+          <label className="field-label" htmlFor="password">비밀번호</label>
           <input
-            className="px-4 py-2 w-[200px] outline-0 border-slate-500 border-b-2 focus:border-b-sky-400"
+            className="field-input"
             id="password"
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="비밀번호"
             ref={passwordRef}
           />
         </div>
       </div>
-      <div className="w-full h-full flex items-center justify-center col-span-full row-start-4">
+      <div className="flex min-h-11 items-center justify-center">
         {isLoading ? (
-          <ThreeDotsBounce className="w-12 h-8" />
+          <span role="status" aria-label="로그인 중" className="text-accent">
+            <ThreeDotsBounce className="w-12 h-8" />
+          </span>
         ) : (
           <input
             type="submit"
-            className="w-24 uppercase rounded-xl cursor-pointer px-2 py-1 btn-hover"
+            className="btn-primary min-h-11 w-full"
             disabled={isLoading}
-            value={"Sign In"}
+            value={"로그인"}
           />
         )}
       </div>

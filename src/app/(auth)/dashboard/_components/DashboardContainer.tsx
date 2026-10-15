@@ -1,7 +1,8 @@
 "use client";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 import PhotoPost from "@/components/common/PhotoPost";
-import FeedEndNotice from "@/components/common/ui/FeedEndNotice";
+import LoadMore from "@/components/common/ui/LoadMore";
+import PageHeading from "@/components/common/ui/PageHeading";
+import PhotoGridSkeleton from "@/components/common/ui/PhotoGridSkeleton";
 import PostsWrapper from "@/components/common/ui/PostsWrapper";
 import { QueryData } from "@/types/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -35,38 +36,43 @@ export default function DashboradContainer() {
   });
 
 
-  if (status === "pending") return <LoadingSpinner />;
-  if (status === "error") return <p>Error..</p>
+  const heading = (
+    <div className="mb-8">
+      <PageHeading title="대시보드" description="내가 올린 사진" />
+    </div>
+  );
+
+  if (status === "pending")
+    return (
+      <>
+        {heading}
+        <PhotoGridSkeleton />
+      </>
+    );
+  if (status === "error")
+    return (
+      <>
+        {heading}
+        <p role="alert" className="py-16 text-center text-sm text-danger">게시물을 불러오지 못했습니다.</p>
+      </>
+    );
+
   if (status === "success" && data)
     return (
-      <div>
-        {data.pages.map((page, pageIndex) => {
-
-          return (
-            <PostsWrapper key={pageIndex}>
-              {page.items.map((d: QueryData) => {
-
-                return <PhotoPost item={d} key={d.id} />;
-              })}
-            </PostsWrapper>
-          );
-        })}
-        <div className="w-full flex items-center justify-center py-4">
-          {hasNextPage ? (
-            isFetchingNextPage ? (
-                <LoadingSpinner />
-            ) : (
-              <button
-                className="btn-wrap btn-hover"
-                onClick={() => fetchNextPage()}
-              >
-                NEXT
-              </button>
-            )
-          ) : (
-            <FeedEndNotice />
-          )}
-        </div>
-      </div>
+      <>
+        {heading}
+        <PostsWrapper>
+          {data.pages
+            .flatMap((page) => page.items)
+            .map((d: QueryData) => {
+              return <PhotoPost item={d} key={d.id} />;
+            })}
+        </PostsWrapper>
+        <LoadMore
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={() => fetchNextPage()}
+        />
+      </>
     );
 }
