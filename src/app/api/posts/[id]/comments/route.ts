@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase-admin";
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { FieldValue } from "firebase-admin/firestore";
 import { cookies } from "next/headers";
@@ -10,7 +10,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   // content validation
-  const { content, displayName, photoURL } = await req.json();
+  const { content } = await req.json();
 
   if (typeof content !== "string" || content.length === 0) {
     return NextResponse.json(
@@ -24,28 +24,38 @@ export async function POST(
   // get session from server
   const session = (await cookies()).get("session");
   if (!session)
-    return NextResponse.json({ status: 401, message: "Unauthorized" });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   // extract token from session
   const tokenId = session.value;
 
   // decoding token
   const decode = await verifySessionCookie(tokenId);
-  if (!decode || decode === undefined)
-    return NextResponse.json({ status: 401, message: "Unauthorized" });
-  const commentRef = adminDb.collection(`/posts/${postId}/comments/`).doc();
+  if (!decode)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  try {
+    const user = await adminAuth.getUser(decode.uid);
 
-  await adminDb.runTransaction(async (tx) => {
-    tx.create(commentRef, {
+    const { displayName, photoURL } = user;
+
+    const commentRef = adminDb.collection(`/posts/${postId}/comments/`).doc();
+    // displayName 클라이언트는 Anonymous로 표시, DB는 null로 저장
+    await commentRef.create({
       content,
       uid: decode.uid,
-      displayName: displayName,
-      photoURL: photoURL,
+      displayName: displayName ?? null,
+      photoURL: photoURL ?? null,
       createdAt: FieldValue.serverTimestamp(),
     });
-  });
 
-  return NextResponse.json({ message: "OK" });
+    return NextResponse.json({ message: "OK" });
+  } catch (err) {
+    if ((err as { code?: string }).code === "auth/user-not-found")
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    console.error(err);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  }
+
 }
 
 // READ
@@ -66,7 +76,7 @@ export async function GET(
   const session = (await cookies()).get("session");
   const decoded = session ? await verifySessionCookie(session.value) : null;
   const viewerUid = decoded?.uid ?? null;
-  
+
   const docs = (await query.get()).docs;
   let lastDoc;
   if (docs.length < 10) lastDoc = null;
@@ -75,11 +85,11 @@ export async function GET(
   const comments = docs.map((d) => {
     const { uid, photoURL, content, displayName } = d.data() as {
       uid: string;
-      photoURL: string;
+      photoURL: string | null;
       content: string;
-      displayName: string;
+      displayName: string | null;
     };
-    
+
 
     return {
       photoURL,
@@ -100,4 +110,4 @@ export async function GET(
 }
 
 // UPDATE
-export async function PATCH() {}
+export async function PATCH() { }

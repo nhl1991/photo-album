@@ -21,8 +21,6 @@ export default function CommentForm({ postId }: { postId: string }) {
       },
       body: JSON.stringify({
         content,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
       }),
     });
     if (response.ok) {

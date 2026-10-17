@@ -11,7 +11,7 @@ export default function CommentListView({ id, comment, children }: { id: string,
           <figure className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-line">
             {comment.photoURL ? (
               <Image
-                alt={`${comment.displayName} profile image`}
+                alt={`${comment.displayName ?? "Anonymous"} profile image`}
                 src={comment.photoURL}
                 className="object-cover"
                 sizes="10vw"
@@ -20,7 +20,7 @@ export default function CommentListView({ id, comment, children }: { id: string,
               />
             ) : null}
           </figure>
-          <p className="text-sm font-medium text-ink">{comment.displayName}</p>
+          <p className="text-sm font-medium text-ink">{comment.displayName ?? "Anonymous"}</p>
         </div>
         <div className="flex gap-x-1">{children}</div>
       </header>
