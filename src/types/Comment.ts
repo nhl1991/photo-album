@@ -1,7 +1,7 @@
 
 export interface Comment {
-  displayName: string;
-  photoURL: string;
+  displayName: string | null;
+  photoURL: string | null;
   content: string;
   id: string;
   isMine: boolean;
