@@ -2,7 +2,7 @@
 // import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Logout } from "../utils/firebase-utils";
+import { logOut } from "../utils/firebase-utils";
 import LogoutIcon from "./icons/LogoutIcon";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname, useRouter } from "next/navigation";
@@ -32,7 +32,7 @@ export default function Navigation() {
         method: "POST",
       });
       if (response.ok) {
-        await Logout();
+        await logOut();
         setUser(null);
         router.push("/");
       }
