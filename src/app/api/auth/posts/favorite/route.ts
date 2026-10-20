@@ -3,19 +3,20 @@ import { adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { handleApiError } from "@/lib/error/handleApiError";
 const DOCS_SIZE = 8;
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const cursor = searchParams.get("cursor"); // createdAt (string)
   const session = (await cookies()).get("session");
   if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
 
   const tokenId = session.value;
 
   const decode = await verifySessionCookie(tokenId);
   if (!decode)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
 
   let query = adminDb
     .collection(`/users/${decode.uid}/likedPosts/`)
@@ -25,31 +26,25 @@ export async function GET(req: Request) {
   if (cursor !== null && cursor !== undefined) {
     query = query.startAfter(Number(cursor));
   }
-  const t0 = Date.now();
+
   try {
     const likedPostsSnap = await query.get();
     const likedPostsRefs = likedPostsSnap.docs.map((d)=> adminDb.doc(`/posts/${d.id}`));
     const snap = await adminDb.getAll(...likedPostsRefs);
-    console.log(
-      "[posts] firestore ok",
-      Date.now() - t0,
-      "ms",
-      "size",
-      likedPostsSnap.size,
-    );
+    
     const docs = snap;
     let lastDoc;
     if (docs.length < DOCS_SIZE) lastDoc = null;
     else lastDoc = docs.at(-1);
     const raw = lastDoc?.get("createdAt");
 
-    return Response.json({
+    return NextResponse.json({
       items: docs.map((d) => ({ id: d.id, ...d.data() })),
       nextCursor: lastDoc ? raw.toString() : null,
     });
   } catch (e) {
-    console.error("[posts] firestore fail", Date.now() - t0, "ms", e);
-    throw e;
+
+    return handleApiError(500, "INTERNAL_SERVER_ERROR", e);
   }
 
   //   const snap = await query.get();

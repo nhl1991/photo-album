@@ -1,5 +1,5 @@
 // app/api/posts/route.ts
-import { handleApiError } from "@/lib/api/handleApiError";
+import { handleApiError } from "@/lib/error/handleApiError";
 import { adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { cookies } from "next/headers";
@@ -10,13 +10,13 @@ export async function GET(req: Request) {
   const cursor = searchParams.get("cursor"); // createdAt (string)
   const session = (await cookies()).get("session");
   if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
 
   const tokenId = session.value;
 
   const decode = await verifySessionCookie(tokenId);
   if (!decode)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
 
   let query = adminDb
     .collection("posts")
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
   if (cursor !== null && cursor !== undefined) {
     query = query.startAfter(Number(cursor));
   }
-  const t0 = Date.now();
+  
   try {
     const snap = await query.get();
 
@@ -36,13 +36,13 @@ export async function GET(req: Request) {
     else lastDoc = docs.at(-1);
     const raw = lastDoc?.get("createdAt");
 
-    return Response.json({
+    return NextResponse.json({
       items: docs.map((d) => ({ id: d.id, ...d.data() })),
       nextCursor: lastDoc ? raw.toString() : null,
     });
   } catch (e) {
-    console.error("[posts] firestore fail", Date.now() - t0, "ms", e);
-    return handleApiError(e);
+
+    return handleApiError(500, "INTERNAL_SERVER_ERROR", e);
   }
 
   //   const snap = await query.get();
