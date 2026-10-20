@@ -3,5 +3,5 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   (await cookies()).delete("session");
-  return NextResponse.json({ status: 200 });
+  return NextResponse.json({ message: "OK" }, { status: 200 });
 }

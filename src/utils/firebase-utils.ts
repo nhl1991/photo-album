@@ -137,7 +137,7 @@ export async function deleteComment(
   else return;
 }
 
-export async function Logout() {
+export async function logOut() {
   await auth.signOut();
 }
 

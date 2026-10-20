@@ -1,6 +1,7 @@
 /**
  * Get All posts order by createdAt
  */
+import { handleApiError } from "@/lib/error/handleApiError";
 import { adminAuth, adminDb, adminStorage } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { getDownloadURL } from "firebase-admin/storage";
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
   // get session from server
   const session = (await cookies()).get("session");
   if (!session)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
 
   // extract token from session
   const tokenId = session.value;
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
   // decoding token
   const decode = await verifySessionCookie(tokenId);
   if (!decode)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
   const { displayName, photoURL } = await adminAuth.getUser(decode.uid);
 
   const formData = await req.formData();
@@ -83,11 +84,11 @@ export async function POST(req: NextRequest) {
     postId = getRequiredString(formData, "postId");
   } catch (err) {
     console.error(err);
-    return Response.json({ error: "MISSING_REQUIRED_FIELD" }, { status: 400 });
+    return handleApiError(400, "MISSING_REQUIRED_FIELD");
   }
 
   if (!/^[A-Za-z0-9]{20}$/.test(postId))
-    return NextResponse.json({ error: "INVALID_POST_ID" }, { status: 400 });
+    return handleApiError(400, "INVALID_POST_ID");
 
   const postRef = adminDb.collection("posts").doc(postId);
   const expectedPath = `posts/${decode.uid}/${postId}`;
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
   const file = adminStorage.bucket().file(expectedPath);
   const [exists] = await file.exists();
   if (!exists)
-    return NextResponse.json({ error: "IMAGE_NOT_FOUND" }, { status: 400 });
+    return handleApiError(400, "IMAGE_NOT_FOUND");
   const imageUrl = await getDownloadURL(file);
   await postRef.create({
     title,
@@ -114,5 +115,5 @@ export async function POST(req: NextRequest) {
     createdAt: Date.now(),
   });
 
-  return NextResponse.json({ message: "ok" }, { status: 200 });
+  return NextResponse.json({ message: "OK" }, { status: 200 });
 }

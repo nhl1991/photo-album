@@ -1,4 +1,5 @@
 import { getSessionValue } from "@/lib/auth/getSessionValue";
+import { handleApiError } from "@/lib/error/handleApiError";
 import { adminDb, adminStorage } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { cookies } from "next/headers";
@@ -41,26 +42,26 @@ export async function DELETE(
   // get session from server
   const session = (await cookies()).get("session");
   if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
   const tokenId = session.value;
 
   // decoding token
   const decode = await verifySessionCookie(tokenId);
   if (!decode)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return handleApiError(401, "Unauthorized");
 
   // storage posts/{postId} 삭제
   const postId = (await params).id;
 
   if (!postId)
-    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+    return handleApiError(404, "NOT_FOUND");
   const postData = (await adminDb.doc(`/posts/${postId}`).get()).data();
 
   if (!postData)
-    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+    return handleApiError(404, "NOT_FOUND");
 
   if (postData.author.uid !== decode.uid)
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return handleApiError(403, "Forbidden");
 
   const expected = `posts/${decode.uid}/${postId}`;
   const likesRef = await adminDb.collection(`/posts/${postId}/likes`).get();
@@ -87,15 +88,8 @@ export async function DELETE(
 
   try {
     await adminDb.doc(`/posts/${postId}`).delete();
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      {
-        code: "POST_DELETE_FAILED",
-        message: "Failed to delete post",
-      },
-      { status: 500 },
-    );
+  } catch (e) {
+    return handleApiError(500, "POST_DELETE_FAILED", e);
   }
 
   if (postData.imagePath === expected) {

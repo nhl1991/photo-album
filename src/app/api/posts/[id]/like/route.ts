@@ -1,3 +1,4 @@
+import { handleApiError } from "@/lib/error/handleApiError";
 import { adminDb } from "@/lib/firebase-admin";
 import { verifySessionCookie } from "@/lib/verifySession";
 import { FieldValue } from "firebase-admin/firestore";
@@ -6,13 +7,12 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
-  req: NextRequest,
+  _: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const postId = (await params).id;
   const sessionCookie = (await cookies()).get("session");
-  if (!sessionCookie)
-    return NextResponse.json({ ok: false, status: 401, error: "Unauthorized" });
+  if (!sessionCookie) return handleApiError(401, "Unauthorized");
 
   const tokenId = sessionCookie.value;
   const decode = await verifySessionCookie(tokenId);
@@ -43,7 +43,7 @@ export async function POST(
       }
     });
     revalidatePath(`/posts/${postId}`);
-    return NextResponse.json({ data });
+    return NextResponse.json({ message: "OK", data });
   }
-  return NextResponse.json({ liked: false });
+  return handleApiError(401, "Unauthorized");
 }
