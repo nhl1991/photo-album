@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
+        message: "OK",
         ok: true,
         results: data.results.map((r: GeocodeResponse) => {
           const { formatted_address, place_id } = r;
