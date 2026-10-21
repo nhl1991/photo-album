@@ -1,21 +1,16 @@
+import { requireUser } from "@/lib/auth/requireUser";
 import { rateLimit } from "@/lib/ratelimit";
-import { verifySessionCookie } from "@/lib/verifySession";
 import { GeocodeResponse } from "@/types/Geocode";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const session = (await cookies()).get("session");
-  const decode = session ? await verifySessionCookie(session.value) : null;
-  if (!decode)
-    return NextResponse.json(
-      { ok: false, error: "Unauthorized" },
-      { status: 401 },
-    );
+  const auth = await requireUser();
+  if(!auth.ok) return auth.response;
+  const { decodedUid } = auth;
 
   try {
     // geocode 라우트: 세션 검증 직후
-    const rl = await rateLimit(`geocode_${decode.uid}`, 30, 60_000);
+    const rl = await rateLimit(`geocode_${decodedUid}`, 30, 60_000);
     if (!rl.ok)
       return NextResponse.json(
         { ok: false, error: "Too many requests." },
