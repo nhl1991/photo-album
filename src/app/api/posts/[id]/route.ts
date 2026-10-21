@@ -1,8 +1,7 @@
-import { getSessionValue } from "@/lib/auth/getSessionValue";
+import { getUserOptional } from "@/lib/auth/getUserOptional";
+import { requireUser } from "@/lib/auth/requireUser";
 import { handleApiError } from "@/lib/error/handleApiError";
 import { adminDb, adminStorage } from "@/lib/firebase-admin";
-import { verifySessionCookie } from "@/lib/verifySession";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 /**
  * Get a single post.
@@ -10,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
  * @returns A Single post.
  */
 export async function GET(
-  _: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const postId = (await params).id;
@@ -20,15 +19,15 @@ export async function GET(
   const id = doc.id;
   const post = doc.data();
   const authorUid = post ? post.author.uid : null;
-  const tokenId = await getSessionValue();
-  const decode = tokenId ? await verifySessionCookie(tokenId) : null;
+  const sessionUid = await getUserOptional();
+  const isMine = sessionUid != null && authorUid === sessionUid;
 
-  const sessionUid = decode ? decode.uid : null;
-  const isMine = authorUid === sessionUid;
-  const likeDoc = await adminDb
-    .doc(`/posts/${postId}/likes/${sessionUid}`)
-    .get();
-  liked = likeDoc.exists ? true : false;
+  if (sessionUid) {
+    const likeDoc = await adminDb
+      .doc(`/posts/${postId}/likes/${sessionUid}`)
+      .get();
+    liked = likeDoc.exists ? true : false;
+  }
 
   return NextResponse.json({ id, post, liked, isMine });
 }
@@ -40,30 +39,22 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   // get session from server
-  const session = (await cookies()).get("session");
-  if (!session)
-    return handleApiError(401, "Unauthorized");
-  const tokenId = session.value;
-
-  // decoding token
-  const decode = await verifySessionCookie(tokenId);
-  if (!decode)
-    return handleApiError(401, "Unauthorized");
+  const auth = await requireUser();
+  if (!auth.ok) return auth.response;
+  const { decodedUid } = auth;
 
   // storage posts/{postId} 삭제
   const postId = (await params).id;
 
-  if (!postId)
-    return handleApiError(404, "NOT_FOUND");
+  if (!postId) return handleApiError(404, "NOT_FOUND");
   const postData = (await adminDb.doc(`/posts/${postId}`).get()).data();
 
-  if (!postData)
-    return handleApiError(404, "NOT_FOUND");
+  if (!postData) return handleApiError(404, "NOT_FOUND");
 
-  if (postData.author.uid !== decode.uid)
+  if (postData.author.uid !== decodedUid)
     return handleApiError(403, "Forbidden");
 
-  const expected = `posts/${decode.uid}/${postId}`;
+  const expected = `posts/${decodedUid}/${postId}`;
   const likesRef = await adminDb.collection(`/posts/${postId}/likes`).get();
 
   let batch = adminDb.batch();

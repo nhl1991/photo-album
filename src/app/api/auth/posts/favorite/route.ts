@@ -1,25 +1,18 @@
 // app/api/posts/route.ts
 import { adminDb } from "@/lib/firebase-admin";
-import { verifySessionCookie } from "@/lib/verifySession";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { handleApiError } from "@/lib/error/handleApiError";
+import { requireUser } from "@/lib/auth/requireUser";
 const DOCS_SIZE = 8;
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const cursor = searchParams.get("cursor"); // createdAt (string)
-  const session = (await cookies()).get("session");
-  if (!session)
-    return handleApiError(401, "Unauthorized");
-
-  const tokenId = session.value;
-
-  const decode = await verifySessionCookie(tokenId);
-  if (!decode)
-    return handleApiError(401, "Unauthorized");
+  const auth = await requireUser();
+  if(!auth.ok) return auth.response;
+  const { decodedUid } = auth;
 
   let query = adminDb
-    .collection(`/users/${decode.uid}/likedPosts/`)
+    .collection(`/users/${decodedUid}/likedPosts/`)
     .orderBy("createdAt", "desc")
     .limit(DOCS_SIZE);
 

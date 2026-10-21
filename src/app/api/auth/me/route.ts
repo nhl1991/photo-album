@@ -1,20 +1,15 @@
-import { getSessionValue } from "@/lib/auth/getSessionValue";
+
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
-import { verifySessionCookie } from "@/lib/verifySession";
 import { NextResponse } from "next/server";
-import { handleApiError } from "@/lib/error/handleApiError";
+import { requireUser } from "@/lib/auth/requireUser";
 
 export async function GET() {
-  const session = await getSessionValue();
-  if (!session)
-    return handleApiError(401, "Unauthorized");
-  const decode = await verifySessionCookie(session);
-  
-  if (!decode)
-    return handleApiError(401, "Unauthorized");
+  const auth = await requireUser();
+  if (!auth.ok) return auth.response;
+  const { decodedUid } = auth;
 
-  const user = await adminAuth.getUser(decode.uid);
-  await adminDb.doc(`/users/${decode.uid}`).set({
+  const user = await adminAuth.getUser(decodedUid);
+  await adminDb.doc(`/users/${decodedUid}`).set({
     displayName: user.displayName,
     photoURL: user.photoURL,
     updatedAt: Date.now(),

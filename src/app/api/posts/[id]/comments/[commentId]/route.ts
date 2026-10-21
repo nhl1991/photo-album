@@ -1,30 +1,24 @@
 import { adminDb } from "@/lib/firebase-admin";
-import { verifySessionCookie } from "@/lib/verifySession";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/lib/error/handleApiError";
+import { requireUser } from "@/lib/auth/requireUser";
 
 // DELETE
 export async function DELETE(
-  _: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string; commentId: string }> },
 ) {
   const { id, commentId } = await params;
-  const session = (await cookies()).get("session");
-  
-  if (!session) return handleApiError(401, "Unauthorized");
-
-  const tokenId = session.value;
-  const decode = await verifySessionCookie(tokenId);
-
-  if (!decode) return handleApiError(401, "Unauthorized");
+  const auth = await requireUser();
+  if (!auth.ok) return auth.response;
+  const { decodedUid } = auth;
 
   const commentRef = adminDb.doc(`posts/${id}/comments/${commentId}`);
   const comment = (await commentRef.get()).data();
 
   if (!comment) return handleApiError(404, "NOT_FOUND");
 
-  if (comment.uid !== decode.uid) return handleApiError(401, "Unauthorized");
+  if (comment.uid !== decodedUid) return handleApiError(403, "Forbidden");
 
   await commentRef.delete();
 

@@ -1,8 +1,10 @@
+import { getUserOptional } from "@/lib/auth/getUserOptional";
+import { requireUser } from "@/lib/auth/requireUser";
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
-import { verifySessionCookie } from "@/lib/verifySession";
 import { FieldValue } from "firebase-admin/firestore";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { handleApiError } from "@/lib/error/handleApiError";
+import { FirebaseAuthError } from "firebase-admin/auth";
 
 // CREATE
 export async function POST(
@@ -13,28 +15,16 @@ export async function POST(
   const { content } = await req.json();
 
   if (typeof content !== "string" || content.length === 0) {
-    return NextResponse.json(
-      { ok: false, error: "INVALID_CONTENT" },
-      { status: 400 },
-    );
+    return handleApiError(400, "INVALID_CONTENT");
   }
   // get post id
   const postId = (await params).id;
 
-  // get session from server
-  const session = (await cookies()).get("session");
-  if (!session)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-
-  // extract token from session
-  const tokenId = session.value;
-
-  // decoding token
-  const decode = await verifySessionCookie(tokenId);
-  if (!decode)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const auth = await requireUser();
+  if (!auth.ok) return auth.response;
+  const { decodedUid } = auth;
   try {
-    const user = await adminAuth.getUser(decode.uid);
+    const user = await adminAuth.getUser(decodedUid);
 
     const { displayName, photoURL } = user;
 
@@ -42,20 +32,18 @@ export async function POST(
     // displayName 클라이언트는 Anonymous로 표시, DB는 null로 저장
     await commentRef.create({
       content,
-      uid: decode.uid,
+      uid: decodedUid,
       displayName: displayName ?? null,
       photoURL: photoURL ?? null,
       createdAt: FieldValue.serverTimestamp(),
     });
 
     return NextResponse.json({ message: "OK" });
-  } catch (err) {
-    if ((err as { code?: string }).code === "auth/user-not-found")
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    console.error(err);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  } catch (e) {
+    if (e instanceof FirebaseAuthError && e.hasCode("user-not-found"))
+      return handleApiError(401, "Unauthorized");
+    return handleApiError(500, "INTERNAL_SERVER_ERROR", e);
   }
-
 }
 
 // READ
@@ -73,9 +61,7 @@ export async function GET(
   if (cursor !== null && cursor !== undefined) {
     query = query.startAfter(Number(cursor));
   }
-  const session = (await cookies()).get("session");
-  const decoded = session ? await verifySessionCookie(session.value) : null;
-  const viewerUid = decoded?.uid ?? null;
+  const viewerUid = await getUserOptional();
 
   const docs = (await query.get()).docs;
   let lastDoc;
@@ -89,7 +75,6 @@ export async function GET(
       content: string;
       displayName: string | null;
     };
-
 
     return {
       photoURL,
@@ -110,4 +95,4 @@ export async function GET(
 }
 
 // UPDATE
-export async function PATCH() { }
+export async function PATCH() {}

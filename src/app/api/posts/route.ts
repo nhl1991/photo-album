@@ -1,11 +1,10 @@
 /**
  * Get All posts order by createdAt
  */
+import { requireUser } from "@/lib/auth/requireUser";
 import { handleApiError } from "@/lib/error/handleApiError";
 import { adminAuth, adminDb, adminStorage } from "@/lib/firebase-admin";
-import { verifySessionCookie } from "@/lib/verifySession";
 import { getDownloadURL } from "firebase-admin/storage";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 const DOCS_SIZE = 8;
 export async function GET(req: Request) {
@@ -56,19 +55,10 @@ const getRequiredString = (fd: FormData, key: string): string => {
 };
 
 export async function POST(req: NextRequest) {
-  // get session from server
-  const session = (await cookies()).get("session");
-  if (!session)
-    return handleApiError(401, "Unauthorized");
-
-  // extract token from session
-  const tokenId = session.value;
-
-  // decoding token
-  const decode = await verifySessionCookie(tokenId);
-  if (!decode)
-    return handleApiError(401, "Unauthorized");
-  const { displayName, photoURL } = await adminAuth.getUser(decode.uid);
+  const auth = await requireUser();
+  if (!auth.ok) return auth.response;
+  const { decodedUid } = auth;
+  const { displayName, photoURL } = await adminAuth.getUser(decodedUid);
 
   const formData = await req.formData();
 
@@ -91,7 +81,7 @@ export async function POST(req: NextRequest) {
     return handleApiError(400, "INVALID_POST_ID");
 
   const postRef = adminDb.collection("posts").doc(postId);
-  const expectedPath = `posts/${decode.uid}/${postId}`;
+  const expectedPath = `posts/${decodedUid}/${postId}`;
 
   const file = adminStorage.bucket().file(expectedPath);
   const [exists] = await file.exists();
@@ -104,7 +94,7 @@ export async function POST(req: NextRequest) {
     author: {
       photoURL: photoURL,
       displayName: displayName,
-      uid: decode.uid,
+      uid: decodedUid,
     },
     address: JSON.parse(address),
     view: 0,
