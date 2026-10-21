@@ -20,7 +20,7 @@ export async function GET(
   const post = doc.data();
   const authorUid = post ? post.author.uid : null;
   const sessionUid = await getUserOptional();
-  const isMine = authorUid === sessionUid;
+  const isMine = sessionUid != null && authorUid === sessionUid;
 
   if (sessionUid) {
     const likeDoc = await adminDb
