@@ -1,11 +1,17 @@
 import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 import { useAuth } from "@/hooks/useAuth";
+import { establishSession } from "@/lib/auth/establishSession";
 import { auth } from "@/lib/firebase";
 import { logOut, printErrorMessage } from "@/utils/firebase-utils";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
+
+const notifySignupSessionFailure = async () => {
+  await logOut().catch(() => {});
+  alert("가입은 완료됐지만 로그인에 실패했습니다. 로그인 페이지로 이동합니다.");
+};
 
 export default function SignUpForm({
   setError,
@@ -53,37 +59,23 @@ export default function SignUpForm({
       await updateProfile(user, { displayName: displayNameRef.current.value });
 
       // 2. 서버 세션 발급
-      const idToken = await user.getIdToken();
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${idToken}` },
-      });
 
-      if (response.ok) {
+      const result = await establishSession(user);
+
+      if (result.ok) {
         setUser(user);
         router.push("/");
         return;
       }
 
       // 3. 세션 발급 실패: 클라이언트 로그아웃 후 안내
-      await logOut();
-      const { error } = await response.json().catch(() => ({ error: null }));
-      if (error === "USER_DISABLED") {
-        setError("사용자 계정이 비활성화되었습니다.");
-        return;
-      }
-      alert(
-        response.status === 401
-          ? "인증에 실패했습니다. 로그인 페이지로 이동합니다."
-          : "로그인에 실패했습니다. 로그인 페이지로 이동합니다.",
-      );
+      await notifySignupSessionFailure();
       router.push("/signin");
+      return;
     } catch (e) {
       if (created) {
-        await logOut().catch(() => {});
-        setError(
-          "가입은 완료됐지만 로그인에 실패했습니다. 로그인 페이지에서 다시 로그인해주세요.",
-        );
+        await notifySignupSessionFailure();
+        router.push("/signin");
       } else if (e instanceof FirebaseError) setError(printErrorMessage(e));
       else setError("가입 중 오류가 발생했습니다.");
     } finally {
