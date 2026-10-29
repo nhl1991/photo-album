@@ -2,7 +2,12 @@
 
 import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 import { useAuth } from "@/hooks/useAuth";
-import { FirebaseAuthSignIn, printErrorMessage } from "@/utils/firebase-utils";
+import { establishSession } from "@/lib/auth/establishSession";
+import {
+  FirebaseAuthSignIn,
+  logOut,
+  printErrorMessage,
+} from "@/utils/firebase-utils";
 import { FirebaseError } from "firebase/app";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
@@ -29,21 +34,20 @@ export default function SignInForm({
           emailRef.current.value,
           passwordRef.current.value,
         );
-        const tokenId = await user.getIdToken();
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${tokenId}` },
-        });
+        const result = await establishSession(user);
 
-        if (response.ok && user) {
+        if (result.ok) {
           setUser(user);
           router.push("/");
+          return;
         }
+        await logOut().catch(() => {});
+        setError("로그인에 실패했습니다.");
+        return;
       }
     } catch (e) {
-      if (e instanceof FirebaseError) {
-        setError(printErrorMessage(e));
-      }
+      if (e instanceof FirebaseError) setError(printErrorMessage(e));
+      else setError("로그인 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
 
@@ -54,7 +58,9 @@ export default function SignInForm({
     <form className="flex flex-col gap-y-6" onSubmit={onSubmit}>
       <div className="flex flex-col gap-y-5">
         <div>
-          <label className="field-label" htmlFor="email">이메일</label>
+          <label className="field-label" htmlFor="email">
+            이메일
+          </label>
           <input
             className="field-input"
             id="email"
@@ -65,7 +71,9 @@ export default function SignInForm({
           />
         </div>
         <div>
-          <label className="field-label" htmlFor="password">비밀번호</label>
+          <label className="field-label" htmlFor="password">
+            비밀번호
+          </label>
           <input
             className="field-input"
             id="password"
