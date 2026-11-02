@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // 클라이언트 입력 제한(10MB)과 맞춘 이미지 검사.
+    // image/svg+xml은 스크립트를 담을 수 있어 허용 목록에서 제외한다.
+    function isAllowedImage() {
+      return request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp|gif)');
+    }
+
+    // 게시물 이미지: 작성자 본인만 업로드하고, 게시물 생성 실패 시 정리를 위해 삭제를 허용한다.
+    // 업로드 후 이미지 바꿔치기를 막기 위해 update는 허용하지 않는다.
+    // 게시물 삭제 시 정리와 다운로드 URL 발급은 서버(Admin SDK)가 한다.
+    match /posts/{uid}/{postId} {
+      allow create: if isOwner(uid) && isAllowedImage();
+      allow delete: if isOwner(uid);
+    }
+
+    // 아바타: 본인만 업로드·교체하고, getDownloadURL 호출을 위해 본인 조회를 허용한다.
+    match /avatars/{uid} {
+      allow create, update: if isOwner(uid) && isAllowedImage();
+      allow get: if isOwner(uid);
+    }
+
+    // 그 밖의 경로는 일치하는 규칙이 없으므로 모두 거부된다.
+  }
+}

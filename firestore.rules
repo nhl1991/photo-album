@@ -1,0 +1,12 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 모든 읽기·쓰기는 서버 API(Admin SDK)를 통해서만 한다.
+    // Admin SDK는 보안 규칙을 우회하므로 클라이언트 접근은 전부 거부한다.
+    // 클라이언트의 firebase/firestore는 게시물 ID를 미리 만드는 로컬 계산에만 쓰인다.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
