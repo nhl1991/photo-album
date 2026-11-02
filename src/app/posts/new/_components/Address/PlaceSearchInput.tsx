@@ -11,10 +11,13 @@ export default function PlaceSearchInput({
 }) {
   const queryRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState(false);
+  // 같은 검색어라도 이전 요청의 응답이 최신 결과를 덮어쓰지 않도록 요청마다 식별자를 부여한다.
+  const latestRequestId = useRef(0);
   const handleOnChange = useDebouncedCallback(async () => {
     if (!queryRef) return;
     if (!queryRef.current) return;
 
+    const requestId = ++latestRequestId.current;
     const value = queryRef.current.value.trim();
     if (value.length < 2) {
       setQueryResults(null);
@@ -23,11 +26,11 @@ export default function PlaceSearchInput({
     }
     try {
       const results = await findPlacesByQuery(value);
-      if (queryRef.current?.value.trim() !== value) return;
+      if (requestId !== latestRequestId.current) return;
       if (results) setQueryResults(results);
       setError(false);
     } catch {
-      if (queryRef.current?.value.trim() !== value) return;
+      if (requestId !== latestRequestId.current) return;
       setQueryResults(null);
       setError(true);
     }
