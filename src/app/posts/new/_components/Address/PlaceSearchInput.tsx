@@ -1,8 +1,8 @@
 "use client";
 import { findPlacesByQuery } from "@/lib/findPlacesByQuery";
 import { GeocodeResults } from "@/types/Geocode";
-
-import { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function PlaceSearchInput({
   setQueryResults,
@@ -10,31 +10,31 @@ export default function PlaceSearchInput({
   setQueryResults: Dispatch<SetStateAction<GeocodeResults[] | null>>;
 }) {
   const queryRef = useRef<HTMLInputElement>(null);
-
-  const handleOnClick = async () => {
+  const [error, setError] = useState(false);
+  const handleOnChange = useDebouncedCallback(async () => {
     if (!queryRef) return;
     if (!queryRef.current) return;
 
-    await fetch("/api/geocode/query", {
-      method: "POST",
-      body: JSON.stringify({ place_id: "ChIJg-NbxYfmAGARSKvGWN74GMo" }),
-    });
-  };
-
-  const handleOnChange = async () => {
-    if (!queryRef) return;
-    if (!queryRef.current) return;
-    const { value } = queryRef.current;
-    if (value === "") {
+    const value = queryRef.current.value.trim();
+    if (value.length < 2) {
       setQueryResults(null);
+      setError(false);
       return;
     }
-    const results = await findPlacesByQuery(value);
-    if (results) setQueryResults(results);
-  };
+    try {
+      const results = await findPlacesByQuery(value);
+      if (queryRef.current?.value.trim() !== value) return;
+      if (results) setQueryResults(results);
+      setError(false);
+    } catch {
+      if (queryRef.current?.value.trim() !== value) return;
+      setQueryResults(null);
+      setError(true);
+    }
+  }, 300);
 
   return (
-    <div className="flex items-center gap-2 px-5 py-5">
+    <div className="flex flex-col items-center gap-2 px-5 py-5">
       <input
         type="text"
         className="field-input min-w-0 flex-1"
@@ -45,12 +45,11 @@ export default function PlaceSearchInput({
         ref={queryRef}
         onChange={handleOnChange}
       />
-      <button
-        onClick={handleOnClick}
-        className="btn-secondary shrink-0"
-      >
-        검색
-      </button>
+      {error && (
+        <p role="alert" className="text-sm text-danger">
+          장소 검색 중 오류가 발생했습니다.
+        </p>
+      )}
     </div>
   );
 }
