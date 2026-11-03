@@ -1,7 +1,7 @@
 
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { adminAuth, adminDb } from "@/lib/server/firebase-admin";
 import { NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/requireUser";
+import { requireUser } from "@/lib/server/auth/requireUser";
 
 export async function GET() {
   const auth = await requireUser();

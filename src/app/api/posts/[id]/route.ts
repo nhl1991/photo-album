@@ -1,7 +1,7 @@
-import { getUserOptional } from "@/lib/auth/getUserOptional";
-import { requireUser } from "@/lib/auth/requireUser";
-import { handleApiError } from "@/lib/error/handleApiError";
-import { adminDb, adminStorage } from "@/lib/firebase-admin";
+import { getUserOptional } from "@/lib/server/auth/getUserOptional";
+import { requireUser } from "@/lib/server/auth/requireUser";
+import { handleApiError } from "@/lib/server/error/handleApiError";
+import { adminDb, adminStorage } from "@/lib/server/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 /**
  * Get a single post.

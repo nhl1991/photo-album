@@ -1,3 +1,4 @@
+import "server-only";
 import { NextResponse } from "next/server";
 
 type ApiErrorStatus = 400 | 401 | 403 | 404 | 429 | 500 | 502;

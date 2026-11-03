@@ -10,7 +10,7 @@ import PlaceIcon from "@/components/icons/PlaceIcon";
 import CreatePostForm from "./CreatePostForm";
 import { FormState } from "@/types/Form";
 import { ref, uploadBytes, deleteObject } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db, storage } from "@/lib/client/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { collection, doc } from "firebase/firestore";
 import { useRouter } from "next/navigation";

@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { signOutUser } from "@/lib/auth/firebaseSignOut";
+import { signOutUser } from "@/lib/client/auth/firebaseSignOut";
 import { useRouter } from "next/navigation";
 
 export default function SignOut() {

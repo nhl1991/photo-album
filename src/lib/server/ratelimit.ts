@@ -1,7 +1,7 @@
 
 
 import "server-only";
-import { adminDb } from "./firebase-admin";
+import { adminDb } from "@/lib/server/firebase-admin";
 // key : 유저, limit: 제한 횟수, windowMs: 인터벌 (밀리초)
 export async function rateLimit(key: string, limit: number, windowMs: number) {
   const windowStart = Math.floor(Date.now() / windowMs) * windowMs;

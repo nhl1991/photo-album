@@ -1,7 +1,7 @@
 // app/api/posts/route.ts
-import { requireUser } from "@/lib/auth/requireUser";
-import { handleApiError } from "@/lib/error/handleApiError";
-import { adminDb } from "@/lib/firebase-admin";
+import { requireUser } from "@/lib/server/auth/requireUser";
+import { handleApiError } from "@/lib/server/error/handleApiError";
+import { adminDb } from "@/lib/server/firebase-admin";
 import { NextResponse } from "next/server";
 const DOCS_SIZE = 8;
 export async function GET(req: Request) {

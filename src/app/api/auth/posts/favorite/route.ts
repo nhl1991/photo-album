@@ -1,8 +1,8 @@
 // app/api/posts/route.ts
-import { adminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/server/firebase-admin";
 import { NextResponse } from "next/server";
-import { handleApiError } from "@/lib/error/handleApiError";
-import { requireUser } from "@/lib/auth/requireUser";
+import { handleApiError } from "@/lib/server/error/handleApiError";
+import { requireUser } from "@/lib/server/auth/requireUser";
 const DOCS_SIZE = 8;
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

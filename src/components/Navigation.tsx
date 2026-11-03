@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { signOutUser } from "../lib/auth/firebaseSignOut";
+import { signOutUser } from "@/lib/client/auth/firebaseSignOut";
 import LogoutIcon from "./icons/LogoutIcon";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname, useRouter } from "next/navigation";

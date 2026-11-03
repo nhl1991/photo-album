@@ -1,5 +1,5 @@
-import { requireUser } from "@/lib/auth/requireUser";
-import { rateLimit } from "@/lib/ratelimit";
+import { requireUser } from "@/lib/server/auth/requireUser";
+import { rateLimit } from "@/lib/server/ratelimit";
 import { GeocodeResponse } from "@/types/Geocode";
 import { NextRequest, NextResponse } from "next/server";
 

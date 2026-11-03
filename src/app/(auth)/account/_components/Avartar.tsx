@@ -1,4 +1,4 @@
-import { storage } from "@/lib/firebase";
+import { storage } from "@/lib/client/firebase";
 import { updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { ChangeEvent, useEffect, useState } from "react";

@@ -1,5 +1,5 @@
 "use client";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/client/firebase";
 import { FirebaseError } from "firebase/app";
 import {
   EmailAuthProvider,

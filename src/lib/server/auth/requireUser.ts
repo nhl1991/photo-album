@@ -1,6 +1,7 @@
-import { handleApiError } from "../error/handleApiError";
+import "server-only";
+import { handleApiError } from "@/lib/server/error/handleApiError";
 import { NextResponse } from "next/server";
-import { getUserOptional } from "./getUserOptional";
+import { getUserOptional } from "@/lib/server/auth/getUserOptional";
 type RequireUserResult =
   | { ok: false; response: NextResponse }
   | { ok: true; decodedUid: string };

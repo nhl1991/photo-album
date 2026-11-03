@@ -1,6 +1,6 @@
 import "server-only";
 import { FirebaseAuthError } from "firebase-admin/auth";
-import { adminAuth } from "./firebase-admin";
+import { adminAuth } from "@/lib/server/firebase-admin";
 
 export async function verifySessionCookie(tokenId: string) {
   try {

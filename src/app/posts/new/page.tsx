@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import CreatePostContainer from "./_components/CreatePostContainer";
 import { setOptions } from "@googlemaps/js-api-loader";
-import { GOOGLE_API_KEY } from "@/lib/google-api-key";
+import { GOOGLE_API_KEY } from "@/lib/client/maps/google-api-key";
 /**
  *
  * 파일 업로드 컴포넌트
