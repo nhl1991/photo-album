@@ -3,14 +3,12 @@
 import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 import { useAuth } from "@/hooks/useAuth";
 import { establishSession } from "@/lib/auth/establishSession";
-import {
-  FirebaseAuthSignIn,
-  logOut,
-  printErrorMessage,
-} from "@/utils/firebase-utils";
+import { signOutUser } from "@/lib/auth/firebaseSignOut";
 import { FirebaseError } from "firebase/app";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { signInUser } from "@/lib/auth/firebaseSignIn";
+import { getAuthErrorMessage } from "@/lib/error/getAuthError";
 
 export default function SignInForm({
   setError,
@@ -30,7 +28,7 @@ export default function SignInForm({
       setIsLoading(true);
       setError("");
       if (emailRef.current && passwordRef.current) {
-        const user = await FirebaseAuthSignIn(
+        const user = await signInUser(
           emailRef.current.value,
           passwordRef.current.value,
         );
@@ -41,12 +39,12 @@ export default function SignInForm({
           router.push("/");
           return;
         }
-        await logOut().catch(() => {});
+        await signOutUser().catch(() => {});
         setError("로그인에 실패했습니다.");
         return;
       }
     } catch (e) {
-      if (e instanceof FirebaseError) setError(printErrorMessage(e));
+      if (e instanceof FirebaseError) setError(getAuthErrorMessage(e));
       else setError("로그인 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);

@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { logOut } from "@/utils/firebase-utils";
+import { signOutUser } from "@/lib/auth/firebaseSignOut";
 import { useRouter } from "next/navigation";
 
 export default function SignOut() {
@@ -11,7 +11,7 @@ export default function SignOut() {
         method: "POST",
       });
       if (response.ok) {
-        await logOut();
+        await signOutUser();
         setUser(null);
         router.push("/signin");
       } else {
