@@ -7,7 +7,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 export default function DisplayName() {
   const [isEdit, setIsEdit] = useState(false); // boolean for Edit Display name.
   const [username, setUsername] = useState<string>("Anonymous");
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
 
   useEffect(() => {
     if (user && user.displayName) setUsername(user.displayName);
@@ -20,6 +20,7 @@ export default function DisplayName() {
     if (isEdit === false) setIsEdit(true);
     else {
       await updateProfile(user, { displayName: username });
+      refreshProfile();
       if (user.displayName) setUsername(user.displayName);
       setIsEdit(false);
     }
