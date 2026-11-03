@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 import { FirebaseAuthError } from "firebase-admin/auth";
 import { adminAuth } from "./firebase-admin";
 
