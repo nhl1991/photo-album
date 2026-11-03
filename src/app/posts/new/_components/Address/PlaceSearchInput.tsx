@@ -1,5 +1,5 @@
 "use client";
-import { findPlacesByQuery } from "@/lib/findPlacesByQuery";
+import { findPlacesByQuery } from "@/lib/client/maps/findPlacesByQuery";
 import { GeocodeResults } from "@/types/Geocode";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";

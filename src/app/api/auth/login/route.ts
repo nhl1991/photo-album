@@ -1,8 +1,8 @@
-import { adminAuth } from "@/lib/firebase-admin";
+import { adminAuth } from "@/lib/server/firebase-admin";
 import { FirebaseAuthError } from "firebase-admin/auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { handleApiError } from "@/lib/error/handleApiError";
+import { handleApiError } from "@/lib/server/error/handleApiError";
 const INVALID_TOKEN_CODES = [
   "invalid-id-token",
   "id-token-expired",

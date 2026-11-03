@@ -1,9 +1,9 @@
 /**
  * Get All posts order by createdAt
  */
-import { requireUser } from "@/lib/auth/requireUser";
-import { handleApiError } from "@/lib/error/handleApiError";
-import { adminAuth, adminDb, adminStorage } from "@/lib/firebase-admin";
+import { requireUser } from "@/lib/server/auth/requireUser";
+import { handleApiError } from "@/lib/server/error/handleApiError";
+import { adminAuth, adminDb, adminStorage } from "@/lib/server/firebase-admin";
 import { getDownloadURL } from "firebase-admin/storage";
 import { NextRequest, NextResponse } from "next/server";
 const DOCS_SIZE = 8;

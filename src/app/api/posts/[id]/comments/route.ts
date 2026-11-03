@@ -1,9 +1,9 @@
-import { getUserOptional } from "@/lib/auth/getUserOptional";
-import { requireUser } from "@/lib/auth/requireUser";
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { getUserOptional } from "@/lib/server/auth/getUserOptional";
+import { requireUser } from "@/lib/server/auth/requireUser";
+import { adminAuth, adminDb } from "@/lib/server/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
-import { handleApiError } from "@/lib/error/handleApiError";
+import { handleApiError } from "@/lib/server/error/handleApiError";
 import { FirebaseAuthError } from "firebase-admin/auth";
 
 // CREATE

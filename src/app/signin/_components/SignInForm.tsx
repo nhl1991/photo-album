@@ -2,13 +2,13 @@
 
 import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 import { useAuth } from "@/hooks/useAuth";
-import { establishSession } from "@/lib/auth/establishSession";
-import { signOutUser } from "@/lib/auth/firebaseSignOut";
+import { establishSession } from "@/lib/client/auth/establishSession";
+import { signOutUser } from "@/lib/client/auth/firebaseSignOut";
 import { FirebaseError } from "firebase/app";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { signInUser } from "@/lib/auth/firebaseSignIn";
-import { getAuthErrorMessage } from "@/lib/error/getAuthError";
+import { signInUser } from "@/lib/client/auth/firebaseSignIn";
+import { getAuthErrorMessage } from "@/lib/client/error/getAuthError";
 
 export default function SignInForm({
   setError,

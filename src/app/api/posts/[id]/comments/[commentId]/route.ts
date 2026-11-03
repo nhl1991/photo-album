@@ -1,7 +1,7 @@
-import { adminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/server/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { handleApiError } from "@/lib/error/handleApiError";
-import { requireUser } from "@/lib/auth/requireUser";
+import { handleApiError } from "@/lib/server/error/handleApiError";
+import { requireUser } from "@/lib/server/auth/requireUser";
 
 // DELETE
 export async function DELETE(

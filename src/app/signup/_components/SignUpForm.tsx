@@ -1,8 +1,8 @@
-import { getAuthErrorMessage } from "@/lib/error/getAuthError";
+import { getAuthErrorMessage } from "@/lib/client/error/getAuthError";
 import { useAuth } from "@/hooks/useAuth";
-import { establishSession } from "@/lib/auth/establishSession";
-import { auth } from "@/lib/firebase";
-import { signOutUser } from "@/lib/auth/firebaseSignOut";
+import { establishSession } from "@/lib/client/auth/establishSession";
+import { auth } from "@/lib/client/firebase";
+import { signOutUser } from "@/lib/client/auth/firebaseSignOut";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";

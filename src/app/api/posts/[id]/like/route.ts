@@ -1,5 +1,5 @@
-import { requireUser } from "@/lib/auth/requireUser";
-import { adminDb } from "@/lib/firebase-admin";
+import { requireUser } from "@/lib/server/auth/requireUser";
+import { adminDb } from "@/lib/server/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
