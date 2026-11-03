@@ -41,15 +41,6 @@ export default function Navigation() {
   };
 
   useEffect(() => {
-    const init = async () => {
-      await fetch("/api/auth/me", {
-        method: "GET",
-      });
-    };
-    init();
-  }, [user]);
-
-  useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
 
