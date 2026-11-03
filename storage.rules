@@ -13,12 +13,11 @@ service firebase.storage {
         && request.resource.contentType.matches('image/(jpeg|png|webp|gif)');
     }
 
-    // 게시물 이미지: 작성자 본인만 업로드하고, 게시물 생성 실패 시 정리를 위해 삭제를 허용한다.
-    // 업로드 후 이미지 바꿔치기를 막기 위해 update는 허용하지 않는다.
-    // 게시물 삭제 시 정리와 다운로드 URL 발급은 서버(Admin SDK)가 한다.
+    // 게시물 이미지: 작성자 본인만, 연결된 게시물 문서가 아직 없을 때만 업로드·삭제할 수 있다.
+    // (게시 후 삭제+재업로드로 이미지를 바꾸거나, 생성 응답이 유실됐을 때 게시된 이미지를 지우는 것을 막는다)
     match /posts/{uid}/{postId} {
-      allow create: if isOwner(uid) && isAllowedImage();
-      allow delete: if isOwner(uid);
+      allow create: if isOwner(uid) && isAllowedImage() && !firestore.exists(/databases/(default)/documents/posts/$(postId));
+      allow delete: if isOwner(uid) && !firestore.exists(/databases/(default)/documents/posts/$(postId));
     }
 
     // 아바타: 본인만 업로드·교체하고, getDownloadURL 호출을 위해 본인 조회를 허용한다.
