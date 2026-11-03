@@ -4,7 +4,7 @@ import { establishSession } from "@/lib/client/auth/establishSession";
 import { auth } from "@/lib/client/firebase";
 import { signOutUser } from "@/lib/client/auth/firebaseSignOut";
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
@@ -23,7 +23,7 @@ export default function SignUpForm({
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const displayNameRef = useRef<HTMLInputElement>(null);
-  const { setUser } = useAuth();
+  const { setUser, updateUserProfile } = useAuth();
   const router = useRouter();
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,7 +57,7 @@ export default function SignUpForm({
         passwordRef.current.value,
       );
       created = true;
-      await updateProfile(user, { displayName: displayNameRef.current.value });
+      await updateUserProfile(user, { displayName: displayNameRef.current.value });
 
       // 2. 서버 세션 발급
 

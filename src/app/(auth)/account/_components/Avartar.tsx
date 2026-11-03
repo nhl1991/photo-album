@@ -1,13 +1,13 @@
 import { storage } from "@/lib/client/firebase";
-import { updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { ChangeEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { AuthUser } from "@/types/Auth";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Avartar({ user }: { user: AuthUser }) {
   const [avatar, setAvatar] = useState<string | null>(null);
-
+  const { updateUserProfile } = useAuth();
   const handleOnProfileImage = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!user) return;
     const { files } = e.target;
@@ -18,12 +18,10 @@ export default function Avartar({ user }: { user: AuthUser }) {
         const result = await uploadBytes(locationRef, file);
         const photoURL = await getDownloadURL(result.ref);
 
+        await updateUserProfile(user, { photoURL: photoURL });
         setAvatar(photoURL);
-        await updateProfile(user, {
-          photoURL: photoURL,
-        });
       } catch (e) {
-        setAvatar(user.photoURL)
+        setAvatar(user.photoURL);
         console.log(e);
       }
     }
@@ -35,7 +33,10 @@ export default function Avartar({ user }: { user: AuthUser }) {
 
   return (
     <div>
-      <label htmlFor="avartar" className="group block rounded-full hover:cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
+      <label
+        htmlFor="avartar"
+        className="group block rounded-full hover:cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent"
+      >
         <span className="sr-only">프로필 사진 변경</span>
         <div className="relative h-28 w-28 overflow-hidden rounded-full bg-line text-muted ring-1 ring-line transition-opacity duration-300 group-hover:opacity-85">
           {user && avatar ? (

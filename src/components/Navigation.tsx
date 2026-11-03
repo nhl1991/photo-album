@@ -20,11 +20,11 @@ export default function Navigation() {
   // const router = useRouter();
   const router = useRouter();
   const pathname = usePathname();
-  const [displayName, setDisplayName] = useState<string | null>("");
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, setUser, status } = useAuth();
+  const { user, setUser, status, profile } = useAuth();
+  const displayName = profile?.displayName ?? "Anonymous";
   const onLogout = async () => {
     try {
       const response = await fetch("/api/auth/logout", {
@@ -39,17 +39,6 @@ export default function Navigation() {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    const init = async () => {
-      await fetch("/api/auth/me", {
-        method: "GET",
-      });
-    };
-    init();
-
-    if (user) setDisplayName(user.displayName);
-  }, [user]);
 
   useEffect(() => {
     setMenuOpen(false);

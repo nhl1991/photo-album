@@ -1,13 +1,12 @@
 import CompleteIcon from "@/components/icons/CompleteIcon";
 import EditIcon from "@/components/icons/EditIcon";
 import { useAuth } from "@/hooks/useAuth";
-import { updateProfile } from "firebase/auth";
 import { ChangeEvent, useEffect, useState } from "react";
 
 export default function DisplayName() {
   const [isEdit, setIsEdit] = useState(false); // boolean for Edit Display name.
   const [username, setUsername] = useState<string>("Anonymous");
-  const { user } = useAuth();
+  const { user, updateUserProfile } = useAuth();
 
   useEffect(() => {
     if (user && user.displayName) setUsername(user.displayName);
@@ -19,7 +18,7 @@ export default function DisplayName() {
     //Switch to Edit.
     if (isEdit === false) setIsEdit(true);
     else {
-      await updateProfile(user, { displayName: username });
+      await updateUserProfile(user, { displayName: username });
       if (user.displayName) setUsername(user.displayName);
       setIsEdit(false);
     }
