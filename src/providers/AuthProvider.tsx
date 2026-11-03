@@ -1,7 +1,7 @@
 "use client";
 import { auth } from "@/lib/client/firebase";
 import { AuthUser, AuthState, Profile } from "@/types/Auth";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, updateProfile, User } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 
 const toProfile = (u: User | null): Profile =>
@@ -25,10 +25,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, [userAuth]);
   const refreshProfile = () => setProfile(toProfile(auth.currentUser));
-
+  const updateUserProfile = async (
+    u: User,
+    data: { displayName?: string; photoURL?: string },
+  ) => {
+    await updateProfile(u, data);
+    refreshProfile();
+  };
   return (
     <AuthContext.Provider
-      value={{ user, setUser, status, profile, refreshProfile }}
+      value={{ user, setUser, status, profile, updateUserProfile }}
     >
       {children}
     </AuthContext.Provider>
