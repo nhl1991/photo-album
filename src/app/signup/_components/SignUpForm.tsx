@@ -1,15 +1,16 @@
-import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
+import { getAuthErrorMessage } from "@/lib/error/getAuthError";
 import { useAuth } from "@/hooks/useAuth";
 import { establishSession } from "@/lib/auth/establishSession";
 import { auth } from "@/lib/firebase";
-import { logOut, printErrorMessage } from "@/utils/firebase-utils";
+import { signOutUser } from "@/lib/auth/firebaseSignOut";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
+import ThreeDotsBounce from "@/components/icons/ThreeDotsBounce";
 
 const notifySignupSessionFailure = async () => {
-  await logOut().catch(() => {});
+  await signOutUser().catch(() => {});
   alert("가입은 완료됐지만 로그인에 실패했습니다. 로그인 페이지로 이동합니다.");
 };
 
@@ -76,7 +77,7 @@ export default function SignUpForm({
       if (created) {
         await notifySignupSessionFailure();
         router.push("/signin");
-      } else if (e instanceof FirebaseError) setError(printErrorMessage(e));
+      } else if (e instanceof FirebaseError) setError(getAuthErrorMessage(e));
       else setError("가입 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);

@@ -49,3 +49,8 @@ next-env.d.ts
 
 # Alternate Code
 *.txt
+# firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
