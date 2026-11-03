@@ -8,7 +8,7 @@ description: Use when reviewing a PR or auditing code in this repository. Review
 For PR reviews, inspect changed code and the relevant surrounding call chain; report defects introduced by the change. For project audits, inspect active application flows and report existing actionable defects within the requested scope. Trace actual callers before treating legacy helpers or installed dependencies as active behavior.
 
 ## 1. Authentication and Session Handling
-- Use `requireUser()` for protected routes and `getUserOptional()` for optional identity on public routes (`src/lib/auth/`). Flag new route code that bypasses these helpers by reading `cookies().get("session")` directly. Direct session cookie access is expected only in `src/lib/auth/*` (centralized access), `src/app/api/auth/login` and `src/app/api/auth/logout` (issuing and clearing), and `src/middleware.tsx` (presence check before redirect).
+- Use `requireUser()` for protected routes and `getUserOptional()` for optional identity on public routes (`src/lib/server/auth/`). Flag new route code that bypasses these helpers by reading `cookies().get("session")` directly. Direct session cookie access is expected only in `src/lib/server/auth/*` (centralized access), `src/app/api/auth/login` and `src/app/api/auth/logout` (issuing and clearing), and `src/middleware.tsx` (presence check before redirect).
 - Verify Firebase session cookies are issued, verified, and invalidated correctly (login, logout, password change, and — once an account-deletion feature exists — account deletion should all affect session validity).
 - If password change is done via the client Firebase SDK rather than a server API route, check that the server session cookie is also refreshed/invalidated so it doesn't stay valid on the old credentials.
 - Check httpOnly/secure/sameSite cookie settings and server session verification on protected operations across `src/app/api/auth/**`, `src/app/api/posts/**`, and `src/app/api/geocode/**`. Distinguish intentionally public reads from authenticated writes; do not assume every posts route requires login.
@@ -16,7 +16,7 @@ For PR reviews, inspect changed code and the relevant surrounding call chain; re
 - Check for GET routes with unexpected write side effects (e.g. `/api/auth/me` should not mutate state as a side effect of being called).
 - Check guards (`AccountContainer`, middleware) distinguish pending authentication from guests and do not expose protected content before redirect. Cookie presence or a client-side redirect alone must not authorize protected server data or operations.
 - Check new protected pages are covered by middleware's `protectedPaths` and any matcher configuration. Exact `includes(pathname)` checks do not cover nested paths; verify intended protection for descendants without matching unrelated path prefixes.
-- Check that rate limiting (`src/lib/ratelimit.ts`) is applied consistently across sensitive/abuse-prone routes (login, post/comment creation, geocoding, etc.), not just the ones that already have it.
+- Check that rate limiting (`src/lib/server/ratelimit.ts`) is applied consistently across sensitive/abuse-prone routes (login, post/comment creation, geocoding, etc.), not just the ones that already have it.
 - Check TanStack Query keys and cache cleanup isolate user-specific data, including favorites and ownership flags, across login, logout, and account switching. Verify mutations refresh affected detail and list queries.
 
 ## 2. Firestore / Storage Security and Ownership
@@ -46,7 +46,8 @@ For PR reviews, inspect changed code and the relevant surrounding call chain; re
 - Keep server Geocoding keys and Firebase Admin credentials out of public env vars, client bundles, responses, and logs. Browser Maps keys are intentionally public; assess API/referrer restrictions when configuration is available and distinguish them from server credentials.
 - Check `next.config` `images.remotePatterns` is scoped to the actual storage bucket(s) in use, not wildcarded broader than necessary.
 - Check Firebase Admin credentials are only used in server-only modules (`server-only` import present where expected).
-- Distinguish `import "server-only"` from `"use server"`: the latter declares Server Actions and can make exported async helpers remotely invocable when exposed through action references. Flag its use on internal helpers (existing cases in `src/lib/auth/getSessionValue.ts` and `src/lib/verifySession.ts` are tracked in #25); inspect action reachability, authorization, inputs, and returned session data rather than assuming every export is a reachable endpoint.
+- `src/lib/client/` holds browser-only modules (Firebase client SDK, Maps loader) and `src/lib/server/` holds server-only modules, each starting with `import "server-only"`. Flag new server helpers placed outside `src/lib/server/` or missing that import, and client components or `src/lib/client/` modules that import from `src/lib/server/`.
+- Distinguish `import "server-only"` from `"use server"`: the latter declares Server Actions and can make exported async helpers remotely invocable when exposed through action references. Flag its use on internal helpers; inspect action reachability, authorization, inputs, and returned session data rather than assuming every export is a reachable endpoint.
 
 ## 6. Uploads and Images
 - Check file selection/upload code handles the empty/cancelled-selection case (no indexing into an empty file list).
