@@ -35,7 +35,16 @@ export async function PUT(
     return NextResponse.json({ message: "OK" });
   } catch (e) {
     const code = getErrorCode(e);
-    if (code === ALREADY_EXISTS) return NextResponse.json({ message: "OK" }); // 이미 좋아요한 상태
+    if (code === ALREADY_EXISTS) {
+      try {
+        const postExists = (await postRef.get()).exists;
+        return postExists
+          ? NextResponse.json({ message: "OK" })
+          : handleApiError(404, "NOT_FOUND");
+      } catch (readError) {
+        return handleApiError(500, "INTERNAL_SERVER_ERROR", readError);
+      }
+    }
     if (code === NOT_FOUND) return handleApiError(404, "NOT_FOUND"); // 게시물 없음
     return handleApiError(500, "INTERNAL_SERVER_ERROR", e);
   }
@@ -61,10 +70,14 @@ export async function DELETE(
   } catch (e) {
     // 이미 취소된 상태와 게시물 없음이 모두 NOT_FOUND라, 실패했을 때만 게시물 존재를 확인한다.
     if (getErrorCode(e) === NOT_FOUND) {
-      const exists = (await postRef.get()).exists;
-      return exists
-        ? NextResponse.json({ message: "OK" })
-        : handleApiError(404, "NOT_FOUND");
+      try {
+        const exists = (await postRef.get()).exists;
+        return exists
+          ? NextResponse.json({ message: "OK" })
+          : handleApiError(404, "NOT_FOUND");
+      } catch (e) {
+        return handleApiError(500, "INTERNAL_SERVER_ERROR", e);
+      }
     }
     return handleApiError(500, "INTERNAL_SERVER_ERROR", e);
   }

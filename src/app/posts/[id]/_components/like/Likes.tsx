@@ -37,8 +37,8 @@ export default function Likes({
       toggleOptimistic(undefined);
       const response = await fetch(`/api/posts/${postId}/like`, {
         method: nextLiked ? "PUT" : "DELETE",
-      });
-      if (!response.ok) return; // 실패하면 자동으로 원래대로
+      }).catch(() => null);
+      if (!response?.ok) return; // 실패하면 자동으로 원래대로
       const delta = nextLiked ? 1 : -1;
       startTransition(() =>
         setState((s) => ({ liked: nextLiked, count: s.count + delta })),
@@ -51,7 +51,11 @@ export default function Likes({
           old && {
             ...old,
             liked: nextLiked,
-            post: { ...old.post, likeCount: old.post.likeCount + delta },
+            post: {
+              ...old.post,
+              likeCount:
+                old.post.likeCount + (old.liked === nextLiked ? 0 : delta),
+            },
           },
       );
     });
