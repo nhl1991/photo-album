@@ -8,5 +8,5 @@ export type AuthState = {
     status:string,
     setUser: Dispatch<SetStateAction<AuthUser>>,
     profile: Profile,
-    updateUserProfile: (u: User, data: { displayName?: string; photoURL?: string }) => Promise<void>    
+    updateUserProfile: (u: User, data: { displayName?: string; photoURL?: string }) => Promise<void>  
 }

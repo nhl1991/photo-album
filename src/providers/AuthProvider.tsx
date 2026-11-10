@@ -24,13 +24,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile(toProfile(r));
     });
   }, [userAuth]);
-  const refreshProfile = () => setProfile(toProfile(auth.currentUser));
+  const refreshUserProfile = () => {
+    setProfile(toProfile(auth.currentUser));
+  };
   const updateUserProfile = async (
     u: User,
     data: { displayName?: string; photoURL?: string },
   ) => {
-    await updateProfile(u, data);
-    refreshProfile();
+    try {
+      await updateProfile(u, data);
+      const res = await fetch("/api/auth/users", { method: "PATCH" });
+      if (!res.ok) throw new Error("PROFILE_SYNC_FAILED");
+    } finally {
+      refreshUserProfile();
+    }
   };
   return (
     <AuthContext.Provider

@@ -1,4 +1,5 @@
 import { adminAuth } from "@/lib/server/firebase-admin";
+import { syncProfile } from "@/lib/server/users/syncProfile";
 import { FirebaseAuthError } from "firebase-admin/auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -14,17 +15,23 @@ export async function POST(req: NextRequest) {
   const header = req.headers.get("Authorization");
   if (!header) return handleApiError(401, "Unauthorized");
   const tokenId = header.split(" ")[1].trim();
+
   try {
+    const { uid } = await adminAuth.verifyIdToken(tokenId);
     const sessionCookie = await adminAuth.createSessionCookie(tokenId, {
       expiresIn: 1000 * 60 * 60 * 24 * 5,
     });
-
     (await cookies()).set("session", sessionCookie, {
       httpOnly: true,
       secure: isProd,
       sameSite: "lax",
       path: "/",
     });
+    try {
+      await syncProfile(uid);
+    } catch (e) {
+      console.error("[login] profile sync failed", e);
+    }
   } catch (e) {
     if (
       e instanceof FirebaseAuthError &&
