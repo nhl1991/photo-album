@@ -1,5 +1,8 @@
+// app/api/posts/[id]/route.ts
 import { getUserOptional } from "@/lib/server/auth/getUserOptional";
 import { requireUser } from "@/lib/server/auth/requireUser";
+import { postsCol } from "@/lib/server/collections";
+import { toPostDetailDto } from "@/lib/server/dto/PostDetailDto";
 import { handleApiError } from "@/lib/server/error/handleApiError";
 import { adminDb, adminStorage } from "@/lib/server/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
@@ -14,22 +17,20 @@ export async function GET(
 ) {
   const postId = (await params).id;
   let liked = false;
+  const post = toPostDetailDto(await postsCol().doc(postId).get());
+  if (!post) return handleApiError(404, "NOT_FOUND");
 
-  const doc = await adminDb.doc(`/posts/${postId}`).get();
-  const id = doc.id;
-  const post = doc.data();
-  const authorUid = post ? post.author.uid : null;
   const sessionUid = await getUserOptional();
-  const isMine = sessionUid != null && authorUid === sessionUid;
+  const isMine = sessionUid != null && post.author.uid === sessionUid;
 
   if (sessionUid) {
     const likeDoc = await adminDb
-      .doc(`/posts/${postId}/likes/${sessionUid}`)
+      .doc(`posts/${postId}/likes/${sessionUid}`)
       .get();
-    liked = likeDoc.exists ? true : false;
+    liked = likeDoc.exists;
   }
 
-  return NextResponse.json({ id, post, liked, isMine });
+  return NextResponse.json({ post: post, liked, isMine });
 }
 
 export async function PATCH() {}
