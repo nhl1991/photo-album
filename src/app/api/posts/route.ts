@@ -2,6 +2,8 @@
  * Get All posts order by createdAt
  */
 import { requireUser } from "@/lib/server/auth/requireUser";
+import { postsCol } from "@/lib/server/collections";
+import { toPostSummaryDto } from "@/lib/server/dto/PostSummaryDto";
 import { handleApiError } from "@/lib/server/error/handleApiError";
 import { adminAuth, adminDb, adminStorage } from "@/lib/server/firebase-admin";
 import { getDownloadURL } from "firebase-admin/storage";
@@ -10,37 +12,26 @@ const DOCS_SIZE = 8;
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const cursor = searchParams.get("cursor"); // createdAt (string)
-  let query = adminDb
-    .collection("posts")
-    .orderBy("createdAt", "desc")
-    .limit(DOCS_SIZE);
+  let query = postsCol().orderBy("createdAt", "desc").limit(DOCS_SIZE);
 
   if (cursor !== null && cursor !== undefined) {
     query = query.startAfter(Number(cursor));
   }
-  const t0 = Date.now();
+
   try {
     const snap = await query.get();
-    console.log(
-      "[posts] firestore ok",
-      Date.now() - t0,
-      "ms",
-      "size",
-      snap.size,
-    );
     const docs = snap.docs;
     let lastDoc;
     if (docs.length < DOCS_SIZE) lastDoc = null;
     else lastDoc = docs.at(-1);
     const raw = lastDoc?.get("createdAt");
 
-    return Response.json({
-      items: docs.map((d) => ({ id: d.id, ...d.data() })),
+    return NextResponse.json({
+      items: docs.map(toPostSummaryDto),
       nextCursor: lastDoc ? raw.toString() : null,
     });
   } catch (e) {
-    console.error("[posts] firestore fail", Date.now() - t0, "ms", e);
-    throw e;
+    return handleApiError(500, "INTERNAL_SERVER_ERROR", e);
   }
 
   //   const snap = await query.get();
@@ -85,8 +76,7 @@ export async function POST(req: NextRequest) {
 
   const file = adminStorage.bucket().file(expectedPath);
   const [exists] = await file.exists();
-  if (!exists)
-    return handleApiError(400, "IMAGE_NOT_FOUND");
+  if (!exists) return handleApiError(400, "IMAGE_NOT_FOUND");
   const imageUrl = await getDownloadURL(file);
   await postRef.create({
     title,
