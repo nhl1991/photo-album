@@ -14,7 +14,7 @@ export default function Author({
         <figure
           className={`${className} relative shrink-0 rounded-full overflow-hidden bg-line`}
         >
-          <Image src={avartar} alt="" fill  sizes="5vw"/>
+          {avartar && <Image src={avartar} alt="" fill  sizes="5vw"/>}
         </figure>
         <p className="text-sm font-medium text-ink">{username}</p>
       </div>

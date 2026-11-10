@@ -30,6 +30,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     data: { displayName?: string; photoURL?: string },
   ) => {
     await updateProfile(u, data);
+    await fetch("/api/auth/users", {
+      method: "PATCH",
+    }).catch((e) => console.error(e));
     refreshProfile();
   };
   return (
