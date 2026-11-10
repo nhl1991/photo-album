@@ -6,8 +6,8 @@ export default function Author({
   avartar,
 }: {
   className: string;
-  username: string;
-  avartar: string;
+  username: string | null;
+  avartar: string | null;
 }) {
   return (
       <div className="flex items-center gap-3">
@@ -16,7 +16,7 @@ export default function Author({
         >
           {avartar && <Image src={avartar} alt="" fill  sizes="5vw"/>}
         </figure>
-        <p className="text-sm font-medium text-ink">{username}</p>
+        <p className="text-sm font-medium text-ink">{username ?? "Anonymous"}</p>
       </div>
   );
 }

@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 export default function Avartar({ user }: { user: AuthUser }) {
   const [avatar, setAvatar] = useState<string | null>(null);
   const { updateUserProfile } = useAuth();
+  const [notice, setNotice] = useState<string | null>(null);
   const handleOnProfileImage = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!user) return;
     const { files } = e.target;
@@ -18,7 +19,15 @@ export default function Avartar({ user }: { user: AuthUser }) {
         const result = await uploadBytes(locationRef, file);
         const photoURL = await getDownloadURL(result.ref);
 
-        await updateUserProfile(user, { photoURL: photoURL });
+        try {
+          await updateUserProfile(user, { photoURL }).then(() => {
+            setNotice(null);
+          });
+        } catch (e) {
+          if (!(e instanceof Error && e.message === "PROFILE_SYNC_FAILED"))
+            throw e; // 바깥 catch에서 되돌림
+          setNotice("저장됐지만 일부 화면에 반영이 늦을 수 있어요.");
+        }
         setAvatar(photoURL);
       } catch (e) {
         setAvatar(user.photoURL);
@@ -75,6 +84,7 @@ export default function Avartar({ user }: { user: AuthUser }) {
           onChange={handleOnProfileImage}
         />
       </label>
+      {notice && <p className="mt-2 text-sm text-red-500">{notice}</p>}
     </div>
   );
 }
